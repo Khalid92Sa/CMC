@@ -38,12 +38,10 @@ namespace CMC.Kernel.Infrastructure.Persistence.Repositories.Lookups
         {
             List<LookupModel> lookupModels = new List<LookupModel>();
             lookupModels = await GetCachedLookups(lookupTypes);
-            switch (lookupTypes)
-            {
-                case LookupTypes.Genders:
-                    lookupModels = await GetCachedLookups(lookupTypes);
-                    break;
-            }
+            //switch (lookupTypes)
+            //{
+                
+            //}
 
             return lookupModels;
         }

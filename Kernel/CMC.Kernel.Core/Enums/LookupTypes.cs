@@ -7,7 +7,6 @@ namespace CMC.Kernel.Core.Enums
     public enum LookupTypes
     {
         ActionTypes = 1,
-        ErrorTypes = 2,
-        Genders = 3
+        ErrorTypes = 2
     }
 }
