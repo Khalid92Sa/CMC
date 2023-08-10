@@ -36,8 +36,8 @@ namespace CMC.Presentation.Web
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{culture=ar}/{controller=Home}/{action=Index}/{id?}",
-                    defaults: new { culture = "ar", controller = "Home", action = "Index" });
+                    pattern: "{controller=Home}/{action=Index}/{id?}",
+                    defaults: new { controller = "Home", action = "Index" });
             });
         }
     }

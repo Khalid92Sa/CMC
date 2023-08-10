@@ -6,6 +6,6 @@ namespace CMC.Kernel.Core.Constants
 {
     public static class Validations
     {
-        public static string MinBasicSalary = "5000";
+       
     }
 }

@@ -9,6 +9,6 @@ namespace CMC.Kernel.Core.Constants
         public static string Common = "Common";
         public static string Identity = "Identity";
         public static string Log = "Log";
-        public static string EForms = "EForms";
+        public static string CMC = "CMC";
     }
 }
