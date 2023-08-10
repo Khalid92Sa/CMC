@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Kernel\CMC.Kernel.Core\CMC.Kernel.Core.csproj" />
+    <ProjectReference Include="..\..\Kernel\CMC.Kernel.Host.Base\CMC.Kernel.Host.Base.csproj" />
+    <ProjectReference Include="..\CMC.Presentation.Application\CMC.Presentation.Application.csproj" />
+  </ItemGroup>
+
+</Project>

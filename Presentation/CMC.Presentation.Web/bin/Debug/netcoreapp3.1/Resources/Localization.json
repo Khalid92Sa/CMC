@@ -1,0 +1,23 @@
+﻿[
+  {
+    "Key": "FieldRequired",
+    "LocalizedValue": {
+      "en-US": "This field is required",
+      "ar-SA": "هذا الحقل مطلوب"
+    }
+  },
+  {
+    "Key": "ID_IQ_Format",
+    "LocalizedValue": {
+      "en-US": "ID or Iqama number not valid",
+      "ar-SA": "رقم الهوية أو الإقامة غير صحيح"
+    }
+  },
+  {
+    "Key": "InvalidSaudiMobile",
+    "LocalizedValue": {
+      "en-US": "This filed should be a Saudi mobile numnber",
+      "ar-SA": "هذا الحقل يجب أن يكون رقم موبايل سعودي"
+    }
+  }
+]

@@ -1,0 +1,17 @@
+D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Infrastructure.Persistence\bin\Release\netcoreapp3.1\Saib.OAO.Kernel.Infrastructure.Persistence.deps.json
+D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Infrastructure.Persistence\bin\Release\netcoreapp3.1\Saib.OAO.Kernel.Infrastructure.Persistence.dll
+D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Infrastructure.Persistence\bin\Release\netcoreapp3.1\Saib.OAO.Kernel.Infrastructure.Persistence.pdb
+D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Infrastructure.Persistence\bin\Release\netcoreapp3.1\Saib.OAO.Kernel.Core.dll
+D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Infrastructure.Persistence\bin\Release\netcoreapp3.1\Saib.OAO.Kernel.Domain.dll
+D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Infrastructure.Persistence\bin\Release\netcoreapp3.1\Saib.OAO.Kernel.Infrastructure.Caching.dll
+D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Infrastructure.Persistence\bin\Release\netcoreapp3.1\Saib.OAO.Kernel.Core.pdb
+D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Infrastructure.Persistence\bin\Release\netcoreapp3.1\Saib.OAO.Kernel.Domain.pdb
+D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Infrastructure.Persistence\bin\Release\netcoreapp3.1\Saib.OAO.Kernel.Infrastructure.Caching.pdb
+D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Infrastructure.Persistence\obj\Release\netcoreapp3.1\Saib.OAO.Kernel.Infrastructure.Persistence.csproj.AssemblyReference.cache
+D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Infrastructure.Persistence\obj\Release\netcoreapp3.1\Saib.OAO.Kernel.Infrastructure.Persistence.GeneratedMSBuildEditorConfig.editorconfig
+D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Infrastructure.Persistence\obj\Release\netcoreapp3.1\Saib.OAO.Kernel.Infrastructure.Persistence.AssemblyInfoInputs.cache
+D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Infrastructure.Persistence\obj\Release\netcoreapp3.1\Saib.OAO.Kernel.Infrastructure.Persistence.AssemblyInfo.cs
+D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Infrastructure.Persistence\obj\Release\netcoreapp3.1\Saib.OAO.Kernel.Infrastructure.Persistence.csproj.CoreCompileInputs.cache
+D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Infrastructure.Persistence\obj\Release\netcoreapp3.1\Saib.OAO.Kernel.Infrastructure.Persistence.csproj.CopyComplete
+D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Infrastructure.Persistence\obj\Release\netcoreapp3.1\Saib.OAO.Kernel.Infrastructure.Persistence.dll
+D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Infrastructure.Persistence\obj\Release\netcoreapp3.1\Saib.OAO.Kernel.Infrastructure.Persistence.pdb

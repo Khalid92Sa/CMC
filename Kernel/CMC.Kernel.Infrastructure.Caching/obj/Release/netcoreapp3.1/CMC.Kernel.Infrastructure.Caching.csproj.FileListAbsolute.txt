@@ -1,0 +1,15 @@
+D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Infrastructure.Caching\bin\Release\netcoreapp3.1\Saib.OAO.Kernel.Infrastructure.Caching.deps.json
+D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Infrastructure.Caching\bin\Release\netcoreapp3.1\Saib.OAO.Kernel.Infrastructure.Caching.dll
+D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Infrastructure.Caching\bin\Release\netcoreapp3.1\Saib.OAO.Kernel.Infrastructure.Caching.pdb
+D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Infrastructure.Caching\bin\Release\netcoreapp3.1\Saib.OAO.Kernel.Core.dll
+D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Infrastructure.Caching\bin\Release\netcoreapp3.1\Saib.OAO.Kernel.Domain.dll
+D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Infrastructure.Caching\bin\Release\netcoreapp3.1\Saib.OAO.Kernel.Core.pdb
+D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Infrastructure.Caching\bin\Release\netcoreapp3.1\Saib.OAO.Kernel.Domain.pdb
+D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Infrastructure.Caching\obj\Release\netcoreapp3.1\Saib.OAO.Kernel.Infrastructure.Caching.csproj.AssemblyReference.cache
+D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Infrastructure.Caching\obj\Release\netcoreapp3.1\Saib.OAO.Kernel.Infrastructure.Caching.GeneratedMSBuildEditorConfig.editorconfig
+D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Infrastructure.Caching\obj\Release\netcoreapp3.1\Saib.OAO.Kernel.Infrastructure.Caching.AssemblyInfoInputs.cache
+D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Infrastructure.Caching\obj\Release\netcoreapp3.1\Saib.OAO.Kernel.Infrastructure.Caching.AssemblyInfo.cs
+D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Infrastructure.Caching\obj\Release\netcoreapp3.1\Saib.OAO.Kernel.Infrastructure.Caching.csproj.CoreCompileInputs.cache
+D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Infrastructure.Caching\obj\Release\netcoreapp3.1\Saib.OAO.Kernel.Infrastructure.Caching.csproj.CopyComplete
+D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Infrastructure.Caching\obj\Release\netcoreapp3.1\Saib.OAO.Kernel.Infrastructure.Caching.dll
+D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Infrastructure.Caching\obj\Release\netcoreapp3.1\Saib.OAO.Kernel.Infrastructure.Caching.pdb

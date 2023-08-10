@@ -1,0 +1,10 @@
+D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Domain\bin\Release\netcoreapp3.1\Saib.OAO.Kernel.Domain.deps.json
+D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Domain\bin\Release\netcoreapp3.1\Saib.OAO.Kernel.Domain.dll
+D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Domain\bin\Release\netcoreapp3.1\Saib.OAO.Kernel.Domain.pdb
+D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Domain\obj\Release\netcoreapp3.1\Saib.OAO.Kernel.Domain.csproj.AssemblyReference.cache
+D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Domain\obj\Release\netcoreapp3.1\Saib.OAO.Kernel.Domain.GeneratedMSBuildEditorConfig.editorconfig
+D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Domain\obj\Release\netcoreapp3.1\Saib.OAO.Kernel.Domain.AssemblyInfoInputs.cache
+D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Domain\obj\Release\netcoreapp3.1\Saib.OAO.Kernel.Domain.AssemblyInfo.cs
+D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Domain\obj\Release\netcoreapp3.1\Saib.OAO.Kernel.Domain.csproj.CoreCompileInputs.cache
+D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Domain\obj\Release\netcoreapp3.1\Saib.OAO.Kernel.Domain.dll
+D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Domain\obj\Release\netcoreapp3.1\Saib.OAO.Kernel.Domain.pdb

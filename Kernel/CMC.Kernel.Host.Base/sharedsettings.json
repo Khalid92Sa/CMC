@@ -1,0 +1,27 @@
+{
+  "ConnectionStrings": {
+    "Default": "Data Source=KHALIDS-DELL;Initial Catalog=SAIB_MMP_Dev;Integrated Security=True;MultipleActiveResultSets=True",
+  },
+  "ElasticApm": {
+    "LogLevel": "None",
+    "ServerUrl": "http://localhost:9200"
+  },
+  "ELKconnection": {
+    "LogstashUrl": "http://localhost:8200"
+  },
+  "Serilog": {
+    "MinimumLevel": {
+      "Default": "Information",
+      "Override": {
+        "Microsoft": "Information",
+        "System": "Warning",
+        "Elastic": "Fatal"
+      }
+    }
+  },
+  "OTPSettings": {
+    "OTPEnabled": false,
+    "ShowOTP": true,
+    "SendSMSMobile": "0560303931"
+  }
+}

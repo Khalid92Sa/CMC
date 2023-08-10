@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Kernel\CMC.Kernel.Core\CMC.Kernel.Core.csproj" />
+    <ProjectReference Include="..\..\Kernel\CMC.Kernel.Infrastructure.Persistence\CMC.Kernel.Infrastructure.Persistence.csproj" />
+    <ProjectReference Include="..\CMC.Presentation.Domain\CMC.Presentation.Domain.csproj" />
+  </ItemGroup>
+
+</Project>
