@@ -15,7 +15,10 @@ namespace CMC.Presentation.Application.Validators.Identity
     {
         public LoginValidator(IStringLocalizer<LoginDTO> localizer)
         {
-
+            //UserName
+            RuleFor(a => a.UserName).NotNull().WithMessage(localizer["FieldRequired"]);
+            //Password
+            RuleFor(a => a.Password).NotNull().WithMessage(localizer["FieldRequired"]);
         }
     }
 }

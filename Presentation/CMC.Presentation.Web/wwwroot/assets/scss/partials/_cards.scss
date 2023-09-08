@@ -1,0 +1,94 @@
+// Users Grids
+
+.users {
+    h6{
+        a{
+            color: $blackColor;
+            text-decoration: none;
+        }
+    }
+}
+
+
+.login-container .card{
+    background-color: rgba(255,255,255,.95);
+}
+
+.card {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1rem;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.QList {
+    .card-header {
+        background-color: #fff;
+    }
+
+    .btn {
+        box-shadow: none;
+        width: 100%;
+        text-align: left;
+        color: $primaryColor;
+        white-space: normal;
+        padding-left: 0;
+        border: none;
+    }
+
+    .btn-link:hover, .btn-link:focus {
+        color: $primaryColor;
+        text-decoration: none;
+        border: none;
+    }
+
+    .collapse {
+        background-color: $primaryVeryLight;
+    }
+
+    button[aria-expanded="true"] + .fa-chevron-down {
+        transform: rotate(180deg);
+        transition: all .4s ease-in-out;
+    }
+
+    .card-header h5 {
+        position: relative;
+    }
+
+    .fa-chevron-down {
+        position: absolute;
+        font-size: 1rem;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        margin: auto;
+        color: #aaa;
+        transition: all .4s ease-in-out;
+    }
+
+    .accordion .accordion .btn {
+        font-size: .75rem;
+    }
+
+    .accordion .accordion .card, .accordion .accordion .card-header {
+        border: 0;
+        border-radius: 0;
+        background-color: transparent;
+    }
+
+    .accordion .accordion .fa-chevron-down {
+        font-size: .9rem;
+    }
+
+    .accordion .accordion .card-body {
+        padding: 1rem 3rem;
+        font-size: .8rem;
+    }
+
+    .accordion .accordion .card-header {
+        padding: 0.5rem 1.25rem;
+    }
+
+    .accordion .accordion button {
+        color: #555;
+    }
+}

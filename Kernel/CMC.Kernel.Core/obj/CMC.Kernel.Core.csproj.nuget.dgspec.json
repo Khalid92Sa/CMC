@@ -50,6 +50,10 @@
         "netcoreapp3.1": {
           "targetAlias": "netcoreapp3.1",
           "dependencies": {
+            "BCrypt.Net-Next": {
+              "target": "Package",
+              "version": "[4.0.3, )"
+            },
             "Elastic.Apm.NetCoreAll": {
               "target": "Package",
               "version": "[1.16.1, )"
@@ -72,7 +76,7 @@
             },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
-              "version": "[5.0.17, )"
+              "version": "[5.0.10, )"
             },
             "Newtonsoft.Json": {
               "target": "Package",

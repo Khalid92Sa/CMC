@@ -58,21 +58,5 @@ namespace CMC.Kernel.Infrastructure.Persistence.Services
                 throw ;
             }
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public async Task<List<LookupModel>> GetCities()
-        {
-            try
-            {
-                return await _lookupRepository.GetCities();
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-        }
-
     }
 }

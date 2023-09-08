@@ -1,0 +1,6 @@
+$homeBanner:url('../images/Background.svg') #{"/*rtl:url('../images/Background-rtl.svg')*/"};
+
+@mixin BannerBackground{
+    background-repeat: no-repeat;
+    background-position: left;
+}

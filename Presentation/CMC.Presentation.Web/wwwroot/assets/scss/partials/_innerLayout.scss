@@ -1,0 +1,122 @@
+.login-container{
+    background-image:url("../images/carousel/carousel-image2.jpg");
+    background-repeat: no-repeat;
+    object-fit: cover;
+    background-size: cover;
+
+    .login{
+        border-right:1px solid #eee; 
+    }
+.login, .register{
+    img{
+        transition:all 1s;
+        transform: scale(0.7);
+    }
+    a:hover{
+        img{
+            transform: scale(1);
+        }
+    }
+}
+    
+}
+
+@media only screen and (max-width:767px){
+    .login-nav{
+        /*position:absolute !important;*/
+    }
+    .login-container {
+        background-attachment: fixed;
+        /*padding-top: 35px;
+        padding-bottom: 35px;*/
+        /*min-height: 100%;*/
+        position: relative;
+
+        .login {
+            border-right: none;
+        }
+    }
+    .login, .register {
+        img {
+            width:100px !important;
+        }
+        }
+   
+    }
+
+.inner-main-div {
+    height: 100vh;
+
+    .main-header {
+        background-image: url("../images/inners/innerBackground.png");
+        background-repeat: no-repeat;
+        object-fit: cover;
+        background-size: cover;
+        height: 124px;
+    }
+
+    .main-section {
+        height: calc(100vh - 124px);
+        background-color: #ffffff;
+        overflow-y: auto;
+        /*.scroll-div{
+            overflow-y:auto;
+            height: 100%;
+            width: 100%;
+        }*/
+    }
+
+    .main-footer {
+        /*height: 10%;*/
+        border-top: 1px solid #eee;
+        background-image: url("../images/inners/innerBackground.png");
+        background-repeat: no-repeat;
+        object-fit: cover;
+        background-size: cover;
+    }
+
+   
+}
+
+
+@media only screen and (max-width: 767px) {
+    .inner-main-div {
+        .main-footer, .main-section, .main-header {
+            /*height: auto;*/
+        }
+
+        .main-header {
+            height: 130px;
+        }
+    }
+
+    .main-section {
+        height: calc(100vh - 130px);
+    }
+    }
+
+.payment-method{
+
+    a img{
+        opacity: .5;
+        height: 23px;
+    }
+    a{
+        transform: scale(.9);
+        transition: all .3s ease-in;
+        &:hover{
+            transform: scale(1);
+            img{
+                opacity: .7;
+            }
+        }
+        &.active{
+            border-color: $primaryColor !important;
+            transform: scale(1);
+                 img{
+                    opacity: 1;
+                }
+    }
+
+}
+}

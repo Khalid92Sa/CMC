@@ -1,0 +1,114 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Microsoft.AspNetCore.Mvc;
+@using System.Globalization;
+@using System.Threading
+@using CMC.Kernel.Core.Constants
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    Layout = null;
+    ViewBag.Title = Localizer["LoginTitle"].Value;
+    bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
+    var returnUrl = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}{Context.Request.QueryString}";
+    string direction = IsAr ? "dir=rtl" : "";
+    string baseURL = $"{Context.Request.Scheme}://{Context.Request.Host}/";
+}
+<style>
+    .navbar-header-menu {
+        z-index: 1000;
+    }
+</style>
+
+<!DOCTYPE html>
+<html lang="en" @direction>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@Localizer["LoginTitle"]</title>
+    <meta content="@Localizer["LoginTitle"]" name="description" />
+
+    @if (IsAr)
+    {
+        <!-- CSS -->
+        @*<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/css/select2.min.css" rel="stylesheet" />*@
+        <link type="text/css" rel="stylesheet" href="~/assets/shared/select2/select2.min.rtl.css" />
+        <link type="text/css" rel="stylesheet" href="~/assets/shared/bootstrap/css/bootstrap.min.rtl.css" />
+        <link type="text/css" rel="stylesheet" href="~/assets/shared/MDB-Free_4.8.0/css/mdb.min.rtl.css" />
+        <link type="text/css" rel="stylesheet" href="~/assets/shared/MDB-Free_4.8.0/css/addons/datatables.min.rtl.css">
+        <link type="text/css" rel="stylesheet" href="~/assets/shared/font-awesome-5.1/css/all.min.css" />
+        <link type="text/css" rel="stylesheet" href="~/assets/css/main.rtl.css" />
+    }
+    else
+    {
+        <!-- CSS -->
+        @*<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/css/select2.min.css" rel="stylesheet" />*@
+        <link type="text/css" rel="stylesheet" href="~/assets/shared/select2/select2.min.css" />
+        <link type="text/css" rel="stylesheet" href="~/assets/shared/bootstrap/css/bootstrap.min.css" />
+        <link type="text/css" rel="stylesheet" href="~/assets/shared/MDB-Free_4.8.0/css/mdb.min.css" />
+        <link type="text/css" rel="stylesheet" href="~/assets/shared/MDB-Free_4.8.0/css/addons/datatables.min.css">
+        <link type="text/css" rel="stylesheet" href="~/assets/shared/font-awesome-5.1/css/all.min.css" />
+        <link type="text/css" rel="stylesheet" href="~/assets/css/main.css" />
+    }
+    <!-- JS -->
+    <script type="text/javascript" src="~/assets/js/jquery-3.5.1.min.js"></script>
+    <script type="text/javascript" src="~/assets/js/utils.js"></script>
+    <script type="text/javascript" src="~/assets/js/tether.min.js"></script>
+    <script type="text/javascript" src="~/assets/js/popper.js"></script>
+    <script src="~/assets/shared/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="~/assets/shared/MDB-Free_4.8.0/js/addons/datatables.min.js"></script>
+    <script type="text/javascript" src="~/assets/shared/font-awesome-5.1/js/all.min.js"></script>
+    <script type="text/javascript" src="~/assets/js/scripts.js"></script>
+    <script type="text/javascript" src="~/assets/js/autologout.js"></script>
+
+    <script type="text/javascript" src="~/assets/js/Application/GeneralClass.js"></script>
+    <script type="text/javascript" src="~/assets/js/Application/Login.js"></script>
+
+    <style>
+        .input-validation-error {
+            background: pink;
+            border: 1px solid red;
+        }
+    </style>
+</head>
+<body style="min-height:100vh;overflow-x:hidden;">
+    <input type="hidden" value="@returnUrl" id="hdnReturnedUrl" />
+    <nav id="navbar" class="navbar navbar-expand-lg navbar-light login-nav py-lg-0">
+        <div class="container d-flex align-items-center">
+            <a class="navbar-brand animated fadeInLeft" href="@Url.Action("Index","Home")">
+                <img class="img-ar" src="~/assets/images/logos/logo-dark.png" style="width:120px;">
+                <img class="img-en" src="~/assets/images/logos/logo-dark.png" style="width:120px;">
+            </a>
+            <div class="d-flex align-items-center">
+                <div class="d-flex d-lg-none">
+                    <partial name="../Shared/_Language.cshtml" />
+                </div>
+            </div>
+            <div class="collapse navbar-collapse navbar-header-menu animated fadeIn justify-content-end rounded p-3" id="navbarSupportedContent">
+                <ul class="navbar-nav align-items-start align-items-md-center">
+                    <li class="nav-item d-none d-lg-flex ml-2">
+                        <partial name="../Shared/_Language.cshtml" />
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid login-container px-0">
+        <div class="mask rgba-primary-dark w-100 h-100 position-absolute"></div>
+        @RenderBody()
+    </div>
+    <footer class="font-small wow fadeIn animated fadeInUp" data-aos="fade-up">
+        <div class="row py-2 d-flex align-items-center footer-copyright no-gutters">
+            <div class="col-12 text-dark text-center">
+                <small>
+                    <script>document.write(new Date().getFullYear())</script> © @Localizer["CityMall"].
+                </small>
+            </div>
+        </div>
+    </footer>
+    <div class="WaitingBar" id="loading" style="display: none; opacity: 0.3; height: 100%; width: 100%; position: fixed; left: 0px; top: 0px; z-index: 1001;
+        background: rgb(59, 132, 92); justify-content: center; align-items: center;">
+        <img src="~/assets/images/spinner-transparent.gif" style="display: block; margin-left: auto; margin-right: auto; width: 111px;">
+    </div>
+</body>
+</html>
+

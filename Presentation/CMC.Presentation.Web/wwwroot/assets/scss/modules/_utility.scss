@@ -1,0 +1,83 @@
+// Borders
+.rounded-pill{
+    border-radius: 100rem;
+}
+.fit-cover {
+    object-fit: cover;
+}
+.alert {
+    position: absolute;
+    padding: .75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: 0;
+    z-index: 1031;
+    width: 100%;
+}
+
+
+.modal-content.alert-success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+.modal-content.alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+@media only screen and (min-width: 768px) {
+    .h-md-100 {
+        height: 100% !important;
+    }
+
+}
+
+@media only screen and (max-width: 767px) {
+    .h-sm-100 {
+        height: 100%;
+    }
+}
+
+@media only screen and (min-width: 1024px) {
+    .position-md-fixed {
+        position: fixed;
+    }
+    }
+
+    .right-0 {
+        right: 0;
+    }
+
+
+.notify-badge {
+    right: 11px; 
+    width: 20px;
+    height: 20px;
+    top: -10px;
+    font-size: 13px;
+}
+
+.CustomWrapper #tblBillerTransfer_wrapper .row:last-child {
+    .col-md-7 {
+        display: flex;
+    }
+
+    .col-md-5 {
+        display: none !important;
+    }
+}
+
+.text-decoration-none{
+    text-decoration:none !important;
+}
+
+.card .card-body table thead tr th{
+    text-align:left;
+}
+
+.card .card-body table tbody tr td {
+    text-align: left;
+}

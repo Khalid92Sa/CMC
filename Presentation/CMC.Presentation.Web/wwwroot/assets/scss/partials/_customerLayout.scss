@@ -1,0 +1,69 @@
+﻿.side-menu-cust, .mobile-menu {
+    .side-menu {
+        background-color: $primaryVeryLight;
+        height: 100vh;
+        top: 0;
+        position: relative;
+        overflow-y: hidden;
+
+        .customer-side-menu {
+            overflow-y: auto;
+            height: calc(100vh - 155px);
+            padding-bottom: 2rem;
+            overflow-x: hidden;
+        }
+
+        .nav a {
+            background-color: $primaryVeryLight;
+        }
+
+        .nav a[aria-expanded="true"] {
+            background-color: $primaryVeryLight;
+
+            + ul {
+                /*background-color: $primaryLight2;*/
+            }
+        }
+
+
+        .nav a.active[aria-expanded="true"] {
+            background-color: $primaryVeryLight;
+            color: $primaryColor;
+
+            svg {
+                color: $accentColor1;
+            }
+
+            + ul {
+                /*background-color: $primaryLight2;*/
+            }
+
+            &:hover, &:focus, &:active {
+                background-color: $primaryVeryLight;
+                color: $primaryColor;
+            }
+        }
+
+        .nav-link.active {
+            background-color: $primaryLight;
+            color: #fff;
+
+            &:hover, &:focus, &:active {
+                background-color: $primaryLight;
+                color: #fff;
+            }
+        }
+
+        .nav-item.show .nav-link, .nav a:hover {
+            background-color: #f0f0f0;
+
+            svg {
+            }
+        }
+
+        .nav ul a {
+            padding: .6rem 3rem;
+            padding-right: 0;
+        }
+    }
+}

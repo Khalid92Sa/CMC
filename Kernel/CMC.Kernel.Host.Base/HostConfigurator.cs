@@ -59,16 +59,20 @@ namespace CMC.Kernel.Host.Base
             var config = BuildConfiguration();
             services.AddSingleton<Configuration>(config);
             services.AddSingleton(Log.Logger);
+
             services.AddTransient<IRestClient, RestClient>();
             services.AddHttpClient<RestClient>();
-            services.AddDbContext<IUnitOfWork, UnitOfWork>(options => options.UseSqlServer(config.ConnectionStrings.Default, providerOptions => providerOptions.CommandTimeout(60)).EnableSensitiveDataLogging(true), ServiceLifetime.Transient);
+
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<IHttpLogRepository, HttpLogRepository>();
             services.AddScoped<ICrossCuttingDependencies, CrossCuttingDependencies>();
+
+            services.AddDbContext<IUnitOfWork, UnitOfWork>(options => options.UseSqlServer(config.ConnectionStrings.Default, providerOptions => providerOptions.CommandTimeout(60)).EnableSensitiveDataLogging(true), ServiceLifetime.Transient);
+            
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             services.AddFluentValidationRegistration();
-            services.AddLocalizationExtention();
             services.AddCorsPolicyRegistration();
+            services.AddLocalizationExtention();
             services.AddSession();
             services.AddControllers();
             services.RegisterRunningModuleDependencies();
@@ -79,6 +83,7 @@ namespace CMC.Kernel.Host.Base
                     .AddApiExplorer();
             services.AddApiVersioningRegistration();
             ConfigureAdditionalServices(services, config);
+            services.AddAutoMapper(CreateAutoMapperMaps);
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
             services.AddScoped<ILookupsService, LookupsService>();
         }

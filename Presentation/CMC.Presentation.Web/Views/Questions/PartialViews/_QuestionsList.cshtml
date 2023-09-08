@@ -1,0 +1,32 @@
+﻿@model CMC.Presentation.Application.DTOs.Questions.CategoryDTO
+
+@{
+    ViewData["Title"] = Localizer["CategoryQuestions"].Value;
+}
+
+
+
+<div class="border border-light-grey rounded p-3 mt-3">
+    <div style="overflow-x: auto;">
+        <table id="tblQuestionList" class="table border-0 table-responsive-lg w-100">
+            <thead>
+                <tr style="white-space:nowrap;">
+                    <th scope="col">#</th>
+                    <th scope="col">@Localizer["QuestionText"]</th>
+                    <th scope="col">@Localizer["QuestionTimer"]</th>
+                    <th scope="col">@Localizer["QuestionPoint"]</th>
+                    <th scope="col">@Localizer["Actions"]</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+<script src="~/assets/libs/datatable/jquery-3.3.1.js"></script>
+
+
+
+
+<script src="~/assets/js/Application/QuestionsCategories.js"></script>
+<script>
+    QuestionList.pageLoad();
+</script>

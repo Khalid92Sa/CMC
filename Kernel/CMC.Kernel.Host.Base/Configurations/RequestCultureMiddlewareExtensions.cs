@@ -27,70 +27,39 @@ namespace CMC.Kernel.Host.Base.Configurations
 
         public async Task InvokeAsync(HttpContext context)
         {
-            string selectedLanguage = "";
-
-            string path = context.Request.Path;
-            if (!string.IsNullOrEmpty(path))
+            try
             {
-                if (path != "/" && path.Length == 3 && !path.EndsWith('/'))
-                    path = $"{path}/";
-
-                if (path == "/")
-                    selectedLanguage = GetDefaultCulture(context);
-                else if (path.Length >= 3 && path[0] == '/' && path[3] == '/')
+                var selectedLanguage = context.Request.Cookies[CookieNames.SelectedLanguage];
+                if (string.IsNullOrWhiteSpace(selectedLanguage))
                 {
-                    selectedLanguage = context.Request.Path.Value.Substring(1, 2);
-                    if (selectedLanguage != Languages.English && selectedLanguage != Languages.Arabic)
-                        selectedLanguage = GetDefaultCulture(context);
-
-                    if (selectedLanguage == Languages.English)
-                        selectedLanguage = SupportedCultures.EnglishUs;
-                    else
-                        selectedLanguage = SupportedCultures.Arabic;
-
-                    context.Response.Cookies.Append(
-                        CookieNames.SelectedLanguage,
-                        selectedLanguage,
-                        new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) }
-                        );
+                    selectedLanguage = SupportedCultures.Arabic;
                 }
-                else
-                    selectedLanguage = GetDefaultCulture(context);
+
+                var culture = new CultureInfo(selectedLanguage);
+                culture.NumberFormat.NumberDecimalSeparator = ".";
+                culture.NumberFormat.CurrencyDecimalSeparator = ".";
+                CultureInfo.CurrentCulture = culture;
+                CultureInfo.CurrentUICulture = culture;
+
+
+                ////To add Headers AFTER everything you need to do this
+                //context.Response.OnStarting(state =>
+                //{
+                //    var httpContext = (HttpContext)state;
+                //    CookieOptions option = new CookieOptions();
+                //    option.Expires = DateTime.Now.AddYears(1);
+                //    httpContext.Response.Cookies.Append(CookieNames.SelectedLanguage, selectedLanguage, option);
+
+                //    return Task.CompletedTask;
+                //}, context);
+
+                await _next(context);
             }
-            else
-                selectedLanguage = GetDefaultCulture(context);
+            catch (Exception ex)
+            {
+                throw;
+            }
 
-
-            if (string.IsNullOrWhiteSpace(selectedLanguage))
-                selectedLanguage = SupportedCultures.Arabic;
-
-            var culture = new CultureInfo(selectedLanguage);
-            culture.NumberFormat.NumberDecimalSeparator = ".";
-            culture.NumberFormat.CurrencyDecimalSeparator = ".";
-            CultureInfo.CurrentCulture = culture;
-            CultureInfo.CurrentUICulture = culture;
-
-
-            ////To add Headers AFTER everything you need to do this
-            //context.Response.OnStarting(state =>
-            //{
-            //    var httpContext = (HttpContext)state;
-            //    CookieOptions option = new CookieOptions();
-            //    option.Expires = DateTime.Now.AddYears(1);
-            //    httpContext.Response.Cookies.Append(CookieNames.SelectedLanguage, selectedLanguage, option);
-
-            //    return Task.CompletedTask;
-            //}, context);
-
-            await _next(context);
-        }
-
-        private string GetDefaultCulture(HttpContext context)
-        {
-            string defaultLanguage = context.Request.Cookies[CookieNames.SelectedLanguage];
-            if (string.IsNullOrWhiteSpace(defaultLanguage))
-                defaultLanguage = SupportedCultures.Arabic;
-            return defaultLanguage;
         }
     }
 }

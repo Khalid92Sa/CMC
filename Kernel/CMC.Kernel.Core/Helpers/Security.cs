@@ -56,5 +56,11 @@ namespace CMC.Kernel.Core.Helpers
                 throw ex;
             }
         }
+
+
+        public static string Hash(string text)
+        {
+            return BCrypt.Net.BCrypt.HashPassword(text);
+        }
     }
 }

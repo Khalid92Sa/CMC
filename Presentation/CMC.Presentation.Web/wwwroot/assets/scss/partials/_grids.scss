@@ -1,0 +1,225 @@
+table {
+    tr td, tr th {
+        font-size: 13px;
+        vertical-align: middle;
+    }
+
+    thead tr th {
+        font-family: $BoldFont;
+    }
+
+    input.form-control {
+        width: auto;
+    }
+
+    a {
+        color: $primaryColor !important;
+    }
+
+    button, .btn-outline {
+        margin: 0 !important;
+        padding: .2rem 0.8rem !important;
+        background-color: transparent !important;
+        box-shadow: none !important;
+
+        &:hover, &.active, &:active, &:focus {
+            color: $whiteColor !important;
+            opacity: .8;
+            box-shadow: none !important;
+        }
+    }
+
+    .btn-outline {
+
+        &:hover, &.active, &:active, &:focus {
+            color: $whiteColor !important;
+            background-color: $primaryColor !important;
+            opacity: .8;
+            box-shadow: none !important;
+        }
+    }
+}
+
+
+   
+
+a.action,button.action{
+    padding: .2rem .4rem !important;
+    border-radius: .25rem;
+    height: 25px;
+    text-align: center;
+    width: 25px;
+    color: #ffffff !important;
+    font-size: 12px;
+    border: none;
+    cursor: pointer;
+
+    svg{
+        vertical-align: middle;
+    }
+
+   
+
+}
+table.table a.btn.btn-primary {
+    color: #fff !important;
+}
+.bill-table{
+    thead th{
+background-color: $secondaryColor;
+    }
+
+    thead tr th:last-of-type, tbody tr td:last-of-type{
+        text-align:right;
+        max-width: 200px;
+    }
+    tbody tr:last-of-type{
+    td,th{
+        color: $primaryColor;
+        font-size: 15px;
+        font-family: $BoldFont;
+    }
+   
+}
+}
+
+
+.middle-table-cell{
+    tr td, tbody tr th{
+        vertical-align: middle;
+    }
+}
+
+table
+tr
+td{
+    select{
+        padding: 0 !important;
+        height: auto !important;
+        width: 100px !important;
+        margin: auto;
+    }
+} 
+
+.fit-width{
+    width:1px;
+    white-space: nowrap;
+}
+
+.filter {
+    input, select {
+        font-size: 12px;
+        line-height: 22px !important;
+        color:#333;
+    }
+
+
+}
+
+@media only screen and (min-width: 1024px) {
+   
+    }
+
+
+
+    td.withDownload {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .AttachmentSection {
+        width: 100%;
+        position: relative;
+
+        .NationalID {
+            /*text-align:right;*/
+            position: absolute;
+            top: 0;
+            right: 20px;
+            left: 0;
+        }
+
+        div {
+            display: inline-block;
+        }
+
+        .Download {
+            /*text-align:left;*/
+            height: 23px;
+            width: 37px;
+            position: absolute;
+            top: 0;
+            right: 18px;
+            left: auto;
+        }
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: $primaryColor;
+
+        &:hover {
+            background-color: $primaryColor;
+        }
+    }
+
+    .deleteRow {
+        position: absolute;
+        right: -26px;
+        height: 26px;
+        width: 26px;
+        top: 0;
+        bottom: 0;
+        margin: auto !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0 5px 5px 0;
+        display: none;
+    }
+
+    tr:hover td > .deleteRow {
+        display: flex;
+    }
+
+    table.dataTable thead .sorting:after, table.dataTable thead .sorting:before, table.dataTable thead .sorting_asc:after, table.dataTable thead .sorting_asc:before, table.dataTable thead .sorting_asc_disabled:after, table.dataTable thead .sorting_asc_disabled:before, table.dataTable thead .sorting_desc:after, table.dataTable thead .sorting_desc:before, table.dataTable thead .sorting_desc_disabled:after, table.dataTable thead .sorting_desc_disabled:before {
+        bottom: .5rem;
+    }
+
+    table.dataTable thead .sorting:after, table.dataTable thead .sorting_asc:after, table.dataTable thead .sorting_asc_disabled:after, table.dataTable thead .sorting_desc:after, table.dataTable thead .sorting_desc_disabled:after,
+    table.dataTable thead .sorting:before, table.dataTable thead .sorting_asc:before, table.dataTable thead .sorting_asc_disabled:before, table.dataTable thead .sorting_desc:before, table.dataTable thead .sorting_desc_disabled:before {
+        font-size: .8rem;
+        right: 16px;
+    }
+
+
+    table thead {
+        th.icons-table {
+            &.sorting:after, &.sorting_asc:after, &.sorting_asc_disabled:after, &.sorting_desc:after, &.sorting_desc_disabled:after,
+            &.sorting:before, &.sorting_asc:before, &.sorting_asc_disabled:before, &.sorting_desc:before, &.sorting_desc_disabled:before {
+                display: none;
+            }
+        }
+    }
+
+
+.clearing#divProcessing {
+    label {
+        margin-top: 33px;
+    }
+}
+
+.pagination .page-item .page-link {
+    border: 1px solid #dee2e6;
+}
+
+table.nowrap thead {
+    white-space: nowrap;
+}
+
+.table.nowrap td, .table th {
+    border-top: 0px !important;
+}
+
+.table tbody td, .table tbody th {
+    border-top: 1px solid #dee2e6 !important;
+}

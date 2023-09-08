@@ -6,6 +6,6 @@ namespace CMC.Kernel.Core.Constants
 {
     public class PaginationSettings
     {
-        public const int PageSize = 50;
+        public const int PageSize = 20;
     }
 }

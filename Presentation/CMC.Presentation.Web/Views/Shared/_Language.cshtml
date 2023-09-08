@@ -1,0 +1,30 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Microsoft.AspNetCore.Mvc;
+@using System.Globalization;
+@using System.Threading
+@using CMC.Kernel.Core.Constants
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
+    var returnUrl = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}{Context.Request.QueryString}";
+}
+
+
+<div class="lang-switch">
+    @{
+        @Html.AntiForgeryToken()
+        <div class="dropdown-toggle">
+            @if (!IsAr)
+            {
+                <a id="Arabic" class="nav-link btn btn-outline-primary font-weight-bold" onclick="GeneralClass.ToggleLanguage('ar-JO')"
+                   title="العربية" style="width: 40px; padding: 5px;">ع</a>
+            }
+            else
+            {
+                <a id="English" class="nav-link btn btn-outline-primary font-weight-bold" onclick="GeneralClass.ToggleLanguage('en-US')"
+                   title="English" style="width: 40px; padding: 5px;">EN</a>
+            }
+        </div>
+    }
+</div>

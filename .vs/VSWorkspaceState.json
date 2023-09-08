@@ -1,7 +1,18 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\Kernel",
+    "\\Kernel\\CMC.Kernel.Core",
+    "\\Kernel\\CMC.Kernel.Core\\Models",
+    "\\Presentation",
+    "\\Presentation\\CMC.Presentation.Web",
+    "\\Presentation\\CMC.Presentation.Web\\wwwroot",
+    "\\Presentation\\CMC.Presentation.Web\\wwwroot\\assets",
+    "\\Presentation\\CMC.Presentation.Web\\wwwroot\\assets\\js",
+    "\\Presentation\\CMC.Presentation.Web\\wwwroot\\assets\\js\\Helper",
+    "\\Presentation\\CMC.Presentation.Web\\wwwroot\\assets\\libs",
+    "\\Presentation\\CMC.Presentation.Web\\wwwroot\\assets\\libs\\Datatable"
   ],
-  "SelectedNode": "\\D:\\Profile\\Projects\\CMC",
+  "SelectedNode": "\\Presentation\\CMC.Presentation.Web\\Views\\Questions\\PartialViews\\_QuestionsList.cshtml",
   "PreviewInSolutionExplorer": false
 }

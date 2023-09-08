@@ -9,6 +9,5 @@ namespace CMC.Kernel.Infrastructure.Persistence.Services
     {
         Task<LookupModel> GetLookupById(int id);
         Task<List<LookupModel>> GetLookupItems(LookupTypes lookupTypes);
-        Task<List<LookupModel>> GetCities();
     }
 }
