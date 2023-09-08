@@ -50,6 +50,10 @@
         "netcoreapp3.1": {
           "targetAlias": "netcoreapp3.1",
           "dependencies": {
+            "BCrypt.Net-Next": {
+              "target": "Package",
+              "version": "[4.0.3, )"
+            },
             "Elastic.Apm.NetCoreAll": {
               "target": "Package",
               "version": "[1.16.1, )"
@@ -72,7 +76,7 @@
             },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
-              "version": "[5.0.17, )"
+              "version": "[5.0.10, )"
             },
             "Newtonsoft.Json": {
               "target": "Package",
@@ -229,6 +233,10 @@
               "target": "Package",
               "version": "[12.0.1, )"
             },
+            "AutoMapper.Extensions.Microsoft.DependencyInjection": {
+              "target": "Package",
+              "version": "[12.0.1, )"
+            },
             "MediatR": {
               "target": "Package",
               "version": "[10.0.1, )"
@@ -240,6 +248,10 @@
             "Microsoft.AspNetCore.Http.Abstractions": {
               "target": "Package",
               "version": "[2.2.0, )"
+            },
+            "Microsoft.AspNetCore.Identity.UI": {
+              "target": "Package",
+              "version": "[3.1.25, )"
             },
             "Microsoft.AspNetCore.Mvc.Versioning": {
               "target": "Package",
@@ -472,6 +484,9 @@
               },
               "D:\\Profile\\Projects\\CMC\\Kernel\\CMC.Kernel.Infrastructure.Caching\\CMC.Kernel.Infrastructure.Caching.csproj": {
                 "projectPath": "D:\\Profile\\Projects\\CMC\\Kernel\\CMC.Kernel.Infrastructure.Caching\\CMC.Kernel.Infrastructure.Caching.csproj"
+              },
+              "D:\\Profile\\Projects\\CMC\\Presentation\\CMC.Presentation.Domain\\CMC.Presentation.Domain.csproj": {
+                "projectPath": "D:\\Profile\\Projects\\CMC\\Presentation\\CMC.Presentation.Domain\\CMC.Presentation.Domain.csproj"
               }
             }
           }
@@ -486,6 +501,10 @@
         "netcoreapp3.1": {
           "targetAlias": "netcoreapp3.1",
           "dependencies": {
+            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[3.1.25, )"
+            },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
               "version": "[5.0.17, )"
@@ -495,6 +514,12 @@
               "version": "[5.0.17, )"
             },
             "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[5.0.17, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
               "target": "Package",
               "version": "[5.0.17, )"
             }
@@ -571,9 +596,17 @@
         "netcoreapp3.1": {
           "targetAlias": "netcoreapp3.1",
           "dependencies": {
+            "AutoMapper": {
+              "target": "Package",
+              "version": "[12.0.1, )"
+            },
             "Microsoft.AspNetCore.Http.Features": {
               "target": "Package",
               "version": "[2.2.0, )"
+            },
+            "SixLabors.ImageSharp": {
+              "target": "Package",
+              "version": "[3.0.2, )"
             },
             "System.Drawing.Common": {
               "target": "Package",
@@ -634,6 +667,9 @@
           "netcoreapp3.1": {
             "targetAlias": "netcoreapp3.1",
             "projectReferences": {
+              "D:\\Profile\\Projects\\CMC\\Kernel\\CMC.Kernel.Core\\CMC.Kernel.Core.csproj": {
+                "projectPath": "D:\\Profile\\Projects\\CMC\\Kernel\\CMC.Kernel.Core\\CMC.Kernel.Core.csproj"
+              },
               "D:\\Profile\\Projects\\CMC\\Kernel\\CMC.Kernel.Domain\\CMC.Kernel.Domain.csproj": {
                 "projectPath": "D:\\Profile\\Projects\\CMC\\Kernel\\CMC.Kernel.Domain\\CMC.Kernel.Domain.csproj"
               }
@@ -650,9 +686,9 @@
         "netcoreapp3.1": {
           "targetAlias": "netcoreapp3.1",
           "dependencies": {
-            "Microsoft.EntityFrameworkCore.SqlServer": {
+            "Microsoft.AspNetCore.Identity.UI": {
               "target": "Package",
-              "version": "[5.0.1, )"
+              "version": "[3.1.25, )"
             }
           },
           "imports": [
@@ -726,6 +762,12 @@
       "frameworks": {
         "netcoreapp3.1": {
           "targetAlias": "netcoreapp3.1",
+          "dependencies": {
+            "Microsoft.EntityFrameworkCore.Relational": {
+              "target": "Package",
+              "version": "[5.0.17, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
@@ -798,6 +840,22 @@
       "frameworks": {
         "netcoreapp3.1": {
           "targetAlias": "netcoreapp3.1",
+          "dependencies": {
+            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[5.0.10, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[5.0.10, )"
+            },
+            "Microsoft.Extensions.Configuration.Binder": {
+              "target": "Package",
+              "version": "[6.0.0, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",

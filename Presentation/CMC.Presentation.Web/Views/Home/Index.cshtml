@@ -1,9 +1,30 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = Localizer["Dashboard"].Value;
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-    <p>@Localizer["FieldRequired"]</p>
+<div class="flex flex-column justify-content-center align-items-center">
+    <div class="row justify-content-between">
+        <div class="col-12 d-flex flex-row justify-content-between">
+            <h6 class="text-primary justify-content-start align-middle align-self-center mb-3">@Localizer["Menu_MainPage"]</h6>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6 d-flex align-items-center">
+                    <div class="d-block">
+                        <h3 style="font-family: 'TajawalRegular';">@Localizer["Common_MainPage_Hello"] &nbsp;<span class="font-weight-bold text-primary">خالد</span></h3>
+                    </div>
+                </div>
+                <div class="col-md-6 d-flex align-items-center">
+                    <img class="p-5" src="~/assets/images/layout/home-page.jpg" style="width:100%" />
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+<script>
+    GeneralClass.ActivationSubMenuItem('#lnkMainPage', '#lnkMainPage');
+    GeneralClass.ActivationSubMenuItem('#lnkMainPage2', '#lnkMainPage2');
+</script>

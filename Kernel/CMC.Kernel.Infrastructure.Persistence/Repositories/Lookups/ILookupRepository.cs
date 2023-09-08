@@ -13,7 +13,6 @@ namespace CMC.Kernel.Infrastructure.Persistence.Repositories.Lookups
         public Task<LookupModel> GetLookupById(int id);
         public Task<LookupModel> GetLookupByNameAndCategoryCode(string name, bool isEnglish, LookupTypes lookupTypes);
         public Task<LookupModel> GetLookupByCodeAndCategoryCode(string name, LookupTypes lookupTypes);
-        public Task<List<LookupModel>> GetCities();
         public Task<List<LookupModel>> GetLookupItems(List<int> IDs);
 
     }

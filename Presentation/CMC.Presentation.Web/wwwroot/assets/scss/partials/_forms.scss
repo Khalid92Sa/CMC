@@ -1,0 +1,436 @@
+.form-group label{
+    margin-bottom: .3rem;
+  }
+
+  .form-control{
+      color: $blackColor;
+      
+  }
+
+  .custom-radio .custom-control-input:checked~.custom-control-label::before,
+  .custom-control-input:checked~.custom-control-label::before,
+  .custom-checkbox .custom-control-input:checked~.custom-control-label::before
+  {
+   background-color:$primaryColor;
+}
+
+.mdl-textfield__label{
+    margin-bottom:0 !important;
+    font-size:14px;
+}
+
+.mdl-textfield__input {
+    font-family: $RegularFont;
+}
+
+.input-group-text{
+    font-size:.8rem;
+}
+
+.mdl-textfield--floating-label.is-focused .mdl-textfield__label,
+.mdl-textfield--floating-label.is-dirty .mdl-textfield__label,
+.mdl-textfield--floating-label.has-placeholder .mdl-textfield__label {
+    color: $primaryColor;
+    font-size: 12px;
+    top: 4px;
+    visibility: visible;
+}
+
+.mdl-textfield__label:after {
+    background-color: $primaryColor;
+}
+
+    .inline-buttons {
+        margin-bottom: 20px;
+    }
+
+    input:-internal-autofill-selected {
+        background-color: transparent !important;
+    }
+
+    .requiredLabel {
+        &:after {
+            content: " * ";
+            display: inline-block;
+            color: red;
+        }
+    }
+
+    .topLabels label {
+        vertical-align: top;
+    }
+
+
+    select {
+        border-color: #ced4da;
+        background-color: #fff;
+        border-radius: 4px
+    }
+    /* Switch */
+    HTML CSS Result EDIT ON .switch {
+        font-size: 14px;
+        position: relative;
+    }
+
+    .switch input {
+        position: absolute;
+        height: 1px;
+        width: 1px;
+        background: none;
+        border: 0;
+        clip: rect(0 0 0 0);
+        clip-path: inset(50%);
+        overflow: hidden;
+        padding: 0;
+    }
+
+    .switch input + label {
+        position: relative;
+        min-width: 3rem;
+        border-radius: 1.9rem;
+        height: 1.9rem;
+        line-height: 1.9rem;
+        display: inline-block;
+        cursor: pointer;
+        outline: none;
+        user-select: none;
+        vertical-align: middle;
+        text-indent: 4.3rem;
+    }
+
+    .switch input + label::before,
+    .switch input + label::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 3rem;
+        bottom: 0;
+        display: block;
+    }
+
+    .switch input + label::before {
+        right: 0;
+        background-color: #dee2e6;
+        border-radius: 1.9rem;
+        transition: 0.2s all;
+    }
+
+    .switch input + label::after {
+        top: 3.2px;
+        left: 4px;
+        right: auto;
+        width: 1.5rem;
+        height: 1.5rem;
+        border-radius: 50%;
+        background-color: white;
+        transition: 0.2s all;
+    }
+
+    .switch input:checked + label::before {
+        background-color: $primaryColor;
+    }
+
+    .switch input:checked + label::after {
+        margin-left: 1.9rem;
+    }
+
+    .switch input:focus + label::before {
+        outline: none;
+        box-shadow: 0 0 0 0.2rem $secondaryColor;
+    }
+
+    .switch input:disabled + label {
+        color: #868e96;
+        cursor: not-allowed;
+    }
+
+    .switch input:disabled + label::before {
+        background-color: #e9ecef;
+    }
+
+    .switch.switch-sm {
+        font-size: 13px;
+    }
+
+    .switch.switch-sm input + label {
+        min-width: 3rem;
+        height: 1.4rem;
+        line-height: 1.8rem;
+        text-indent: 4.3rem;
+    }
+
+    .switch.switch-sm input + label::before {
+        width: 3rem;
+    }
+
+    .switch.switch-sm input + label::after {
+        width: 1rem;
+        height: 1rem;
+    }
+
+    .switch.switch-sm input:checked + label::after {
+        margin-left: 1.5rem;
+    }
+
+    .switch.switch-lg {
+        font-size: 15px;
+    }
+
+    .switch.switch-lg input + label {
+        min-width: 3rem;
+        height: 1.76rem;
+        line-height: 1.9rem;
+        text-indent: 4.3rem;
+    }
+
+    .switch.switch-lg input + label::before {
+        width: 3rem;
+    }
+
+    .switch.switch-lg input + label::after {
+        width: 1.8rem;
+        height: 1.8rem;
+    }
+
+    .switch.switch-lg input:checked + label::after {
+        margin-left: 1.9rem;
+    }
+
+    .switch + .switch {
+        margin-left: 1rem;
+    }
+    /*****/
+    // Textarea Editor
+    #editor {
+        resize: vertical;
+        overflow: auto;
+        line-height: 1.5;
+        background-image: none;
+        border: 1px solid #ddd;
+        border-radius: 0 0 .25rem .25rem;
+        border-top: 0;
+        min-height: 150px;
+        box-shadow: none;
+        padding: 8px 16px;
+        margin: 0 auto;
+        font-size: 14px;
+        transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+    }
+
+#editor:focus {
+    border-color: $primaryVeryLight;
+    -webkit-box-shadow: 0 0 0 0.2rem $primaryVeryLight;
+    box-shadow: 0 0 0 0.2rem $primaryVeryLight;
+    outline: 0 none;
+}
+
+    #editControls {
+        border: 1px solid #ddd;
+        border-radius: .25rem .25rem 0 0;
+    }
+
+    #editparent {
+        a.btn {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            border: none;
+            color: $blackColor;
+            box-shadow: none;
+        }
+
+        .btn-xs {
+            padding: .25em .75em;
+            font-size: .8rem;
+        }
+
+        .btn-default {
+            border-color: #d9d9d9;
+            background-image: linear-gradient(#ffffff, #f2f2f2);
+        }
+
+        .btn-default:hover {
+            background: linear-gradient(#f2f2f2, #e6e6e6);
+        }
+    }
+
+    .custom-checkbox .custom-control-input:checked ~ .custom-control-label::before,
+    .custom-control-input:checked ~ .custom-control-label::before {
+        background-color: $primaryColor;
+    }
+    /* ****************** */
+    .calendars-month th, .calendars-month td {
+        font-size: .6rem;
+    }
+
+.select2-container{
+    width:100% !important;
+}
+
+.select2-container .select2-selection--single {
+    border-color: #ced4da !important;
+    background-color: #fff !important;
+    border-radius: 4px !important;
+    height: calc(2.25rem + 2px) !important;
+    padding: .375rem .75rem !important;
+
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 37px;
+    }
+
+
+
+.custom-file {
+
+    .custom-file-label {
+        color: $primaryColor;
+        background-color: $primaryLight;
+        border: none;
+        line-height: 2;
+
+        &::after {
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+            background-color: $primaryColor;
+            color: $whiteColor;
+            cursor: pointer;
+            height: calc(2.25rem + 2px);
+            line-height: 2;
+        }
+
+        &.download-btn::after {
+            content: "\f019";
+        }
+
+        &.upload-btn::after {
+            content: "\f093";
+        }
+    }
+}
+
+.field-validation-valid {
+    display: none;
+}
+
+.custom-checkbox .custom-control-input:disabled:checked ~ .custom-control-label::before,
+.custom-radio .custom-control-input:disabled:checked ~ .custom-control-label::before {
+    background-color: $primaryMid;
+}
+
+.select2-container--default.select2-container--focus .select2-selection--multiple {
+    border: solid #ddd 1px;
+    outline: 0;
+}
+
+.select2-container--default .select2-selection--multiple {
+    border: 1px solid #ddd;
+}
+
+.multi-collapses {
+    ul li {
+        a.main-title-collapse {
+            color: $blackColor;
+            padding: 10px 15px;
+            display: block;
+            position: relative;
+            font-family: $RegularFont;
+
+            &[aria-expanded=true] {
+                color: $primaryColor;
+                font-family: $BoldFont;
+                background-color: rgba(5, 45, 114,.05);
+                border-radius: .25rem .25rem 0 0;
+
+                + ul {
+                    background-color: rgba(5, 45, 114,.05);
+                    border-radius: 0 0 0.25rem .25rem;
+                    padding-top: 10px;
+                    padding-bottom: 10px;
+                }
+            }
+        }
+
+        ul li {
+
+            a.sub-title-collapse {
+                color: $blackColor;
+                background-color: transparent;
+                border-radius: 0;
+                padding: 5px 30px;
+                display: block;
+                font-size: .9rem;
+                position: relative;
+
+                &[aria-expanded=true] {
+                    font-family: $BoldFont;
+                    color: $blackColor;
+                    background-color: transparent;
+                    border-radius: 0;
+
+                    + ul {
+                        background-color: transparent;
+                        border-radius: 0;
+                        padding-bottom: 10px;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.collapse-btn {
+
+    &::after {
+        content: "\f078";
+        font-family: "Font Awesome 5 Free";
+        font-weight: 700 !important;
+        border: none;
+        height: 40px;
+        line-height: 40px;
+        width: auto;
+        font-size: 10px;
+        top: 0;
+        color: #999;
+        display: inline-block;
+        position: absolute;
+        right: 15px;
+        -webkit-transform: rotate( 0deg );
+        -ms-transform: rotate(0deg);
+        transform: rotate( 0deg );
+        -webkit-transition: 0.4s all ease-in-out;
+        -o-transition: 0.4s all ease-in-out;
+        transition: 0.4s all ease-in-out;
+    }
+
+    &[aria-expanded=true]::after {
+        -webkit-transform: rotate( 180deg );
+        -ms-transform: rotate(180deg);
+        transform: rotate( 180deg );
+        -webkit-transition: 0.4s all ease-in-out;
+        -o-transition: 0.4s all ease-in-out;
+        transition: 0.4s all ease-in-out;
+    }
+}
+
+.tooltip-inner {
+    color: #333;
+    background-color: #DEE2E6;
+}
+.bs-tooltip-auto[x-placement^=bottom] .arrow::before, .bs-tooltip-bottom .arrow::before {
+    border-bottom-color: #DEE2E6;
+}
+.tooltip.show{
+    opacity:.95;
+}
+
+.timer-countdown {
+    height: calc(2.25rem + 2px);
+    background-color: $primaryLight;
+    color: $primaryColor;
+}
+.timer-countdown.expired {
+    background-color: rgb(255 53 71 / 20%);
+    color: #ff3547;
+}

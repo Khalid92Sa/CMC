@@ -1,38 +1,40 @@
 ﻿using CMC.Kernel.Core.Configurations;
+using CMC.Kernel.Core.Constants;
 using CMC.Kernel.Core.Controllers;
+using CMC.Presentation.Application.ActionFilters;
 using CMC.Presentation.Web.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace CMC.Presentation.Web.Controllers
 {
+    [CheckSession]
     public class HomeController : BaseController
     {
-        private readonly ILogger<HomeController> _logger;
-        private Configuration _configuration { set; get; }
-        
-        public HomeController(ILogger<HomeController> logger, Configuration configuration)
+        public HomeController()
         {
-            _logger = logger;
-            _configuration = configuration;
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             return View();
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        [HttpPost]
+        public IActionResult SetCulture(string culture, string returnUrl)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            Response.Cookies.Append(
+                        CookieNames.SelectedLanguage,
+                        culture,
+                        new CookieOptions { Expires = DateTimeOffset.Now.AddYears(1) }
+                    );
+            return Json(new { url = returnUrl });
         }
     }
 }

@@ -27,7 +27,7 @@ namespace CMC.Kernel.Infrastructure.Persistence.Repositories.Lookups
         public async Task<int> GetCategoryId(LookupTypes lookupTypes)
         {
             string code = ((int)lookupTypes).ToString();
-            var result = await GetAll().Where(l => l.Code == code).FirstOrDefaultAsync();
+            var result = await GetAll().Where(l => l.Code == code && l.IsDeleted == false).FirstOrDefaultAsync();
             return result.Id;
         }
     }

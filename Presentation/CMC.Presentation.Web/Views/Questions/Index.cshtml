@@ -1,0 +1,100 @@
+﻿@model List<CMC.Kernel.Infrastructure.Caching.Model.LookupModel>
+@{
+    ViewData["Title"] = Localizer["QuestionsBank"].Value;
+    bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
+}
+
+<style>
+    .category-box {
+        border: 1px solid #ddd;
+        padding: 20px;
+        text-align: center;
+        margin-bottom: 20px;
+        height: 100%; /* Set a fixed height for the boxes */
+        display: flex;
+        flex-direction: column;
+    }
+
+    .image-container {
+        flex: 1; /* Allow the image container to expand */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden; /* Hide any overflowing parts of the image */
+    }
+
+        .image-container img {
+            max-width: 100%; /* Ensure the image doesn't exceed the container's width */
+            max-height: 100%; /* Ensure the image doesn't exceed the container's height */
+            object-fit: contain; /* Maintain aspect ratio without cropping or stretching */
+        }
+</style>
+
+
+
+<div class="flex flex-column justify-content-center align-items-center">
+    <div class="row justify-content-between">
+        <div class="col-12 d-flex flex-row justify-content-between">
+            <h6 class="justify-content-start align-middle align-self-center mb-3">@Localizer["QuestionsCategories"]</h6>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            @if (Model == null || Model.Count == 0)
+            {
+                <div class="row justify-content-between">
+                    <div class="col-12 d-flex flex-row justify-content-between align-items-center">
+                        <span style="font-weight:bold" class="justify-content-start align-middle align-self-center mb-3">
+                            @Localizer["NoCategoriesFound"]
+                        </span>
+                    </div>
+                </div>
+                <div class="form-row  pb-2 filter">
+                    <div class="form-group col-12 col-md-auto px-3 m-0">
+                        <a class="btn btn-primary rounded btn-sm m-0" href="@Url.Action("AddCategory","Questions")">@Localizer["Add"]</a>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="d-flex flex-row row mt-4 mb-5">
+                    <div class="col-12 col-md-4 py-3 px-4">
+                        <a class="btn btn-primary w-50 mx-0" href="@Url.Action("AddCategory","Questions")">@Localizer["Add"]</a>
+                    </div>
+                </div>
+               
+                <div class="row justify-content-between">
+                    <div class="col-md-12">
+                        <div class="row">
+                            @foreach (var category in Model)
+                            {
+                                string categoryName = IsAr ? category.NameAr : category.NameEn;
+                                <div class="col-md-3">
+                                    <div class="category-box" style="cursor:pointer" onclick="window.location.href='@Url.Action("AddCategory", "Questions", new { id = category.Id })'">
+                                        <div class="image-container">
+                                            <img src="@category.Img" alt="@categoryName">
+                                           @* @if(category.ImageData!=null && category.ImageData.Length > 0)
+                                            {
+                                                <img src="data:image/png;base64,@Convert.ToBase64String(category.ImageData)" src="@category.Img " alt="@categoryName">
+                                            }
+                                            else
+                                            {
+                                                <img src="~/assets/images/categories/default.jpg" alt="@categoryName">
+                                            }*@
+                                        </div>
+                                        <h4>@categoryName</h4>
+                                        <p class="text-muted mb-2">@Localizer["QuestionCount"]: @category.Sort</p>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<script>
+    GeneralClass.ActivationSubMenuItem('#lnkQuestions', '#lnkQuestionCategory');
+    GeneralClass.ActivationSubMenuItem('#lnkQuestions2', '#lnkQuestionCategory2');
+</script>

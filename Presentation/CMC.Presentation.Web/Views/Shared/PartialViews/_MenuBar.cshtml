@@ -1,0 +1,58 @@
+﻿
+<div class="vertical-menu">
+    <div data-simplebar class="h-100">
+        <!--- Sidemenu -->
+        <div id="sidebar-menu">
+            <!-- Left Menu Start -->
+            <ul class="metismenu list-unstyled" id="side-menu">
+                <li>
+                    <a href="@Url.Action("Index","Home")" class="waves-effect">
+                        <i class="ri-dashboard-line"></i>
+                        <span>@Localizer["Dashboard"]</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="#" class="" waves-effect">
+                        <i class="ri-user-2-fill"></i>
+                        <span>@Localizer["Users"]</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="#" class=" waves-effect">
+                        <i class="ri-global-fill"></i>
+                        <span>@Localizer["Competitions"]</span>
+                    </a>
+                </li>
+
+                 <li>
+                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                        <i class="ri-database-2-line"></i>
+                        <span>@Localizer["QuestionsBank"]</span>
+                    </a>
+                    <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="@Url.Action("Index","Questions")">@Localizer["QuestionCategory"]</a></li>
+                        <li><a href="@Url.Action("AddQuestion","Questions")">@Localizer["AddQuestions"]</a></li>
+                    </ul>
+                </li>
+
+                <li>
+                    <a href="apps-chat.html" class=" waves-effect">
+                        <i class="ri-open-arm-fill"></i>
+                        <span>@Localizer["Players"]</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="@Url.Action("Index","Settings")" class=" waves-effect">
+                        <i class="ri-settings-5-line"></i>
+                        <span>@Localizer["Settings"]</span>
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+        <!-- Sidebar -->
+    </div>
+</div>

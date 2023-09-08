@@ -36,13 +36,7 @@ namespace CMC.Kernel.Infrastructure.Persistence.Repositories.Lookups
         /// <returns></returns>
         public async Task<List<LookupModel>> GetLookupItems(LookupTypes lookupTypes)
         {
-            List<LookupModel> lookupModels = new List<LookupModel>();
-            lookupModels = await GetCachedLookups(lookupTypes);
-            //switch (lookupTypes)
-            //{
-                
-            //}
-
+            List<LookupModel> lookupModels = await GetLookups(lookupTypes);
             return lookupModels;
         }
         public async Task<List<LookupModel>> GetLookupItems(List<int>IDs)
@@ -50,7 +44,7 @@ namespace CMC.Kernel.Infrastructure.Persistence.Repositories.Lookups
             try
             {
                 List<LookupModel> lookupModels = new List<LookupModel>();
-                var result = await GetAll().Where(l => IDs.Contains( l.Id )).Select(a => new LookupModel
+                var result = await GetAll().Where(l => IDs.Contains(l.Id) && l.IsDeleted == false).Select(a => new LookupModel
                 {
                     Id = a.Id,
                     Code = a.Code,
@@ -85,6 +79,7 @@ namespace CMC.Kernel.Infrastructure.Persistence.Repositories.Lookups
                 {
                     return await GetLookups(lookupType);
                 });
+
             LookupModel lookup = null;
 
             if (isEnglish)
@@ -116,22 +111,7 @@ namespace CMC.Kernel.Infrastructure.Persistence.Repositories.Lookups
                          });
             return result.Where(a => a.Code == code).SingleOrDefault();
         }
-        /// <summary>
-        /// Get Cities
-        /// </summary>
-        /// <returns></returns>
-        public async Task<List<LookupModel>> GetCities()
-        {
-            List<LookupModel> lookupModels = new List<LookupModel>();
-            lookupModels = await GetAll().Where(l => l.OtherCode == "JED" || l.OtherCode == "MED" || l.OtherCode == "RIY" || l.OtherCode == "MEC").Select(a => new LookupModel
-            {
-                Id = a.Id,
-                Code = a.Code,
-                NameAr = a.NameAr,
-                NameEn = a.NameEn
-            }).ToListAsync(); ;
-            return lookupModels;
-        }
+
         /// <summary>
         /// Get Cached Lookups
         /// </summary>
@@ -156,12 +136,14 @@ namespace CMC.Kernel.Infrastructure.Persistence.Repositories.Lookups
             try
             {
                 string categoryCode = ((int)lookupTypes).ToString();
-                var result = await GetAll().Include(l=>l.LookupCategory).Where(l => l.LookupCategory.Code == categoryCode).Select(a => new LookupModel
+                var result = await GetAll().Include(l=>l.LookupCategory).Where(l => l.LookupCategory.Code == categoryCode && l.IsDeleted == false).Select(a => new LookupModel
                 {
                     Id = a.Id,
                     Code = a.Code,
                     NameAr = a.NameAr,
-                    NameEn = a.NameEn
+                    NameEn = a.NameEn,
+                    CategoryId = a.CategoryID,
+                    Img = a.Img
                 }).ToListAsync();
                 return result;
             }
@@ -180,13 +162,15 @@ namespace CMC.Kernel.Infrastructure.Persistence.Repositories.Lookups
         {
             try
             {
-                var result = await GetAll().Where(l => l.Id == id).Select(a => new LookupModel
+                var result = await GetAll().Where(l => l.Id == id && l.IsDeleted == false).Select(a => new LookupModel
                 {
                     Id = a.Id,
                     Code = a.Code,
                     NameAr = a.NameAr,
                     NameEn = a.NameEn,
-                    OtherCode = a.OtherCode
+                    OtherCode = a.OtherCode,
+                    CategoryId = a.CategoryID,
+                    Img = a.Img
                 }).SingleOrDefaultAsync();
                 return result;
             }

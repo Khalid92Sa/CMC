@@ -1,0 +1,249 @@
+//Buttons
+
+.form-control {
+    font-size: 13px;
+}
+.form-control:focus, .btn:focus{
+border-color: $primaryColor;
+box-shadow: 0 0 0 0.2rem $secondaryColor;
+}
+
+button:focus {
+  outline: 1px dotted;
+  outline: 5px auto $primaryColor;
+}
+
+.btn {
+    font-size: .8rem;
+    padding: .48rem 1.5rem;
+    border: 1px solid transparent;
+    border-radius: 100rem !important;
+    box-shadow: 0 2px 5px 0 rgba(0,0,0,.16);
+}
+
+.btn-primary {
+    border-color: $primaryColor;
+    background-color: $primaryColor !important;
+
+    &:hover {
+        box-shadow: 0 4px 11px 0 rgba(0, 0, 0, 0.12), 0 4px 15px 0 rgba(0, 0, 0, 0.12) !important;
+        border-color: $accentColor2;
+        background-color: $accentColor2 !important;
+    }
+
+    &:hover, &:focus, &.active, &:active {
+        border-color: $accentColor2 !important;
+    }
+}
+
+.btn-primary:not([disabled]):not(.disabled).active, .btn-primary:not([disabled]):not(.disabled):active, .show>.btn-primary.dropdown-toggle{
+  background-color: $primaryColor !important;
+}
+.btn-danger, .btn-secondary {
+    &:hover {
+        box-shadow: 0 4px 11px 0 rgba(0, 0, 0, 0.12), 0 4px 15px 0 rgba(0, 0, 0, 0.12) !important;
+    }
+}
+.btn[class*=btn-outline-] {
+    padding: .48rem 1.5rem;
+}
+
+.btn-accent1 {
+    border-color: $accentColor1;
+    background-color: $accentColor1 !important;
+    color: #fff;
+
+    &:hover {
+        box-shadow: 0 4px 11px 0 rgba(0, 0, 0, 0.12), 0 4px 15px 0 rgba(0, 0, 0, 0.12) !important;
+        border-color: $accentColor1;
+        background-color: $accentColor1 !important;
+    }
+
+    &:hover, &:focus, &.active, &:active {
+        border-color: $accentColor1 !important;
+        color: #fff;
+    }
+}
+
+
+.btn-accent2 {
+    border-color: $accentColor2;
+    background-color: $accentColor2 !important;
+    color: #fff;
+
+    &:hover {
+        box-shadow: 0 4px 11px 0 rgba(0, 0, 0, 0.12), 0 4px 15px 0 rgba(0, 0, 0, 0.12) !important;
+        border-color: $accentColor2;
+        background-color: $accentColor2 !important;
+    }
+
+    &:hover, &:focus, &.active, &:active {
+        border-color: $accentColor2 !important;
+        color: #fff;
+    }
+}
+
+.btn-accent3 {
+    border-color: $accentColor3;
+    background-color: $accentColor3 !important;
+    color: #fff;
+
+    &:hover {
+        box-shadow: 0 4px 11px 0 rgba(0, 0, 0, 0.12), 0 4px 15px 0 rgba(0, 0, 0, 0.12) !important;
+        border-color: $accentColor3;
+        background-color: $accentColor3 !important;
+    }
+
+    &:hover, &:focus, &.active, &:active {
+        border-color: $accentColor3 !important;
+        color: #fff;
+    }
+}
+
+
+.btn-outline-primary {
+    border: 2px solid $primaryColor !important;
+    color: $primaryColor !important;
+    box-shadow: none !important;
+
+    &:hover, &:focus, &.active, &:active {
+        border-color: $primaryColor !important;
+        color: $primaryColor !important;
+    }
+}
+
+.btn-outline-secondary {
+    border: 2px solid #999 !important;
+    background-color: transparent !important;
+    color: #666 !important;
+
+    &:hover, &:focus, &.active, &:active {
+        box-shadow: 0 4px 11px 0 rgba(0, 0, 0, 0.12), 0 4px 15px 0 rgba(0, 0, 0, 0.12) !important;
+        border-color: #999 !important;
+        color: #666 !important;
+    }
+}
+
+
+.btn-accent{
+background-color:$accentColor;
+color:$whiteColor;
+}
+
+.btn-secondary {
+    background-color: #999 !important;
+    border-color: #999 !important;
+
+    &:hover, &:focus, &.active, &:active, &:not([disabled]):not(.disabled).active, &:not([disabled]):not(.disabled):active, .show > &.dropdown-toggle {
+        border-color: $greyDarkColor !important;
+        background-color: $greyDarkColor !important;
+    }
+}
+
+
+.btn.btn-link{
+  color: $primaryColor !important ;
+}
+
+.btn.btn-link[data-dismiss="modal"]{
+  color: $blackColor !important;
+  text-decoration: none;
+}
+.btn-white{
+
+background-color: $whiteColor;
+color: $primaryColor;
+  font-size: 15px;
+
+  &:hover{
+    box-shadow: 0 5px 11px 0 rgba(0,0,0,.18), 0 4px 15px 0 rgba(0,0,0,.15) !important;
+  }
+}
+
+.btn-outline {
+    background-color: $whiteColor;
+    font-size: 15px;
+    border: 1px solid $primaryColor;
+    color: $primaryColor;
+    box-shadow: none;
+
+    &:hover {
+        box-shadow: 0 5px 11px 0 rgba(0,0,0,.18), 0 4px 15px 0 rgba(0,0,0,.15) !important;
+    }
+}
+
+.search-button{
+  position: absolute;
+  right: 30px;
+  padding: 0;
+  background-color: transparent;
+  border: none;
+  color: $greyColor;
+  cursor: pointer;
+  &:focus{
+    outline:none;
+  }
+
+}
+
+.filter button {
+    margin: 0;
+    margin-top: 23px;
+}
+
+@mixin whiteButton {
+  border-radius: 100rem;
+background-color: $whiteColor;
+color: $primaryColor;
+  font-size: 15px;
+}
+
+
+.btn.btn-sm {
+    font-size: .7rem;
+}
+
+.btn-file {
+    position: relative;
+    overflow: hidden;
+    color: $primaryColor;
+    cursor: pointer;
+    background-color: $primaryLight;
+    border-radius: .25rem;
+    padding: .57rem .5rem;
+
+    input[type=file] {
+        position: absolute;
+        top: 0;
+        right: 0;
+        min-width: 1px;
+        min-height: 1px;
+        font-size: 13px;
+        text-align: right;
+        filter: alpha(opacity=0);
+        opacity: 0;
+        outline: none;
+        background: white;
+        display: block;
+        cursor: pointer;
+        width: 100%;
+        height: 100%;
+    }
+
+    label {
+        cursor: pointer;
+        padding-top: 0;
+        margin-bottom: 0;
+    }
+
+    .fa-upload {
+        margin: auto;
+        margin-left: 5px;
+        cursor: pointer;
+    }
+}
+
+
+a.bg-primary:focus, a.bg-primary:hover, button.bg-primary:focus, button.bg-primary:hover {
+  background-color: #329e63!important;
+}

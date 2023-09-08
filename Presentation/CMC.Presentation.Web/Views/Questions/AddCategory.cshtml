@@ -1,0 +1,138 @@
+﻿@model CMC.Presentation.Application.DTOs.Questions.CategoryDTO
+@{
+    ViewData["Title"] = Model.Id.HasValue ? Localizer["EditCategory"].Value : Localizer["AddNewCategory"].Value;
+    bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
+}
+
+<form method="post" id="form-category" enctype="multipart/form-data" asp-controller="Questions" asp-action="AddCategory">
+    <div class="flex flex-column justify-content-center align-items-center">
+        <div class="row justify-content-between">
+            <div class="col-12 d-flex flex-row justify-content-between">
+                @if (Model.Id.HasValue)
+                {
+                    string categoryName = IsAr ? Model.NameAr : Model.NameEn;
+                    <h6 class="justify-content-start align-middle align-self-center mb-3">@Localizer["QuestionsBank"] - @Localizer["Category"] : @categoryName</h6>
+                }
+                else
+                {
+                    <h6 class="justify-content-start align-middle align-self-center mb-3">@Localizer["QuestionsBank"] - @Localizer["AddNewCategory"]</h6>
+                }
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="register py-3 p-md-4 h-100" style="overflow-y: auto">
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" id="num-questions" value="@Model.Questions.Count" />
+                    <div class="mb-2">
+                        <div class="form-group">
+                            <label class="requiredLabel">@Localizer["CategoryNameEn"]</label>
+                            <div class="form-row">
+                                <div class="form-group col-md-3">
+                                    <input class="form-control animated fadeIn" type="text" asp-for="NameEn" onkeypress="return GeneralClass.validationAlphaName(this,event,'en')" />
+                                    <span asp-validation-for="NameEn" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="requiredLabel">@Localizer["CategoryNameAr"]</label>
+                            <div class="form-row">
+                                <div class="form-group col-md-3">
+                                    <input class="form-control animated fadeIn" type="text" asp-for="NameAr" onkeypress="return GeneralClass.validationAlphaName(this,event,'ar')" />
+                                    <span asp-validation-for="NameAr" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-3 d-flex flex-column d-flex" style="margin:0 -15px;">
+                            <label>@Localizer["CategoryImg"]</label>
+                            <span class="danger"></span>
+                            <div class="input-group mb-3">
+                                <div class="custom-file">
+                                    <input type="file" asp-for="Img" name="Img" class="custom-file-input" id="file-category-img" style="cursor:pointer"
+                                           placeholder="@Localizer["ChooseImg"].Value" accept=".jpg, .jpeg, .png">
+                                    <label class="custom-file-label upload-btn" for="file">
+                                        <span id="lblImageName">@Localizer["ChooseImg"]</span>
+                                        <span class="danger"></span> <i id="lblImgStatus" class="fas fa-upload"></i>
+                                    </label>
+                                </div>
+                            </div>
+                            <span id="Img-category-invalid" class="text-danger field-validation-error"></span>
+                        </div>
+                        @if (!string.IsNullOrEmpty(Model.ImgPath) && !Model.ImgPath.Contains("default"))
+                        {
+                            <div class="form-group col-md-4 px-3 m-0 pt-4">
+                                <button type="button" id="btnDeleteExistingImg" onclick="Categories.DeleteExistingImg()" class="btn btn-danger btn-md m-0"><i class="fas fa-trash"></i>@Localizer["DeleteExistingImage"]</button>
+                            </div>
+                            <div class="form-group col-md-12" id="dv-delete-category-status" style="display:none">
+                                <div>
+                                    <span class="h6 h6-responsive mr-2 ml-0 float-left">
+                                        <i id="i-success-delete-img-category" style="display:none" class="fas fa-check-circle text-success"></i>
+                                        <i id="i-error-delete-img-category" style="display:none" class="fas fa-exclamation-circle text-danger"></i>
+                                    </span>
+                                    <span id="spn-delete-category-img-status">
+                                    </span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="col-12 text-center">
+                    <button type="button" class="btn btn-primary" style="width:10%" onclick="Categories.CreateOrUpdate()">@Localizer["Save"]</button>
+                    <button type="button" class="btn btn-secondary" onclick="window.location.href='@Url.Action("Index", "Questions")';" style="width:10%">@Localizer["Cancel"]</button>
+                    @if (Model.Id.HasValue)
+                    {
+                        <button type="button" class="btn btn-danger" onclick="Categories.DeleteCategory()" style="width:10%">@Localizer["Delete"]</button>
+                    }
+                </div>
+            </div>
+        </div>
+
+        @if(Model.Id.HasValue && Model.Questions.Count > 0)
+        {
+            <div class="card mt-5">
+                <div class="card-body">
+                    <div class="form-row mb-3 filter">
+                        <div class="form-group col-md-4 pr-md-2 m-0">
+                            <label class="d-block">@Localizer["QuestionText"]</label>
+                            <input type="text" class="form-control d-inline-block" id="txtQuestionText" />
+                        </div>
+                        <div class="form-group col-md-auto px-md-2 m-0 text-left">
+                            <button id="btnSearch" type="button" class="btn btn-primary rounded">@Localizer["Search"]</button>
+                        </div>
+                    </div>
+                    <div class="from-row mb-3">
+                        <table id="tblQuestions" class="table table-sm table-striped NoPagenation">
+                            <thead>
+                                <tr>
+                                    <th scope="col" style="width:70px;">#</th>
+                                    <th scope="col">@Localizer["QuestionText"]</th>
+                                    <th scope="col">@Localizer["QuestionTimer"]</th>
+                                    <th scope="col">@Localizer["QuestionPoint"]</th>
+                                    <th scope="col"></th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                    <div class="form-row justify-content-end">
+                        <div class="pt-2 mr-3">
+                            <span id="pagerInfo">
+                            </span>
+                        </div>
+                        <div id="pager" class="site-pagination">
+                            <ul id="pagination" class="pagination justify-content-end mb-0"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</form>
+
+<script src="~/assets/js/Application/QuestionsCategories.js"></script>
+<script>
+    Categories.OnLoad();
+    GeneralClass.ActivationSubMenuItem('#lnkQuestions', '#lnkQuestionCategory');
+    GeneralClass.ActivationSubMenuItem('#lnkQuestions2', '#lnkQuestionCategory2');
+</script>

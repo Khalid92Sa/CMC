@@ -1,0 +1,263 @@
+﻿@model CMC.Presentation.Application.DTOs.Questions.QuestionVM
+
+@{
+    ViewData["Title"] = Localizer["AddNewQuestion"].Value;
+    bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
+}
+
+<style>
+    .option-textbox {
+        margin: 0px 10px;
+    }
+
+    .option-row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .option-textbox {
+        flex: 1;
+        margin-left: 5px;
+    }
+
+    .option-label {
+        display: flex;
+        align-items: center;
+    }
+
+    .option-radio {
+        display: none; /* Hide the actual radio button */
+    }
+
+        .option-radio:checked + .radio-custom {
+            border-color: green; /* Change border color when radio is checked */
+        }
+
+    .radio-custom {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: 2px solid #000;
+        border-radius: 50%;
+        margin-right: 5px;
+    }
+
+    .correct-option {
+        border: 2px solid green;
+    }
+
+    .margin-text-box {
+        margin: 0 10px;
+    }
+</style>
+
+
+
+
+<div class="flex flex-column justify-content-center align-items-center">
+    <div class="row justify-content-between">
+        <div class="col-12 d-flex flex-row justify-content-between">
+            <h6 class="justify-content-start align-middle align-self-center mb-3">@Localizer["QuestionsBank"] - @Localizer["AddNewQuestion"]</h6>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="register py-3 p-md-4 h-100" style="overflow-y: auto">
+                <input type="hidden" asp-for="Id" />
+                <div class="mb-2">
+                    <div class="form-group">
+                        <label class="requiredLabel">@Localizer["Category"]</label>
+                        <div class="form-row">
+                            <div class="form-group col-md-2">
+                                <select id="ddlCategories" class="form-select w-100" asp-for="CategoryId" asp-items="@(new SelectList(Model.Categories, "Id", IsAr ? "NameAr" : "NameEn"))">
+                                    <option value="">@Localizer["Select"]</option>
+                                </select>
+                                <span asp-validation-for="CategoryId" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="requiredLabel">@Localizer["QuestionText"]</label>
+                        <div class="form-row">
+                            @if (IsAr)
+                            {
+                                <div class="form-group col-md-6">
+                                    <input class="form-control" type="text" asp-for="TextAr" placeholder="@Localizer["InArabic"]" />
+                                    <span asp-validation-for="TextAr" class="text-danger"></span>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <input class="form-control" type="text" asp-for="TextEn" placeholder="@Localizer["InEnglish"]" />
+                                    <span asp-validation-for="TextEn" class="text-danger"></span>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="form-group col-md-6">
+                                    <input class="form-control" type="text" asp-for="TextEn" placeholder="@Localizer["InEnglish"]" />
+                                    <span asp-validation-for="TextEn" class="text-danger"></span>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <input class="form-control" type="text" asp-for="TextAr" placeholder="@Localizer["InArabic"]" />
+                                    <span asp-validation-for="TextAr" class="text-danger"></span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-row">
+                            <div class="form-group col-md-3">
+                                <label class="requiredLabel">@Localizer["QuestionTime"]</label>
+                                <input class="form-control" type="text" asp-for="Time" onkeypress="return GeneralClass.validationNumbersOnly(this,event)" />
+                                <span asp-validation-for="Time" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label class="requiredLabel">@Localizer["QuestionPoint"]</label>
+                                <input class="form-control" type="text" asp-for="Points" onkeypress="return GeneralClass.validationNumbersOnly(this,event)" />
+                                <span asp-validation-for="Points" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="register py-3 p-md-4 h-100" style="overflow-y: auto">
+                <div class="row mb-3">
+                    <label for="Options" class="col-sm-1">@Localizer["Options"]</label>
+                </div>
+                <div class="row mb-3">
+
+                    <div class="col-sm-10 dv-options">
+                        <div class="option" data-count="1">
+                            <div class="option-row">
+                                <input type="hidden" id="hdn-option-id-1" />
+                                <label class="option-label">
+                                    <input class="form-check-input" type="radio" name="correctOption" id="chk-option-1" onchange="Questions.SelectAnswer(this)">
+                                </label>
+                                @if (IsAr)
+                                {
+                                    <input class="form-control margin-text-box option-textbox-ar" type="text" id="txt-option-ar-1" placeholder="@Localizer["Option1"] @Localizer["InArabic"]" />
+                                    <input class="form-control margin-text-box option-textbox-en" type="text" id="txt-option-en-1" placeholder="@Localizer["Option1"] @Localizer["InEnglish"]" />
+                                }
+                                else
+                                {
+                                    <input class="form-control margin-text-box option-textbox-en" type="text" id="txt-option-en-1" placeholder="@Localizer["Option1"] @Localizer["InEnglish"]" />
+                                    <input class="form-control margin-text-box option-textbox-ar" type="text" id="txt-option-ar-1" placeholder="@Localizer["Option1"] @Localizer["InArabic"]" />
+                                }
+                            </div>
+                            <span class="text-danger field-validation-valid" data-valmsg-replace="true" style="margin:0 20px"></span>
+                        </div>
+                        <div class="option" data-count="2">
+                            <div class="option-row">
+                                <input type="hidden" id="hdn-option-id-2" />
+                                <label class="option-label">
+                                    <input class="form-check-input" type="radio" name="correctOption" id="chk-option-2" onchange="Questions.SelectAnswer(this)">
+                                </label>
+                                @if (IsAr)
+                                {
+                                    <input class="form-control margin-text-box option-textbox-ar" type="text" id="txt-option-ar-2" placeholder="@Localizer["Option2"] @Localizer["InArabic"]" />
+                                    <input class="form-control margin-text-box option-textbox-en" type="text" id="txt-option-en-2" placeholder="@Localizer["Option2"] @Localizer["InEnglish"]" />
+                                }
+                                else
+                                {
+                                    <input class="form-control margin-text-box option-textbox-en" type="text" id="txt-option-en-2" placeholder="@Localizer["Option2"] @Localizer["InEnglish"]" />
+                                    <input class="form-control margin-text-box option-textbox-ar" type="text" id="txt-option-ar-2" placeholder="@Localizer["Option2"] @Localizer["InArabic"]" />
+                                }
+                            </div>
+                            <span class="text-danger field-validation-valid" data-valmsg-replace="true" style="margin:0 20px"></span>
+                        </div>
+                        <div class="option" data-count="3">
+                            <div class="option-row">
+                                <input type="hidden" id="hdn-option-id-3" />
+                                <label class="option-label">
+                                    <input class="form-check-input" type="radio" name="correctOption" id="chk-option-3" onchange="Questions.SelectAnswer(this)">
+                                </label>
+                                @if (IsAr)
+                                {
+                                    <input class="form-control margin-text-box option-textbox-ar" type="text" id="txt-option-ar-3" placeholder="@Localizer["Option3"] @Localizer["InArabic"]" />
+                                    <input class="form-control margin-text-box option-textbox-en" type="text" id="txt-option-en-3" placeholder="@Localizer["Option3"] @Localizer["InEnglish"]" />
+                                }
+                                else
+                                {
+                                    <input class="form-control margin-text-box option-textbox-en" type="text" id="txt-option-en-3" placeholder="@Localizer["Option3"] @Localizer["InEnglish"]" />
+                                    <input class="form-control margin-text-box option-textbox-ar" type="text" id="txt-option-ar-3" placeholder="@Localizer["Option3"] @Localizer["InArabic"]" />
+                                }
+                            </div>
+                            <span class="text-danger field-validation-valid" data-valmsg-replace="true" style="margin:0 20px"></span>
+                        </div>
+                        <div class="option" data-count="4">
+                            <div class="option-row">
+                                <input type="hidden" id="hdn-option-id-4" />
+                                <label class="option-label">
+                                    <input class="form-check-input" type="radio" name="correctOption" id="chk-option-4" onchange="Questions.SelectAnswer(this)">
+                                </label>
+                                @if (IsAr)
+                                {
+                                    <input class="form-control margin-text-box option-textbox-ar" type="text" id="txt-option-ar-4" placeholder="@Localizer["Option4"] @Localizer["InArabic"]" />
+                                    <input class="form-control margin-text-box option-textbox-en" type="text" id="txt-option-en-4" placeholder="@Localizer["Option4"] @Localizer["InEnglish"]" />
+                                }
+                                else
+                                {
+                                    <input class="form-control margin-text-box option-textbox-en" type="text" id="txt-option-en-4" placeholder="@Localizer["Option4"] @Localizer["InEnglish"]" />
+                                    <input class="form-control margin-text-box option-textbox-ar" type="text" id="txt-option-ar-4" placeholder="@Localizer["Option4"] @Localizer["InArabic"]" />
+                                }
+                            </div>
+                            <span class="text-danger field-validation-valid" data-valmsg-replace="true" style="margin:0 20px;"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-5">
+                        <span class="text-danger field-validation-valid" data-valmsg-for="Answers" id="lbl-generic-error" data-valmsg-replace="true" style="margin:0 20px"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 text-center">
+        <button type="button" class="btn btn-primary" onclick="Questions.AddNewQuestion()">@Localizer["Save"]</button>
+        <button type="button" class="btn btn-secondary" onclick="window.location.href='@Url.Action("Index", "Questions")';">@Localizer["Cancel"]</button>
+        @if (Model.Id.HasValue)
+        {
+            <button type="button" onclick="Questions.DeleteQuestion(this)" data-category="@Model.CategoryId" id="btndelete_@Model.Id" class="btn btn-danger">@Localizer["Delete"]</button>
+        }
+    </div>
+</div>
+
+
+<!-- end row -->
+<script src="~/assets/js/Application/QuestionsCategories.js"></script>
+
+
+<script>
+    GeneralClass.ActivationSubMenuItem('#lnkQuestions', '#lnkQuestionAdd');
+    GeneralClass.ActivationSubMenuItem('#lnkQuestions2', '#lnkQuestionAdd2');
+</script>
+
+@if (Model.Id.HasValue && Model.Answers != null && Model.Answers.Count > 0)
+{
+    <script>
+        function decodeHtmlEntities(encodedString) {
+            var textArea = document.createElement('textarea');
+            textArea.innerHTML = encodedString;
+            return textArea.value;
+        }
+    </script>
+    var counter = 1;
+    foreach (var answer in Model.Answers)
+    {
+        <script>
+            $('#txt-option-ar-' + '@counter').val(decodeHtmlEntities('@answer.TextAr'));
+            $('#txt-option-en-' + '@counter').val('@answer.TextEn');
+            $('#hdn-option-id-' + '@counter').val('@answer.Id');
+
+            if ('@answer.IsAnswer'.toString().toLowerCase() == 'true') {
+                $('#chk-option-' + '@counter').prop('checked', 'checked');
+                Questions.SelectAnswer($('#chk-option-' + '@counter'));
+            }
+        </script>
+        counter++;
+    }
+   
+}
+
+

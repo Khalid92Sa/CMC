@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using CMC.Kernel.Core.Constants;
 using CMC.Kernel.Core.Persistence;
 using CMC.Kernel.Domain.Entities;
+using System;
 
 namespace CMC.Kernel.Infrastructure.Persistence.Mapping
 {
@@ -16,6 +17,7 @@ namespace CMC.Kernel.Infrastructure.Persistence.Mapping
             builder.ToTable("Lookups", SchemaName.Common);
             builder.HasKey(t => t.Id);
             builder.HasOne(a => a.LookupCategory).WithMany(a => a.Lookups).HasForeignKey(a => a.CategoryID).IsRequired();
+            builder.Property(x => x.CreatedOn).HasDefaultValue(DateTime.Now);
         }
     }
 }

@@ -1,0 +1,53 @@
+// Fonts 
+
+// Arabic Font
+// Light
+@font-face {
+    font-family: 'TajawalLight';
+    src: url('../fonts/ar/TajawalLight.eot');
+    src: url('../fonts/ar/TajawalLight.eot') format('embedded-opentype'), url('../fonts/ar/TajawalLight.woff2') format('woff2'), url('../fonts/ar/TajawalLight.woff') format('woff'), url('../fonts/ar/TajawalLight.ttf') format('truetype'), url('../fonts/ar/TajawalLight.svg#TajawalLight') format('svg');
+}
+
+// Regular
+@font-face {
+    font-family: 'TajawalRegular';
+    src: url('../fonts/ar/TajawalRegular.eot');
+    src: url('../fonts/ar/TajawalRegular.eot') format('embedded-opentype'), url('../fonts/ar/TajawalRegular.woff2') format('woff2'), url('../fonts/ar/TajawalRegular.woff') format('woff'), url('../fonts/ar/TajawalRegular.ttf') format('truetype'), url('../fonts/ar/TajawalRegular.svg#TajawalRegular') format('svg');
+}
+
+// Bold
+@font-face {
+    font-family: 'TajawalBold';
+    src: url('../fonts/ar/TajawalBold.eot');
+    src: url('../fonts/ar/TajawalBold.eot') format('embedded-opentype'), url('../fonts/ar/TajawalBold.woff2') format('woff2'), url('../fonts/ar/TajawalBold.woff') format('woff'), url('../fonts/ar/TajawalBold.ttf') format('truetype'), url('../fonts/ar/TajawalBold.svg#TajawalBold') format('svg');
+}
+
+// English Font
+// Light
+@font-face {
+    font-family: 'GillSansLight';
+    src: url('../fonts/en/GillSansLight.eot');
+    src: url('../fonts/en/GillSansLight.eot') format('embedded-opentype'), url('../fonts/en/GillSansLight.woff2') format('woff2'), url('../fonts/en/GillSansLight.woff') format('woff'), url('../fonts/en/GillSansLight.ttf') format('truetype'), url('../fonts/en/GillSansLight.svg#GillSansLight') format('svg');
+}
+
+// Regular
+@font-face {
+    font-family: 'GillSansReg';
+    src: url('../fonts/en/GillSansReg.eot');
+    src: url('../fonts/en/GillSansReg.eot') format('embedded-opentype'), url('../fonts/en/GillSansReg.woff2') format('woff2'), url('../fonts/en/GillSansReg.woff') format('woff'), url('../fonts/en/GillSansReg.ttf') format('truetype'), url('../fonts/en/GillSansReg.svg#GillSansReg') format('svg');
+}
+
+// Bold
+@font-face {
+    font-family: 'GillSansbold';
+    src: url('../fonts/en/GillSansbold.eot');
+    src: url('../fonts/en/GillSansbold.eot') format('embedded-opentype'), url('../fonts/en/GillSansbold.woff2') format('woff2'), url('../fonts/en/GillSansbold.woff') format('woff'), url('../fonts/en/GillSansbold.ttf') format('truetype'), url('../fonts/en/GillSansbold.svg#GillSansbold') format('svg');
+}
+
+$LightFont: 'TajawalLight' #{"/*rtl:'TajawalLight'*/"};
+$RegularFont: 'TajawalRegular' #{"/*rtl:'TajawalRegular'*/"};
+$BoldFont: 'TajawalBold' #{"/*rtl:'TajawalBold'*/"};
+$smallText:13px;
+$bigText:15px;
+$medText:14px;
+$vSmallText:12px;

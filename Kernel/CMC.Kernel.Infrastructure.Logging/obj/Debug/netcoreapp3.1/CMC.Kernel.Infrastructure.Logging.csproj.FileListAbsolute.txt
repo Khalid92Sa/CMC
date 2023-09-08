@@ -851,8 +851,6 @@ D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netco
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\refs\Microsoft.AspNetCore.Connections.Abstractions.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\refs\Microsoft.AspNetCore.CookiePolicy.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\refs\Microsoft.AspNetCore.Cors.dll
-D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\refs\Microsoft.AspNetCore.Cryptography.Internal.dll
-D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\refs\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\refs\Microsoft.AspNetCore.DataProtection.Abstractions.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\refs\Microsoft.AspNetCore.DataProtection.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\refs\Microsoft.AspNetCore.DataProtection.Extensions.dll
@@ -926,13 +924,10 @@ D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netco
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\refs\Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\refs\Microsoft.Extensions.Diagnostics.HealthChecks.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\refs\Microsoft.Extensions.FileProviders.Composite.dll
-D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\refs\Microsoft.Extensions.FileProviders.Embedded.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\refs\Microsoft.Extensions.FileProviders.Physical.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\refs\Microsoft.Extensions.FileSystemGlobbing.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\refs\Microsoft.Extensions.Hosting.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\refs\Microsoft.Extensions.Http.dll
-D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\refs\Microsoft.Extensions.Identity.Core.dll
-D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\refs\Microsoft.Extensions.Identity.Stores.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\refs\Microsoft.Extensions.Localization.Abstractions.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\refs\Microsoft.Extensions.Localization.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\refs\Microsoft.Extensions.Logging.Configuration.dll
@@ -1110,3 +1105,5 @@ D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\obj\Debug\netco
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\obj\Debug\netcoreapp3.1\CMC.Kernel.Infrastructure.Logging.csproj.CopyComplete
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\obj\Debug\netcoreapp3.1\CMC.Kernel.Infrastructure.Logging.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\obj\Debug\netcoreapp3.1\CMC.Kernel.Infrastructure.Logging.pdb
+D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\CMC.Presentation.Domain.dll
+D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\CMC.Presentation.Domain.pdb

@@ -1,0 +1,73 @@
+﻿@model CMC.Presentation.Application.DTOs.Players.PlayerDTO
+@{
+    ViewData["Title"] = Localizer["PlayersIndexTitle"].Value;
+    bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
+}
+
+<div class="flex flex-column justify-content-center align-items-center">
+    <div class="row d-flex align-items-center justify-content-between mb-3">
+        <div class="col-5">
+            <h6 class="mb-0">@Localizer["PlayersIndexTitle"]</h6>
+        </div>
+        <div class="col-5">
+            <div class="formBtn d-flex justify-content-end">
+                <a href="@Url.Action("CreatePlayer","Players")" style="white-space:nowrap;" class="btn btn-outline-primary mx-0">@Localizer["AddPlayer"]</a>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="form-row mb-3 filter">
+                <div class="form-group col-md-3 pr-md-2 m-0">
+                    <label class="d-block">@Localizer["PlayerName"]</label>
+                    <input type="text" id="txtPlayerName" class="form-control d-inline-block" />
+                </div>
+                <div class="form-group col-md-3 px-md-2 m-0 pt-3 pt-md-0">
+                    <label class="d-block">@Localizer["MobileNumber"]</label>
+                    <input type="text" id="txtPhoneNumber" class="form-control d-inline-block" onkeypress="return GeneralClass.validationNumbersOnly(this,event)" />
+                </div>
+                <div class="form-group col-md-2 px-md-2 m-0 pt-3 pt-md-0">
+                    <label class="d-block">@Localizer["CategoryPlayer"]</label>
+                    <select class="form-control" id="ddlPlayerType">
+                        <option value="1">@Localizer["All"]</option>
+                        <option value="2">@Localizer["CityMallEmployees"]</option>
+                        <option value="3">@Localizer["NotCityMallEmployee"]</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-auto px-md-2 m-0 text-left">
+                    <button id="btnSearch" class="btn btn-primary rounded">@Localizer["Search"]</button>
+                </div>
+            </div>
+             <div class="from-row mb-3">
+                 <table id="tblPlayers" class="table table-sm table-striped NoPagenation">
+                    <thead>
+                        <tr>
+                            <th scope="col" style="width:70px;">#</th>
+                            <th scope="col">@Localizer["PlayerName"]</th>
+                            <th scope="col">@Localizer["MobileNumber"]</th>
+                            <th scope="col">@Localizer["EmailAddress"]</th>
+                            <th scope="col">@Localizer["CityMallEmployees"]</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                 </table>
+             </div>
+            <div class="form-row justify-content-end">
+                <div class="pt-2 mr-3">
+                    <span id="pagerInfo">
+                    </span>
+                </div>
+                <div id="pager" class="site-pagination">
+                    <ul id="pagination" class="pagination justify-content-end mb-0"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/assets/js/Application/Players.js"></script>
+<script>
+    Players.OnLoad();
+    GeneralClass.ActivationSubMenuItem('#lnkPlayers', '#lnkPlayers');
+    GeneralClass.ActivationSubMenuItem('#lnkPlayers2', '#lnkPlayers2');
+</script>

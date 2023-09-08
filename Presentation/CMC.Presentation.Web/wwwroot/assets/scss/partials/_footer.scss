@@ -1,0 +1,57 @@
+footer {
+    width: 100%;
+
+
+    .footer-copyright {
+        background-color: rgba(0,0,0,.1);
+    }
+
+    ul li {
+        font-size: 13px;
+        margin-bottom: 5px;
+        color: $greyDarkColor;
+    }
+
+    .page-link,
+    a {
+        color: $primaryColor !important;
+
+        &:hover,
+        &.active,
+        &:focus {
+            color: $primaryColor !important;
+        }
+    }
+
+    .row {
+        padding-right: 10%;
+        padding-left: 10%;
+    }
+
+    a {
+        padding-right: 20px;
+    }
+
+    img {
+        max-height: 25px;
+        max-width: 55px;
+    }
+}
+
+
+@media only screen and (max-width: 768px) {
+    footer {
+        img {
+            max-height: 25px;
+            max-width: 30px;
+            margin-bottom: 10px;
+        }
+    
+
+    a {
+        padding-right: 10px;
+        padding-left: 10px;
+    }
+
+}
+}
