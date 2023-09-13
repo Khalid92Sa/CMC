@@ -1,0 +1,129 @@
+@mixin Heading1 {
+    font-family: $BoldFont;
+    font-size: 3.5rem;
+    line-height: 50px;
+}
+
+.font-weight-bold {
+    font-family: $BoldFont !important;
+    font-weight: bold !important;
+}
+
+@mixin SectionTitle {
+    font-family: $BoldFont;
+    font-size: 1.5rem;
+}
+
+@mixin Question {
+    font-family: $RegularFont;
+    font-size: 1rem;
+}
+
+@mixin SideQuestions {
+    font-family: $RegularFont;
+    font-size: .7rem;
+}
+
+@mixin Tags {
+    font-family: $RegularFont;
+    font-size: .8rem;
+    color: $primaryColor;
+    font-weight: normal;
+}
+
+@mixin Filters {
+    font-family: $RegularFont;
+    font-size: .8rem;
+    color: $greyColor;
+    font-weight: normal;
+}
+
+@mixin Status {
+    font-family: $RegularFont;
+    font-size: .7rem;
+    color: $greyColor;
+    font-weight: normal;
+}
+
+@mixin StatusInfo {
+    @include Status;
+    font-family: $BoldFont;
+    color: $blackColor;
+}
+
+@mixin PrimaryButtons {
+    font-family: $RegularFont;
+    font-size: .8rem;
+    color: $greyColor;
+}
+
+@mixin SeconderyButtons {
+    font-family: $RegularFont;
+    font-size: .8rem;
+    color: $greyColor;
+}
+
+.section-title {
+    @include SectionTitle;
+}
+
+.question {
+    @include Question;
+}
+
+.h1,
+h1 {
+    font-size: 2.5rem #{"/*rtl:2.2rem*/"};
+}
+
+.h2,
+h2 {
+    font-size: 2rem #{"/*rtl:1.7rem*/"};
+}
+
+.h3,
+h3 {
+    font-size: 1.6rem #{"/*rtl:1.4rem*/"};
+}
+
+.h4,
+h4 {
+    font-size: 1.4rem #{"/*rtl:1.2rem*/"};
+}
+
+.h5,
+h5 {
+    font-size: 1.2rem #{"/*rtl:1rem*/"};
+}
+
+.h6,
+h6 {
+    font-size: 1rem #{"/*rtl:.9rem*/"};
+}
+
+@media only screen and (max-width: 767px) {
+    .h1,
+    h1 {
+        font-size: 1.9rem #{"/*rtl:1.8rem*/"};
+    }
+    .h2,
+    h2 {
+        font-size: 1.8rem #{"/*rtl:1.6rem*/"};
+    }
+    .h3,
+    h3 {
+        font-size: 1.4rem #{"/*rtl:1.2rem*/"};
+    }
+    .h4,
+    h4 {
+        font-size: 1.2rem #{"/*rtl:1rem*/"};
+    }
+    .h5,
+    h5 {
+        font-size: 1rem #{"/*rtl:.9rem*/"};
+    }
+    .h6,
+    h6 {
+        font-size: .8rem #{"/*rtl:.8rem*/"};
+    }
+}

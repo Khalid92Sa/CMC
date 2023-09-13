@@ -1,6 +1,14 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Http;
+@using CMC.Presentation.Application.DTOs.Identity
+@using Newtonsoft.Json
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = Localizer["Dashboard"].Value;
+    UserDTO userInfoDTO = HttpContextAccessor.HttpContext.Session.GetString("UserInfoDTO") != null ?
+        JsonConvert.DeserializeObject<UserDTO>(HttpContextAccessor.HttpContext.Session.GetString("UserInfoDTO")) : null;
+
 }
 
 <div class="flex flex-column justify-content-center align-items-center">
@@ -14,7 +22,10 @@
             <div class="row">
                 <div class="col-md-6 d-flex align-items-center">
                     <div class="d-block">
-                        <h3 style="font-family: 'TajawalRegular';">@Localizer["Common_MainPage_Hello"] &nbsp;<span class="font-weight-bold text-primary">خالد</span></h3>
+                        @if (userInfoDTO != null)
+                        {
+                            <h3 style="font-family: 'TajawalRegular';">@Localizer["Common_MainPage_Hello"] &nbsp;<span class="font-weight-bold text-primary">@userInfoDTO.Name</span></h3>
+                        }
                     </div>
                 </div>
                 <div class="col-md-6 d-flex align-items-center">

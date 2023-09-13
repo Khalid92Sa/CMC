@@ -18,6 +18,10 @@ namespace CMC.Presentation.Infrastructure.Persistence.Mapping
            
             builder.Property(x => x.CreatedOn).HasDefaultValue(DateTime.Now);
             builder.Property(x => x.IsDeleted).HasDefaultValue(false);
+
+            builder.HasMany(a => a.Competitions)
+                .WithOne(a => a.WinningPlayer)
+                .HasForeignKey(a => a.WinningPlayerId);
         }
     }
 }

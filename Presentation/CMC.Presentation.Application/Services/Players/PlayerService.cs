@@ -5,6 +5,7 @@ using CMC.Kernel.Core.Infrastructure;
 using CMC.Kernel.Core.Persistence;
 using CMC.Kernel.Core.Services;
 using CMC.Kernel.Core.Wrappers;
+using CMC.Kernel.Infrastructure.Caching.Model;
 using CMC.Presentation.Application.DTOs.Players;
 using CMC.Presentation.Application.DTOs.Questions;
 using CMC.Presentation.Domain.Entities;
@@ -178,7 +179,7 @@ namespace CMC.Presentation.Application.Services.Players
             try
             {
                 var player = await _playerRepository.FindAsync(id);
-                if (player != null)
+                if (player != null && player.IsDeleted != true)
                 {
                     return new Response<PlayerDTO>()
                     {
@@ -240,6 +241,40 @@ namespace CMC.Presentation.Application.Services.Players
                 return new Response()
                 {
                     Message = ex.InnerException != null ? ex.InnerException.Message : ex.Message
+                };
+            }
+        }
+
+        /// <summary>
+        /// Get All players based on if they are a City mall team or not.
+        /// </summary>
+        /// <param name="isCityMall"></param>
+        /// <returns></returns>
+        public async Task<Response<List<LookupModel>>> GetPlayers(bool isCityMall)
+        {
+            try
+            {
+                var players = await _playerRepository.GetAll(a => a.IsEmployee == isCityMall && a.IsDeleted != true).Select(player => new LookupModel()
+                {
+                    Id = player.Id,
+                    Name = player.Name,
+                    NameAr = player.Name,
+                    NameEn = player.Name
+                }).ToListAsync();
+                
+                return new Response<List<LookupModel>>()
+                {
+                    Succeeded = true,
+                    Data = players,
+                    StatusCode = (int)HttpStatusCode.Ok
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response<List<LookupModel>>()
+                {
+                    Succeeded = false,
+                    Message = ex.Message
                 };
             }
         }

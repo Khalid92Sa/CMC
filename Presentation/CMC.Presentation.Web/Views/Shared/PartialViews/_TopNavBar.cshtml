@@ -1,9 +1,12 @@
 ﻿@using Microsoft.AspNetCore.Http;
+@using CMC.Presentation.Application.DTOs.Identity
+@using Newtonsoft.Json
 @inject IHttpContextAccessor HttpContextAccessor
 
 @{
     bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
-    string userFullName = HttpContextAccessor.HttpContext.Session.GetString("UserFullName");
+    UserDTO userInfoDTO = HttpContextAccessor.HttpContext.Session.GetString("UserInfoDTO") != null ?
+        JsonConvert.DeserializeObject<UserDTO>(HttpContextAccessor.HttpContext.Session.GetString("UserInfoDTO")) : null;
 }
 
 <header id="page-topbar">
@@ -77,7 +80,10 @@
                         data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <img class="rounded-circle header-profile-user" src="~/assets/images/users/avatar-2.jpg"
                          alt="Header Avatar">
-                    <span class="d-none d-xl-inline-block ms-1">@userFullName</span>
+                    @if (userInfoDTO != null)
+                    {
+                        <span class="d-none d-xl-inline-block ms-1">@userInfoDTO.Name</span>
+                    }
                     <i class="mdi mdi-chevron-down d-none d-xl-inline-block"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-end">

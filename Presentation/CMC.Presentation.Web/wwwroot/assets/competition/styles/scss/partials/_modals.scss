@@ -1,0 +1,25 @@
+
+.modal-header {
+    padding: 1rem 2rem;
+}
+
+.modal-body {
+    padding: 2rem;
+}
+.modal-footer {
+    border: 0 !important;
+    padding: 1rem 2rem;
+    padding-top: 0;
+}
+
+.documentFile{
+    width: 123px;
+    height: 123px;
+}
+
+@media only screen and (max-width: 768px) {
+.documentFile {
+    width: 100px;
+    height: 100px;
+}
+}

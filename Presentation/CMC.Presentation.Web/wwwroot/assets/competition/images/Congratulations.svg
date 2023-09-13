@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="186.89" height="158.475" viewBox="0 0 186.89 158.475">
+  <g id="Group_3446" data-name="Group 3446" transform="translate(-585.833 -317.963)">
+    <g id="Group_3443" data-name="Group 3443" transform="translate(469.063 151.271) rotate(20)">
+      <g id="Group_3441" data-name="Group 3441" transform="translate(206.938 96.789)">
+        <path id="Path_1205" data-name="Path 1205" d="M211.029,152.356a7.5,7.5,0,0,0-3.269,10.092l31.556,61.787a7.5,7.5,0,0,0,10.092,3.268l21-10.724,36.768-113.526Z" transform="translate(-206.938 -97.971)" fill="#ffdf67"/>
+        <path id="Path_1206" data-name="Path 1206" d="M330.109,97.611l-8.731,4.459L284.61,215.6l83.878-42.839a7.5,7.5,0,0,0,3.269-10.092L340.2,100.88A7.5,7.5,0,0,0,330.109,97.611Z" transform="translate(-221.14 -96.789)" fill="#ffcd00"/>
+      </g>
+      <text id="EasyPay_" data-name="EasyPay " transform="translate(216.098 161.406) rotate(-27.054)" fill="#717171" font-size="5" font-family="Montserrat-SemiBold, Montserrat" font-weight="600"><tspan x="0" y="0">EasyPay </tspan></text>
+      <rect id="Rectangle_273" data-name="Rectangle 273" width="29.801" height="19.617" rx="3" transform="translate(220.279 167.904) rotate(-27.054)" fill="#fff"/>
+      <g id="Group_3442" data-name="Group 3442" transform="translate(232.953 140.008)">
+        <rect id="Rectangle_274" data-name="Rectangle 274" width="25.398" height="6.502" transform="translate(0 52.713) rotate(-27.054)" fill="#717171"/>
+        <rect id="Rectangle_275" data-name="Rectangle 275" width="25.398" height="6.502" transform="translate(26.865 38.993) rotate(-27.054)" fill="#717171"/>
+        <rect id="Rectangle_276" data-name="Rectangle 276" width="25.398" height="6.502" transform="translate(53.73 25.272) rotate(-27.054)" fill="#717171"/>
+        <rect id="Rectangle_277" data-name="Rectangle 277" width="25.398" height="6.502" transform="translate(80.595 11.552) rotate(-27.054)" fill="#717171"/>
+      </g>
+      <rect id="Rectangle_278" data-name="Rectangle 278" width="52.131" height="3.955" transform="translate(342.327 153.829) rotate(152.946)" fill="#fff"/>
+      <rect id="Rectangle_279" data-name="Rectangle 279" width="36.192" height="3.658" transform="translate(345.304 159.659) rotate(152.946)" fill="#fff"/>
+      <rect id="Rectangle_280" data-name="Rectangle 280" width="36.192" height="3.658" transform="translate(348.29 165.504) rotate(152.946)" fill="#fff"/>
+    </g>
+    <g id="checked" transform="translate(706 332.068)">
+      <circle id="Ellipse_35" data-name="Ellipse 35" cx="26.015" cy="26.015" r="26.015" transform="translate(0 0)" fill="#00b60c"/>
+      <path id="Path_403" data-name="Path 403" d="M263.253,114.609l-23.007,23.82.041,2.561h1.057l24.917-20.08A26.455,26.455,0,0,0,263.253,114.609Z" transform="translate(-215.451 -102.78)" fill="#0c6039"/>
+      <path id="Path_404" data-name="Path 404" d="M136.221,60.05,131.627,55.5a1.645,1.645,0,0,0-2.276,0L109.718,75.781l-8.5-8.373a1.645,1.645,0,0,0-2.276,0l-4.065,4.024a1.6,1.6,0,0,0,0,2.236l13.577,13.454a2.236,2.236,0,0,0,2.683,0l25.08-24.8A1.645,1.645,0,0,0,136.221,60.05Z" transform="translate(-84.679 -49.359)" fill="#f2f1ef"/>
+      <path id="Path_405" data-name="Path 405" d="M111.494,125l25.08-24.8a1.6,1.6,0,0,0,0-2.236l-.732-.691-25.73,25.283L95.885,108.7l-.61.61a1.6,1.6,0,0,0,0,2.236L108.852,125a1.65,1.65,0,0,0,1.341.447A1.611,1.611,0,0,0,111.494,125Z" transform="translate(-85.032 -87.24)" fill="#e6e5e3"/>
+    </g>
+  </g>
+</svg>

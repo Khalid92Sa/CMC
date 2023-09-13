@@ -1,5 +1,6 @@
 ﻿using CMC.Kernel.Core.Services;
 using CMC.Kernel.Core.Wrappers;
+using CMC.Kernel.Infrastructure.Caching.Model;
 using CMC.Presentation.Application.DTOs.Players;
 using CMC.Presentation.Application.DTOs.Questions;
 using System;
@@ -30,6 +31,13 @@ namespace CMC.Presentation.Application.Services.Players
         /// <param name="id"></param>
         /// <returns></returns>
         Task<Response<PlayerDTO>> GetPlayer(int id);
+
+        /// <summary>
+        /// Get All players based on if they are a City mall team or not.
+        /// </summary>
+        /// <param name="isCityMall"></param>
+        /// <returns></returns>
+        Task<Response<List<LookupModel>>> GetPlayers(bool isCityMall);
 
         /// <summary>
         /// Delete player

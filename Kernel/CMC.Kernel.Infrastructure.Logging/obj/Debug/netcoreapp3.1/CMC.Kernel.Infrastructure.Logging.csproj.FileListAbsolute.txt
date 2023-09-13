@@ -1093,10 +1093,12 @@ D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netco
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\CMC.Kernel.Domain.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\CMC.Kernel.Infrastructure.Caching.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\CMC.Kernel.Infrastructure.Persistence.dll
+D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\CMC.Presentation.Domain.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\CMC.Kernel.Core.pdb
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\CMC.Kernel.Domain.pdb
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\CMC.Kernel.Infrastructure.Persistence.pdb
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\CMC.Kernel.Infrastructure.Caching.pdb
+D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\CMC.Presentation.Domain.pdb
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\obj\Debug\netcoreapp3.1\CMC.Kernel.Infrastructure.Logging.csproj.AssemblyReference.cache
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\obj\Debug\netcoreapp3.1\CMC.Kernel.Infrastructure.Logging.GeneratedMSBuildEditorConfig.editorconfig
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\obj\Debug\netcoreapp3.1\CMC.Kernel.Infrastructure.Logging.AssemblyInfoInputs.cache
@@ -1105,5 +1107,3 @@ D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\obj\Debug\netco
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\obj\Debug\netcoreapp3.1\CMC.Kernel.Infrastructure.Logging.csproj.CopyComplete
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\obj\Debug\netcoreapp3.1\CMC.Kernel.Infrastructure.Logging.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\obj\Debug\netcoreapp3.1\CMC.Kernel.Infrastructure.Logging.pdb
-D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\CMC.Presentation.Domain.dll
-D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\CMC.Presentation.Domain.pdb

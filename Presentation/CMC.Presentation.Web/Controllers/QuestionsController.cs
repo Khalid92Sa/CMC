@@ -21,7 +21,6 @@ using System.Threading.Tasks;
 
 namespace CMC.Presentation.Web.Controllers
 {
-    [CheckSession]
     public class QuestionsController : BaseController
     {
         readonly IQuestionsService _questionsService;

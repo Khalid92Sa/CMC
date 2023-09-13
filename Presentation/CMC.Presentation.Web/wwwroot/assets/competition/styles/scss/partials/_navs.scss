@@ -1,0 +1,136 @@
+.main-menu {
+    display: none;
+    position: absolute;
+    top: 0;
+    z-index: 2;
+    width: 100%;
+    a {
+        color: $whiteColor;
+        display: block;
+        &:hover {
+            text-decoration: none;
+            color: $whiteColor;
+        }
+    }
+    &.show {
+        display: flex;
+    }
+    .col-12 {
+        background-color: $primaryColor;
+        & a:hover {
+            opacity: .9;
+        }
+        &:nth-of-type(1) {
+            a {
+                background-color: $primaryColor;
+            }
+        }
+        &:nth-of-type(2) {
+            a {
+                background-color: #4ae8e3;
+            }
+        }
+        &:nth-of-type(3) {
+            a {
+                background-color: #5f67bb;
+            }
+        }
+        &:nth-of-type(4) {
+            a {
+                background-color: $accentColor;
+            }
+        }
+        &:nth-of-type(5) {
+            a {
+                background-color: #bfbfbf;
+            }
+        }
+    }
+}
+
+.side-menu {
+    background-color: #f0f0f0;
+    position: fixed;
+    height: 100vh;
+    z-index: 1;
+    a {
+        font-family: $BoldFont;
+        color: $darkGreyColor;
+        padding-top: .7rem;
+        padding-bottom: .7rem;
+        &.active {
+            color: $whiteColor;
+            background-color: $primaryColor;
+        }
+    }
+}
+
+.side-nav .nav-link.active {
+    color: $blackColor;
+    font-weight: bold;
+}
+
+.progress-tracker {
+    transition: all .2s ease-in-out !important;
+    .progress-step {
+        transition: all .2s ease-in-out !important;
+    }
+    .progress-title {
+        transition: all .2s ease-in-out;
+    }
+}
+
+.progress-step.is-complete {
+    transition: all .2s ease-in-out;
+    .progress-title {
+        cursor: text;
+    }
+    .progress-step {
+        .progress-title {
+            cursor: default;
+        }
+    }
+}
+
+@media only screen and (max-width: 1023px) {
+    .main-navbar .navbar-collapse {
+        position: absolute !important;
+        background-color: #fff;
+        width: 100%;
+        left: 0;
+        padding: 1rem;
+        top: 57px;
+        z-index: 2005;
+        box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075) !important;
+        ul.navbar-nav {
+            text-align: left;
+            justify-content: start;
+            align-items: start !important;
+            li {
+                padding: .5rem;
+                .dropdown-toggle {
+                    color: rgba(0, 0, 0, .5);
+                }
+                .dropdown-menu {
+                    border: none;
+                    transition: .2s all ease-in-out;
+                    &.show {
+                        transition: .2s all ease-in-out;
+                    }
+                    .dropdown-item {
+                        color: rgba(0, 0, 0, .5);
+                        &.active,
+                        &:active,
+                        &:focus,
+                        &:hover {
+                            color: rgba(0, 0, 0, .9);
+                        }
+                    }
+                    .dropdown-divider {
+                        display: none;
+                    }
+                }
+            }
+        }
+    }
+}

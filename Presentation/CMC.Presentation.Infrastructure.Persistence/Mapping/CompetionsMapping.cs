@@ -16,13 +16,26 @@ namespace CMC.Presentation.Infrastructure.Persistence.Mapping
             builder.ToTable("Competitions", SchemaName.CMC);
             builder.HasKey(t => t.Id);
             builder.HasOne(t => t.Host);
+            builder.Property(x => x.CreatedOn).HasDefaultValue(DateTime.Now);
+            builder.Property(x => x.IsDeleted).HasDefaultValue(false);
+
             builder.HasMany(x => x.CompetitionQuestions)
                 .WithOne(x => x.Competition)
                 .HasForeignKey(x => x.CompetitionId);
 
-            builder.Property(x => x.CreatedOn).HasDefaultValue(DateTime.Now);
-            builder.Property(x => x.IsDeleted).HasDefaultValue(false);
+            builder.HasOne(a => a.Team1)
+                .WithMany()
+                .HasForeignKey(a => a.Team1Id)
+                .IsRequired();
 
+            builder.HasOne(a => a.Team2)
+                .WithMany()
+                .HasForeignKey(a => a.Team2Id)
+                .IsRequired();
+
+            builder.HasOne(a => a.WinningTeam)
+                .WithMany()
+                .HasForeignKey(a => a.WinningTeamId);
         }
     }
 }

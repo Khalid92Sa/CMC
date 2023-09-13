@@ -1,0 +1,13 @@
+.card-body {
+    padding: 1.4rem;
+}
+
+.products-cards {
+    a:hover,a:focus, a:active{
+        .card{
+            box-shadow: 0 2px 9px rgba(0 ,0 ,0 ,.15);
+            transition: all .2s ease-in-out;
+        }
+    }
+  
+}

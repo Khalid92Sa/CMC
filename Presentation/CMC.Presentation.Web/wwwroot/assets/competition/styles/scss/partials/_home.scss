@@ -1,0 +1,185 @@
+
+.carousel {
+    height: 100%;
+}
+
+.main-banner {
+    background-size: 50% 70%;
+    background-repeat: no-repeat;
+    background-position: top right;
+    /*z-index: -1;*/
+    height: 500px;
+    background-image: linear-gradient(To Left, $primaryColor, $primaryColor);
+}
+
+.main-title {
+    font-weight: 700;
+}
+
+
+
+.background-main {
+    background-image: url("../../images/main-banner.png");
+    background-size: 97%;
+    background-repeat: no-repeat;
+    background-position: -150% 7%;
+}
+
+.secondery-paragraph {
+    font-size: 15px;
+}
+
+.section1-banner {
+    height: 500px;
+    position:relative;
+}
+
+.section1-background {
+    background-image: url("../../images/section1-banner.png");
+    background-size: 90%;
+    background-repeat: no-repeat;
+    background-position: 45%;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.section1-background2 {
+    background-image: url("../../images/blocks.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: 0;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    opacity: .5;
+}
+
+.section2-banner {
+    height: 600px;
+    background-image: url("../../images/section2-background.png");
+    background-size: 45%;
+    background-repeat: no-repeat;
+    background-position: top right;
+    z-index: -1;
+}
+
+.section2-background {
+    background-image: url("../../images/section2-banner.png");
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: -50px;
+}
+
+.section3-banner {
+    height: 600px;
+    background-size: 50% 90%;
+    background-position: left;
+    background-repeat: no-repeat;
+    @include primaryGradient;
+    z-index: -1;
+}
+
+.section3-background {
+    background-image: url("../../images/section3-banner.png");
+    background-size: 90%;
+    background-repeat: no-repeat;
+    background-position: 80% 20%;
+}
+
+.section4-banner {
+    height: 600px;
+    background-image: url("../../images/section2-background.png");
+    background-size: 50%;
+    background-repeat: no-repeat;
+    background-position: top right;
+    z-index: -1;
+}
+
+.section4-background {
+    background-image: url("../../images/section4-banner.png");
+    background-size: 80%;
+    background-repeat: no-repeat;
+    background-position: 20% 20%;
+}
+
+
+.services {
+    .rounded {
+        width: 80px;
+        height: 80px;
+        transform: rotate(45deg);
+    }
+
+    img {
+        width: 50px;
+        transform: rotate(-45deg);
+    }
+}
+
+.steps {
+    .rounded {
+        width: 15px;
+        height: 15px;
+        transform: rotate(45deg);
+    }
+}
+
+.home-questions {
+    .QList {
+
+        .card {
+            box-shadow: none !important;
+        }
+
+        .card-header {
+            padding: 0;
+        }
+    }
+}
+@media (max-width: 1023px) {
+    .main-banner, .section2-banner, .section3-banner, .section4-banner {
+        height: auto;
+    }
+
+    }
+
+    @media (max-width: 767px) {
+        .background-main, .section2-background, .section3-background, .section4-background {
+            width: 100%;
+            height: 170px;
+        }
+
+       
+
+        .main-banner, .section2-banner, .section3-banner, .section4-banner {
+            background-size: 78% 35%;
+            background-position: bottom right;
+            height: auto;
+        }
+        .main-banner {
+            background-position: top right;
+        }
+        .section1-banner {
+            height: auto;
+        }
+
+        .section1-background {
+            background-size: 65%;
+        }
+
+        .section2-banner, .section4-banner {
+            background-size: 78% 28%;
+        }
+
+        .section3-banner {
+            height: auto;
+        }
+
+        .section3-background {
+            background-size: 90%;
+            background-position: 0 20%;
+        }
+    }

@@ -1,0 +1,55 @@
+﻿@model CMC.Presentation.Application.DTOs.Identity.LoginDTO
+@using Microsoft.AspNetCore.Http;
+@using System.Globalization;
+@using System.Threading
+@using CMC.Kernel.Core.Constants
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    Layout = "~/Views/Shared/_LoginLayout.cshtml";
+    ViewBag.Title = Localizer["LoginTitle"].Value;
+}
+
+
+<div class="row h-md-100 m-auto py-4 px-0 p-md-0" style="max-width: 1100px">
+    <div class="col-12 h-md-100 d-flex align-items-center justify-content-center">
+        <div class="card w-100 col-md-8 col-xs-12">
+            <div class="card-body">
+                <div>
+                    <div class="login py-3 px-4">
+                        <h5 class="text-center mb-4 mb-md-5">@Localizer["SignInToContinue"]</h5>
+                        @using (Html.BeginForm("Login", "Users", FormMethod.Post, new { role = "form", id = "LoginForm" }))
+                        {
+                            <div class="form-group">
+                                <label>@Localizer["Username"]</label>
+                                <input type="text" asp-for="UserName" class="form-control animated fadeIn" placeholder="@Localizer["EnerUsername"]">
+                                <span asp-validation-for="UserName" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label>@Localizer["Password"]</label>
+                                <input type="password" asp-for="Password" autocomplete="off" class="form-control animated fadeIn" placeholder="@Localizer["EnterPassword"]">
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
+                            <div class="form-group mb-1">
+                                <button id="btnlogin" onclick="Login.SignIn()" class="btn btn-primary w-100 mx-0" type="button">@Localizer["LogIn"]</button>
+                            </div>
+                            <div class="form-group text-center">
+                                @Html.ActionLink(@Localizer["ForgotYourPassword"].Value, "RecoveryPassword", "RecoveryPassword", new { /*IsCustomer = true*/ }, new { @class = "" })
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    Login.OnLoad();
+    var publicURls = {
+        login: '@Url.Action("Login","Users")',
+        HomePage: '@Url.Action("Index","Home")',
+        setCulture: '@Url.Action("SetCulture","Home")',
+    };
+</script>

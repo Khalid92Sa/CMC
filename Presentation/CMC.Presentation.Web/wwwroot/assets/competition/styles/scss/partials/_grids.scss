@@ -1,0 +1,80 @@
+.table{
+  --bs-table-striped-bg: rgba(255, 205, 0, .1);;
+}
+table, .table{
+    thead{
+      background-color:#fff;
+      color: #000;
+  
+      th{
+        padding-top: .7rem;
+        padding-bottom: .7rem;
+        background-color:$accentColor2;
+        font-size: .8rem !important;
+        font-family: $BoldFont;
+        border: 0;
+
+  
+      }
+      th:first-of-type {
+        border-radius:0 0 0 0 ;
+      }
+      th:last-of-type {
+        border-radius: 0 0 0 0 ;
+      }
+    }
+    th, td{
+      font-size: .8rem;
+      vertical-align: middle;
+      padding: .9rem .75rem;
+    }
+
+    button{
+      font-size: .75rem;
+      width: 90px;
+      height: 35px;
+      line-height: 17px;
+      margin: 0;
+    }
+    .table-icon {
+      width: 25px;
+      height: 25px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      &.edit
+      {
+        &:hover,&:active,&:focus{
+          background-color: $primaryColor;
+          color:white !important;
+        }
+      }
+      &.delete
+      {
+        &:hover,&:active,&:focus{
+          background-color: $dangerColor;
+          color:white !important;
+        }
+      }
+  }
+}
+.table-hover tbody tr:hover{
+  background-color:rgba(205,152,44,.1);
+}
+
+.max-calculation-table{
+  th, td{
+    font-size: .8rem;
+    vertical-align: middle;
+    padding: .5rem .75rem;
+  }
+
+  tr td:last-of-type{
+    text-align: right;;
+  }
+
+  h6{
+    margin-bottom: 0;
+  }
+}
+

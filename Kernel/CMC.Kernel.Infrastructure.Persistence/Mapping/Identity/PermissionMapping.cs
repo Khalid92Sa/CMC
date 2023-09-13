@@ -14,9 +14,16 @@ namespace CMC.Kernel.Infrastructure.Persistence.Mapping.Identity
         {
             base.Configure(builder);
             builder.ToTable("Permissions", SchemaName.Identity);
-            builder.Property(x => x.Name).HasMaxLength(128);
+            builder.Property(x => x.NameEn).HasMaxLength(400);
+            builder.Property(x => x.NameAr).HasMaxLength(400);
+            builder.Property(x => x.Code).HasMaxLength(400);
             builder.Property(x => x.CreatedOn).HasDefaultValue(DateTime.Now);
             builder.Property(x=>x.IsDeleted).HasDefaultValue(false);
+
+            builder.HasMany(x => x.GroupPermissions)
+                .WithOne(x => x.Permission)
+                .HasForeignKey(x => x.PermissionId)
+                .IsRequired();
         }
     }
 }

@@ -1,0 +1,24 @@
+﻿@model CMC.Presentation.Application.DTOs.Competitions.CompetitionStartDTO
+@using CMC.Kernel.Core.Constants
+
+@{
+    ViewData["Title"] = "";
+    bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
+    string baseURL = $"{Context.Request.Scheme}://{Context.Request.Host}/";
+    Layout = "~/Views/Shared/_CompetitionLayout.cshtml";
+}
+
+<div class="container-fluid py-3 main-padding d-flex flex-grow-1 position-relative  align-items-start">
+  <section id="dv-partial" style="width:100%">
+        @if (ViewData["Partial"] != null)
+        {
+            @Html.Raw(ViewData["Partial"].ToString())
+        }
+  </section>
+       
+</div>
+
+<script src="~/assets/js/Application/Competition.js"></script>
+<script>
+    StartCompetition.OnLoad();
+</script>

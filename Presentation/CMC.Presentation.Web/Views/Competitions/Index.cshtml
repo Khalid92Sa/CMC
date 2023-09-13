@@ -1,0 +1,86 @@
+﻿@{
+    ViewData["Title"] = Localizer["CompetitionIndexTitle"].Value;
+    bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
+}
+
+<div class="flex flex-column justify-content-center align-items-center">
+    <div class="row d-flex align-items-center justify-content-between mb-3">
+        <div class="col-5">
+            <h6 class="mb-0">@Localizer["CompetitionIndexTitle"]</h6>
+        </div>
+        <div class="col-5">
+            @if(ViewData["CanCreate"] != null && Convert.ToBoolean(ViewData["CanCreate"]))
+            {
+                <div class="formBtn d-flex justify-content-end">
+                    <a href="@Url.Action("CreateCompetition","Competitions")" style="white-space:nowrap;" class="btn btn-outline-primary mx-0">@Localizer["CreateCompetition"]</a>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="form-row mb-3 filter">
+                <div class="form-group col-md-3 pr-md-2 m-0">
+                    <label class="d-block">@Localizer["CompetitionName"]</label>
+                    <input type="text" id="txtCompName" class="form-control d-inline-block" />
+                </div>
+                <div class="form-group col-md-3 px-md-2 m-0 pt-3 pt-md-0">
+                    <label class="d-block">@Localizer["CompetitionStartDate"]</label>
+                    <input type="text" id="txtStartDate" class="form-control d-inline-block" />
+                </div>
+                @{
+                    string hideHosts = ViewData["IsHost"] != null && Convert.ToBoolean(ViewData["IsHost"]) ? "d-none" : "";
+                }
+                <div class="form-group col-md-2 px-md-2 m-0 pt-3 pt-md-0 @hideHosts">
+                    <label class="d-block">@Localizer["CompetitionHost"]</label>
+                    <select class="form-control" id="ddlHosts">
+                        <option value="">@Localizer["All"]</option>
+                        @foreach(var item in ViewBag.Hosts)
+                        {
+                            string hostName = IsAr ? item.NameAr : item.NameEn;
+                            <option value="@item.Id">@hostName</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group col-md-auto px-md-2 m-0 text-left">
+                    <button id="btnSearch" class="btn btn-primary rounded">@Localizer["Search"]</button>
+                </div>
+            </div>
+            <div class="from-row mb-3">
+                <table id="tblCompetitions" class="table table-sm table-striped NoPagenation">
+                    <thead>
+                        <tr>
+                            <th scope="col" style="width:70px;">#</th>
+                            <th scope="col">@Localizer["CompetitionName"]</th>
+                            <th scope="col">@Localizer["CompetitionStartDate"]</th>
+                            @if (!Convert.ToBoolean(ViewData["IsHost"]))
+                            {
+                                <th scope="col">@Localizer["CompetitionHost"]</th>
+                            }
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <div class="form-row justify-content-end">
+                <div class="pt-2 mr-3">
+                    <span id="pagerInfo">
+                    </span>
+                </div>
+                <div id="pager" class="site-pagination">
+                    <ul id="pagination" class="pagination justify-content-end mb-0"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/assets/js/Application/Competition.js"></script>
+<script>
+    CompetitionList.OnLoad();
+    GeneralClass.ActivationSubMenuItem('#lnkCompetitions', '#lnkCompetitions');
+    GeneralClass.ActivationSubMenuItem('#lnkCompetitions2', '#lnkCompetitions2');
+    var CanDelete = '@ViewData["CanDelete"]' == 'True';
+    var CanCreate = '@ViewData["CanCreate"]' == 'True';
+    var IsHost = '@ViewData["IsHost"]' == 'True';
+</script>

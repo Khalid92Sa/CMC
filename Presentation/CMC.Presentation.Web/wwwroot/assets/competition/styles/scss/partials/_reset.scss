@@ -1,0 +1,156 @@
+body {
+    font-family: $RegularFont;
+    font-size: .85rem #{"/*rtl:.8rem*/"};
+    min-height: calc(100vh - 106px);
+    direction: ltr #{"/*rtl:rtl*/"};
+    overflow-x: hidden;
+    text-align: left;
+}
+
+// Pagination
+.page-link,
+a {
+    color: $accentColor;
+}
+
+.container-fixed-top {
+    margin-top: 0;
+}
+
+.container-fixed-out {
+    margin-top: 112px;
+}
+
+.page-link:hover,
+a:hover {
+    color: $accentColor;
+    h5 {
+        color: $accentColor;
+    }
+}
+
+.main-section {
+    background-image: url("../images/side-background.svg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    z-index: 1;
+}
+
+.inner-pages {
+    +.container {
+        padding-top: 5rem;
+    }
+}
+
+@media only screen and (max-width: 767px) {
+    .seperator {
+        display: block;
+    }
+}
+
+.dropdown-menu {
+    left: auto;
+}
+
+@media only screen and (max-width: 767px) {
+    .dropdown-menu {
+        right: 0;
+    }
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    transform: scaleX(1) #{"/*rtl:scaleX(-1)*/"};
+}
+
+.carousel-control-next,
+.carousel-control-prev {
+    width: 30px;
+    height: 30px;
+    top: auto;
+    bottom: 60px;
+    padding: 5px;
+    border-radius: 0;
+    background-color: blue;
+}
+
+.carousel-control-prev {
+    right: 100px;
+    left: auto;
+}
+
+.carousel-control-next {
+    right: 60px;
+    left: auto;
+}
+
+@media only screen and (max-width: 767px) {
+    .carousel-control-prev {
+        right: 60px;
+        left: auto;
+    }
+    .carousel-control-next {
+        right: 20px;
+        left: auto;
+    }
+    .carousel-control-next,
+    .carousel-control-prev {
+        bottom: 20px;
+    }
+}
+
+.login-container {
+    width: 330px;
+    margin: 0 auto;
+}
+
+.side-img-container {
+    position: fixed;
+    right: 0;
+    z-index: 0;
+}
+
+
+/* width */
+
+::-webkit-scrollbar {
+    width: 7px;
+}
+
+
+/* Track */
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+
+/* Handle */
+
+::-webkit-scrollbar-thumb {
+    background: #ddd;
+}
+
+
+/* Handle on hover */
+
+::-webkit-scrollbar-thumb:hover {
+    background: #ccc;
+}
+
+footer {
+    width: 100%;
+}
+
+@media only screen and (max-width: 1023px) {
+    body {
+        font-size: .75rem #{"/*rtl:.65rem*/"};
+    }
+}
+
+.tc {
+    padding-left: 1.5rem;
+    li {
+        padding-top: 20px;
+    }
+}

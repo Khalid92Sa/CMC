@@ -79,11 +79,11 @@
                     </div>
                 </div>
                 <div class="col-12 text-center">
-                    <button type="button" class="btn btn-primary" style="width:10%" onclick="Categories.CreateOrUpdate()">@Localizer["Save"]</button>
-                    <button type="button" class="btn btn-secondary" onclick="window.location.href='@Url.Action("Index", "Questions")';" style="width:10%">@Localizer["Cancel"]</button>
+                    <button type="button" class="btn btn-primary" onclick="Categories.CreateOrUpdate()">@Localizer["Save"]</button>
+                    <button type="button" class="btn btn-secondary" onclick="window.location.href='@Url.Action("Index", "Questions")';">@Localizer["Cancel"]</button>
                     @if (Model.Id.HasValue)
                     {
-                        <button type="button" class="btn btn-danger" onclick="Categories.DeleteCategory()" style="width:10%">@Localizer["Delete"]</button>
+                        <button type="button" class="btn btn-danger" onclick="Categories.DeleteCategory()">@Localizer["Delete"]</button>
                     }
                 </div>
             </div>

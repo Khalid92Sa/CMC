@@ -32,20 +32,43 @@ namespace CMC.Presentation.Application.Helpers
             }
         }
 
+        //public static Image ScaleImage(Image originalImage)
+        //{
+        //    // Define your scaling logic here
+        //    // Example:
+        //    int newWidth = 400; // Set your desired width
+        //    int newHeight = 400; // Set your desired height
+
+        //    Bitmap scaledImage = new Bitmap(newWidth, newHeight);
+        //    using (Graphics graphics = Graphics.FromImage(scaledImage))
+        //    {
+        //        graphics.DrawImage(originalImage, 0, 0, newWidth, newHeight);
+        //    }
+
+        //    return scaledImage;
+        //}
         public static Image ScaleImage(Image originalImage)
         {
-            // Define your scaling logic here
-            // Example:
             int newWidth = 400; // Set your desired width
             int newHeight = 400; // Set your desired height
 
             Bitmap scaledImage = new Bitmap(newWidth, newHeight);
+            scaledImage.SetResolution(originalImage.HorizontalResolution, originalImage.VerticalResolution);
+
             using (Graphics graphics = Graphics.FromImage(scaledImage))
             {
+                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                graphics.SmoothingMode = SmoothingMode.HighQuality;
+                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                graphics.CompositingQuality = CompositingQuality.HighQuality;
+
+                graphics.Clear(Color.Transparent); // Set background to transparent
+
                 graphics.DrawImage(originalImage, 0, 0, newWidth, newHeight);
             }
 
             return scaledImage;
         }
+
     }
 }

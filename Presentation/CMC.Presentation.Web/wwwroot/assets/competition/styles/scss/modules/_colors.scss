@@ -1,0 +1,163 @@
+$primaryColor: #9C59FE; // #ffcd00;
+$accentColor: #FFC82C; // #F8CE46;
+$accentColor1: #95E9FF;
+$accentColor2:rgb(255, 223, 103);
+$accentColor3:rgb(235, 235, 235);
+$accentColor4:rgb(240, 240, 240);
+$buttonGrey:#DEDEDE;
+$lightPrimary: rgba(255, 205, 0, .1); // #988658;
+$midlightPrimary: rgba(255, 205, 0, .5); // #988658;
+$whiteColor:#ffffff;
+$blackColor:#333333;
+$greyColor:#aaa;
+$darkGreyColor:#777;
+$textDanger: #ff3547;
+$dangerColor: #ff3547;
+$secondaryColor:rgba(98, 0, 234, .1);
+$favorite:#FEE400;
+$success:#28A745;
+$downvote:#FF8888;
+// Colors
+.primary-color,
+.text-primary {
+    color: $primaryColor !important;
+}
+
+.bg-primary {
+    background-color: $primaryColor !important;
+}
+
+.text-primary {
+    color: $primaryColor;
+}
+
+.text-success {
+    color: $success;
+}
+
+.accent-color,
+.text-accent {
+    color: $accentColor;
+}
+
+.primary-gradient {
+    background-image: linear-gradient(To Left, $primaryColor, $accentColor);
+}
+
+.white-color {
+    color: $whiteColor;
+}
+
+.text-grey {
+    color: $greyColor;
+}
+
+.text-dark-grey {
+    color: $darkGreyColor;
+}
+
+.text-light-primary {
+    color: $lightPrimary;
+}
+
+.bg-light-primary {
+    background-color: $lightPrimary;
+}
+
+.text-dark {
+    color: #000 !important;
+}
+
+.black-color {
+    color: $blackColor;
+}
+
+.danger-color {
+    color: $textDanger;
+}
+
+.background-primary-color {
+    background-color: $primaryColor;
+}
+
+.background-accent-color {
+    background-color: $accentColor;
+}
+
+.background-accent-color1 {
+    background-color: $accentColor1;
+}
+
+.background-accent-color2 {
+    background-color: $accentColor2;
+}
+
+.background-white-color {
+    background-color: $whiteColor;
+}
+
+.background-black-color {
+    background-color: $blackColor;
+}
+
+.background-grey-color {
+    background-color: $greyColor;
+}
+
+.border-primary {
+    border-color: $primaryColor !important;
+}
+
+.border-light-primary {
+    border-color: rgba(152, 134, 88, .5) !important;
+}
+
+.border-accent {
+    border-color: $accentColor !important;
+}
+
+.bg-vlight {
+    background-color: #fdfdfd !important;
+}
+
+.bg-light {
+    background-color: $accentColor4 !important;
+}
+
+.bg-accent {
+    background-color: $accentColor !important;
+}
+
+.bg-accent1 {
+    background-color: $accentColor1 !important;
+}
+
+.bg-accent2 {
+    background-color: $accentColor2 !important;
+}
+
+.bg-accent3 {
+    background-color: $accentColor3 !important;
+}
+
+.bg-accent4 {
+    background-color: $accentColor4 !important;
+}
+
+.bg-danger{
+    background-color: $dangerColor !important;
+}
+.text-danger{
+    color: $dangerColor !important;
+}
+.bg-light-danger {
+    background-color: rgba(220, 53, 69, .1)!important;
+}
+
+@mixin primaryGradient {
+    background-image: linear-gradient(To Left, $primaryColor, $accentColor);
+}
+
+.bg-light-white {
+    background-color: rgba(255,255,255,0.8);
+}

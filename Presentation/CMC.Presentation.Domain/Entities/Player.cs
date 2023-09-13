@@ -14,5 +14,7 @@ namespace CMC.Presentation.Domain.Entities
         public bool IsEmployee { get; set; }
 
         public virtual ICollection<CompetitionQuestion> CompetitionQuestions { get; set; }
+        public virtual ICollection<Competition> Competitions { get; set; }
+
     }
 }

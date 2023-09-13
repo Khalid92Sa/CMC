@@ -1,0 +1,76 @@
+﻿@model CMC.Presentation.Application.DTOs.Competitions.CompetitionStartDTO
+
+@{
+    ViewData["Title"] = "";
+    bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
+}
+
+<div class="" style="z-index:-1000;">
+    <img class="min-vh-100" src="~/assets/competition/images/Home-Background.png" style="width:100%; position:absolute; top:0; left:0;" />
+</div>
+
+<div class="row m-0 w-100">
+    <div class="col-md-12 text-center">
+        <img src="~/assets/competition/images/Citymall.svg" />
+    </div>
+    <div class="col-md-10 offset-md-1 mt-5">
+        <div class="row">
+            <div class="col-md-4 animated zoomIn">
+                <span class="h2 h2-responsive d-flex justify-content-center text-center">@Localizer["CityMallTeam"]</span>
+                <div class="row mt-5">
+                    @{
+                        var CityMallplayer = Model.TeamCityMall.Where(a => a.IsVSPlayer).SingleOrDefault();
+                        string points = CityMallplayer.Points == 0 || CityMallplayer.Points > 2 && CityMallplayer.Points < 11 ? Localizer["Points"].Value :
+                        CityMallplayer.Points == 2 ? Localizer["TwoPoint"].Value : Localizer["Point"].Value;
+                    }
+                    <div class="col-md-12 cityMallPlayers" data-player-Id="@CityMallplayer.Id" style="cursor:pointer">
+                        <div class="d-flex justify-content-center">
+                            <img src="~/assets/competition/images/player.svg" style="width:100%" />
+                        </div>
+                        <div class="h4 h4-responsive text-center mt-3 player-name">
+                            @CityMallplayer.Name
+                        </div>
+                        <div class=" d-flex justify-content-center mt-2">
+                            <div class="py-2 px-3 text-center rounded-pill background-accent-color h6 h6-responsive" style="width:fit-content; direction:rtl;">
+                                @CityMallplayer.Points @points
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 d-flex align-items-center justify-content-center">
+                <img src="~/assets/competition/images/VS.svg" id="img-goTo-category" style="cursor:pointer" />
+            </div>
+            <div class="animated zoomIn col-md-4">
+                <div>
+                    <span class="h2 h2-responsive d-flex justify-content-center text-center white-color">@Localizer["VisitorsTeam"]</span>
+                    <div class="row mt-5">
+                        @{
+                            var Otherplayer = Model.OtherTeam.Where(a => a.IsVSPlayer).SingleOrDefault();
+                            string OtherPlayerpoints = Otherplayer.Points == 0 || Otherplayer.Points > 2 && Otherplayer.Points < 11 ? Localizer["Points"].Value :
+                            Otherplayer.Points == 2 ? Localizer["TwoPoint"].Value : Localizer["Point"].Value;
+                        }
+                        <div class="col-md-12 OtherPlayers" data-player-Id="@Otherplayer.Id" style="cursor:pointer">
+                            <div class="d-flex justify-content-center">
+                                <img src="~/assets/competition/images/player.svg" style="width:100%" />
+                            </div>
+                            <div class="h4 h4-responsive text-center mt-3 white-color player-name">
+                                @Otherplayer.Name
+                            </div>
+                            <div class=" d-flex justify-content-center mt-2">
+                                <div class="py-2 px-3 text-center rounded-pill background-accent-color h6 h6-responsive" style="width: fit-content; direction: rtl;">
+                                    @Otherplayer.Points @points
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    playersInCompetition.CityMallPlayer = '';
+    playersInCompetition.OtherPlayer = '';
+</script>
