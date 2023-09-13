@@ -22,4 +22,8 @@
     <ProjectReference Include="..\CMC.Kernel.Infrastructure.Caching\CMC.Kernel.Infrastructure.Caching.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Repositories\Identities\" />
+  </ItemGroup>
+
 </Project>

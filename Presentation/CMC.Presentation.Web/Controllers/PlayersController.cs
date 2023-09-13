@@ -1,5 +1,7 @@
-﻿using CMC.Kernel.Core.Controllers;
+﻿using CMC.Kernel.Core.Constants;
+using CMC.Kernel.Core.Controllers;
 using CMC.Kernel.Core.Infrastructure;
+using CMC.Presentation.Application.ActionFilters;
 using CMC.Presentation.Application.DTOs.Players;
 using CMC.Presentation.Application.DTOs.Questions;
 using CMC.Presentation.Application.Services.Players;
@@ -28,6 +30,8 @@ namespace CMC.Presentation.Web.Controllers
             _localizer = localizer;
             _settingService = settingsService;
         }
+
+        //[RolePermission(PermissionCodes.WebPlayerView)]
 
         public IActionResult Index()
         {

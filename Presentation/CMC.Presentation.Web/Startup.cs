@@ -45,8 +45,8 @@ namespace CMC.Presentation.Web
                 endpoints.MapRazorPages();
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}",
-                    defaults: new { controller = "Home", action = "Index" });
+                    pattern: "{controller=Users}/{action=Login}/{id?}",
+                    defaults: new { controller = "Users", action = "Login" });
             });
         }
 
@@ -55,11 +55,13 @@ namespace CMC.Presentation.Web
         {
             //Mapping User
             config.CreateMap<UserDTO, User>()
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => !string.IsNullOrEmpty(src.Name) ? Security.Encrypt(src.Name) : src.Name))
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => !string.IsNullOrEmpty(src.UserName) ? Security.Encrypt(src.UserName) : src.UserName))
                 .ForMember(dest => dest.EmailAddress, opt => opt.MapFrom(src => !string.IsNullOrEmpty(src.EmailAddress) ? Security.Encrypt(src.EmailAddress) : src.EmailAddress))
                 .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => !string.IsNullOrEmpty(src.PhoneNumber) ? Security.Encrypt(src.PhoneNumber) : src.PhoneNumber))
                 .ForMember(dest => dest.CreatedOn, opt => opt.MapFrom(src => DateTime.Now))
                 .ReverseMap()
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => !string.IsNullOrEmpty(src.Name) ? Security.Decrypt(src.Name) : src.Name))
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => !string.IsNullOrEmpty(src.UserName) ? Security.Decrypt(src.UserName) : src.UserName))
                 .ForMember(dest => dest.EmailAddress, opt => opt.MapFrom(src => !string.IsNullOrEmpty(src.EmailAddress) ? Security.Decrypt(src.EmailAddress) : src.EmailAddress))
                 .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => !string.IsNullOrEmpty(src.PhoneNumber) ? Security.Decrypt(src.PhoneNumber) : src.PhoneNumber));

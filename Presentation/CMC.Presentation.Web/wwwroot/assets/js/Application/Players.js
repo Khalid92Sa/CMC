@@ -146,7 +146,6 @@ var Players = {
             confirmButtonText: globalResources.Delete,
             cancelButtonText: globalResources.Cancel,
         }).then((result) => {
-            debugger;
             if (result.isConfirmed) {
                 $.ajax({
                     type: 'DELETE',

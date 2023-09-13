@@ -3,7 +3,12 @@
 @using System.Globalization;
 @using System.Threading
 @using CMC.Kernel.Core.Constants
+@using CMC.Presentation.Application.DTOs.Identity
+@using Newtonsoft.Json
+
+
 @inject IHttpContextAccessor HttpContextAccessor
+
 
 @{
     bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
@@ -11,6 +16,8 @@
     string direction = IsAr ? "dir=rtl" : "";
     string baseURL = $"{Context.Request.Scheme}://{Context.Request.Host}/";
     ViewBag.Title = Localizer["LayoutTitle"].Value;
+    UserDTO userInfoDTO = HttpContextAccessor.HttpContext.Session.GetString("UserInfoDTO") != null ?
+        JsonConvert.DeserializeObject<UserDTO>(HttpContextAccessor.HttpContext.Session.GetString("UserInfoDTO")) : null;
 }
 
 
@@ -40,7 +47,7 @@
     {
         //English Styles
         <link type="text/css" rel="stylesheet" href="~/assets/shared/select2/css/select2.min.css" />
-         <link type="text/css" rel="stylesheet" href="~/assets/js/calender/jquery.calendars.picker.css" />
+        <link type="text/css" rel="stylesheet" href="~/assets/js/calender/jquery.calendars.picker.css" />
         <link type="text/css" rel="stylesheet" href="~/assets/shared/bootstrap/css/bootstrap.min.css" />
         <link type="text/css" rel="stylesheet" href="~/assets/shared/MDB-Free_4.8.0/css/mdb.min.css" />
         <link type="text/css" rel="stylesheet" href="~/assets/shared/MDB-Free_4.8.0/css/addons/datatables.min.css">
@@ -50,7 +57,13 @@
         <link type="text/css" rel="stylesheet" href="~/assets/css/main.css" />
     }
 
-    <link type="text/css" rel="stylesheet" href="~/assets/shared/sweetalert2/sweetalert2.min.css"/>
+    <script>
+        var generalSettings = {
+            pageSize: '@PaginationSettings.PageSize',
+            BaseURL: '@baseURL'
+        };
+    </script>
+    <link type="text/css" rel="stylesheet" href="~/assets/shared/sweetalert2/sweetalert2.min.css" />
 
     <script type="text/javascript" src="~/assets/js/jquery-3.5.1.min.js"></script>
     <script type="text/javascript" src="~/assets/js/utils.js"></script>
@@ -77,7 +90,7 @@
         <script type="text/javascript" src="~/assets/js/calender/jquery.calendars.ummalqura-en.js"></script>
     }
 
-    
+
     <script type="text/javascript" src="~/assets/js/jquery.validate.min.js"></script>
     <script type="text/javascript" src="~/assets/js/jquery.validate.unobtrusive.min.js"></script>
     <!--SignalR-->
@@ -89,7 +102,7 @@
     <script type="text/javascript" src="~/assets/js/helper/apihelper.js"></script>
     <script type="text/javascript" src="~/assets/js/helper/grid.js"></script>
     <script type="text/javascript" src="~/assets/js/Application/GeneralClass.js"></script>
-    <script type="text/javascript" src="~/assets/js/Application/Login.js"></script>
+    <script type="text/javascript" src="~/assets/js/Application/Users.js"></script>
 
     <style>
         .input-validation-error {
@@ -115,33 +128,6 @@
             </a>
             <div class="d-flex">
                 <ul class="navbar-nav align-items-center justify-content-sm-end justify-content-md-end d-flex d-lg-none">
-                    <li class="nav-item" id="notification_li">
-                        <div class="dropdown d-inline-flex notifications">
-                            <a class="h6 nav-link pl-3 mb-0 grey-color text-dark-grey" href="#" id="notifications" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="far fa-bell"></i>
-                                @*@if (!string.IsNullOrEmpty(notificationCount))
-                                {
-                                <div id="notificationCountStyle" class="position-absolute text-white bg-danger rounded-circle d-flex align-items-center justify-content-center notify-badge font-weight-bold">
-                                <span id="notificationCountSpan">@(notificationCount)</span>
-                                </div>
-                                }*@
-                            </a>
-                            <div class="dropdown-menu" id="notificationsBody" aria-labelledby="notifications">
-                                <div id="notificationsBodyItems">
-                                    @*@foreach (var alert in alerts)
-                                    {
-                                    <a class="dropdown-item py-2" href="#" onclick="javascript: gotoLocation(event, '@(alert.URL)', @(alert.Id))">
-                                    <span class="alert-date small d-block">@alert.CreatedOn.ToString("dd/MM/yyyy hh:mm tt")</span>
-                                    <span class="notificatin-text">
-                                    @alert.MessageAr
-                                    </span>
-                                    </a>
-                                    }*@
-                                </div>
-                                <div id="notificationFooter" class="border-top pt-2"><a class='dropdown-item text-center' href="@Url.Action("Index", "NotificationsManagement")"><span>@Localizer["Common_ShowAll"]</span></a></div>
-                            </div>
-                        </div>
-                    </li>
                     <li class="nav-item">
                         <partial name="../Shared/_Language.cshtml" />
                     </li>
@@ -155,50 +141,22 @@
                 <div class="row py-3 d-flex justify-content-center">
                     <div class="col-12 border-bottom d-flex justify-content-lg-start">
                         <ul class="navbar-nav align-items-center align-items-md-center justify-content-sm-center justify-content-md-start">
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">
-                                    @Localizer["Menu_Hello"] <span class="TextHighlight font-weight-bold primary-color">
-                                        @ViewBag.UserFullNameTopBar
-                                    </span> !
-                                </a>
-                            </li>
-
-                            <li class="nav-item d-none d-lg-flex" id="notification_li">
-                                <div class="dropdown d-inline-flex notifications">
-                                    <a class="h6 nav-link mb-0 grey-color text-dark-grey" href="#" id="notifications" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <i class="far fa-bell"></i>
-                                        @* @if (!string.IsNullOrEmpty(notificationCount))
-                                        {
-                                        <div id="notificationCountStyle" class="position-absolute text-white bg-danger rounded-circle d-flex align-items-center justify-content-center notify-badge font-weight-bold">
-                                        <span id="notificationCountSpan">@(notificationCount)</span>
-                                        </div>
-                                        }*@
+                            @if (userInfoDTO != null)
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#">
+                                        @Localizer["Menu_Hello"] <span class="TextHighlight font-weight-bold primary-color">
+                                            @userInfoDTO.Name
+                                        </span> !
                                     </a>
-                                    <div class="dropdown-menu" id="notificationsBody" aria-labelledby="notifications">
-                                        <div id="notificationsBodyItems">
-                                            @* @foreach (var alert in alerts)
-                                            {
-                                            <a class="dropdown-item py-2" href="#" onclick="javascript: gotoLocation(event, '@(alert.URL)', @(alert.Id))">
-                                            <span class="alert-date small d-block">@alert.CreatedOn.ToString("dd/MM/yyyy hh:mm tt")</span>
-                                            <span class="notificatin-text">
-                                            @alert.MessageAr
-                                            </span>
-                                            </a>
-                                            }*@
-                                        </div>
-                                        @* <div id="notificationFooter" class="border-top pt-2"><a class='dropdown-item text-center' href="@Url.Action("Index", "NotificationsManagement")"><span>@ResourceManager.FindResource("Common_ShowAll")</span></a></div>*@
-                                    </div>
-                                </div>
-                            </li>
+                                </li>
+                            }
+
                             <li class="nav-item d-none d-lg-flex">
-                                @* @if (Request.LogonUserIdentity.IsAuthenticated)
+                                @if (userInfoDTO != null && !string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("UserId")))
                                 {
-                                using (Html.BeginForm("Logout", "Logout", new { pageName = "Admin" }, FormMethod.Post, new { id = "logoutForm" }))
-                                {
-                                @Html.AntiForgeryToken()
-                                <a class="nav-link" href="javascript:document.getElementById('logoutForm').submit()">@ResourceManager.FindResource("Menu_Logout")</a>
+                                    <a class="nav-link" href="@Url.Action("Logout","Users")">@Localizer["Logout"]</a>
                                 }
-                                }*@
                             </li>
                             <li class="nav-item d-none d-lg-flex">
                                 <partial name="../Shared/_Language.cshtml" />
@@ -210,22 +168,30 @@
                             <li>
                                 <a href="@(Url.Action("Index" , "Home"))" id="lnkMainPage" class="nav-link"><i class="fas fa-home"></i>@Localizer["Menu_MainPage"]</a>
                             </li>
+                            @if (userInfoDTO.PermissionCodes.Contains(PermissionCodes.SystemSettings) || userInfoDTO.PermissionCodes.Contains(PermissionCodes.WebUsersView))
+                            {
+                                <li>
+                                    <a class="nav-link dropdown-toggle collapsed" id="lnkSystemMangement" href="#SystemMangement" data-toggle="collapse" aria-expanded="false">
+                                        <i class="fas fa-cog"></i> @Localizer["Menu_SystemManagement"]
+                                    </a>
+                                    <ul class="list-unstyled collapse" id="SystemMangement">
+                                        @if (userInfoDTO.PermissionCodes.Contains(PermissionCodes.WebUsersView))
+                                        {
+                                            <li>
+                                                <a class="nav-link text-primary pl-5" id="lnkUsers" href="@Url.Action("Index", "Users")">@Localizer["Menu_UsersAccountsManagement"]</a>
+                                            </li>
+                                        }
+                                        @if (userInfoDTO.PermissionCodes.Contains(PermissionCodes.SystemSettings))
+                                        {
+                                            <li>
+                                                <a class="nav-link text-primary pl-5" id="lnkSettings" href="@Url.Action("Index", "Settings")">@Localizer["Menu_Settings"]</a>
+                                            </li>
+                                        }
+                                    </ul>
+                                </li>
+                            }
                             <li>
-                                <a class="nav-link dropdown-toggle collapsed" id="lnkSystemMangement" href="#SystemMangement" data-toggle="collapse" aria-expanded="false">
-                                    <i class="fas fa-cog"></i> @Localizer["Menu_SystemManagement"]
-                                </a>
-                                <ul class="list-unstyled collapse" id="SystemMangement">
-                                    <li>
-                                        <a class="nav-link text-primary pl-5" id="lnkUsers" href="@Url.Action("Index", "Users")">@Localizer["Menu_UsersAccountsManagement"]</a>
-                                    </li>
-
-                                    <li>
-                                        <a class="nav-link text-primary pl-5" id="lnkSettings" href="@Url.Action("Index", "Settings")">@Localizer["Menu_Settings"]</a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li>
-                                <a href="@(Url.Action("Index" , "Home"))" id="lnkCompetitions" class="nav-link"><i class="fas fa-home"></i>@Localizer["Competitions"]</a>
+                                <a href="@(Url.Action("Index" , "Competitions"))" id="lnkCompetitions" class="nav-link"><i class="fas fa-home"></i>@Localizer["Competitions"]</a>
                             </li>
                             <li>
                                 <a class="nav-link dropdown-toggle collapsed" id="lnkQuestions" href="#Questions" data-toggle="collapse" aria-expanded="false">
@@ -245,17 +211,9 @@
                                 <a href="@(Url.Action("Index" , "Players"))" id="lnkPlayers" class="nav-link"><i class="fas fa-users"></i>@Localizer["Players"]</a>
                             </li>
 
-                            <li class="mt-2 border-top nav-item d-flex">
-                                @* @if (Request.LogonUserIdentity.IsAuthenticated)
-                                {
-                                using (Html.BeginForm("Logout", "Logout", new { pageName = "Admin" }, FormMethod.Post, new { id = "logoutForm" }))
-                                {
-                                @Html.AntiForgeryToken()
-                                <a class="nav-link" href="javascript:document.getElementById('logoutForm').submit()">@ResourceManager.FindResource("Menu_Logout")</a>
-                                }
-                                }*@
-                                <a href="@(Url.Action("Logout" , "Profile"))" id="lnkLogout" class="nav-link"><i class="fas fa-home"></i>@Localizer["Logout"]</a>
-                            </li>
+                          @*  <li class="mt-2 border-top nav-item d-flex">
+                                <a href="@(Url.Action("Logout" , "Users"))" id="lnkLogout" class="nav-link"><i class="fas fa-home"></i>@Localizer["Logout"]</a>
+                            </li>*@
                         </ul>
                     </div>
                 </div>
@@ -270,22 +228,30 @@
                     <li>
                         <a href="@(Url.Action("Index" , "Home"))" id="lnkMainPage2" class="nav-link"><i class="fas fa-home"></i>@Localizer["Menu_MainPage"]</a>
                     </li>
+                    @if (userInfoDTO.PermissionCodes.Contains(PermissionCodes.SystemSettings) || userInfoDTO.PermissionCodes.Contains(PermissionCodes.WebUsersView))
+                    {
+                        <li>
+                            <a class="nav-link dropdown-toggle collapsed" id="lnkSystemMangement2" href="#SystemMangement" data-toggle="collapse" aria-expanded="false">
+                                <i class="fas fa-cog"></i> @Localizer["Menu_SystemManagement"]
+                            </a>
+                            <ul class="list-unstyled collapse" id="SystemMangement">
+                                @if (userInfoDTO.PermissionCodes.Contains(PermissionCodes.WebUsersView))
+                                {
+                                    <li>
+                                        <a class="nav-link text-primary pl-5" id="lnkUsers2" href="@Url.Action("Index", "Users")">@Localizer["Menu_UsersAccountsManagement"]</a>
+                                    </li>
+                                }
+                                @if (userInfoDTO.PermissionCodes.Contains(PermissionCodes.SystemSettings))
+                                {
+                                    <li>
+                                        <a class="nav-link text-primary pl-5" id="lnkSettings2" href="@Url.Action("Index", "Settings")">@Localizer["Menu_Settings"]</a>
+                                    </li>
+                                }
+                            </ul>
+                        </li>
+                    }
                     <li>
-                        <a class="nav-link dropdown-toggle collapsed" id="lnkSystemMangement2" href="#SystemMangement" data-toggle="collapse" aria-expanded="false">
-                            <i class="fas fa-cog"></i> @Localizer["Menu_SystemManagement"]
-                        </a>
-                        <ul class="list-unstyled collapse" id="SystemMangement">
-                            <li>
-                                <a class="nav-link text-primary pl-5" id="lnkUsers2" href="@Url.Action("Index", "Users")">@Localizer["Menu_UsersAccountsManagement"]</a>
-                            </li>
-
-                            <li>
-                                <a class="nav-link text-primary pl-5" id="lnkSettings2" href="@Url.Action("Index", "Settings")">@Localizer["Menu_Settings"]</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="@(Url.Action("Index" , "Home"))" id="lnkCompetitions2" class="nav-link"><i class="fas fa-home"></i>@Localizer["Competitions"]</a>
+                        <a href="@(Url.Action("Index" , "Competitions"))" id="lnkCompetitions2" class="nav-link"><i class="fas fa-home"></i>@Localizer["Competitions"]</a>
                     </li>
                     <li>
                         <a class="nav-link dropdown-toggle collapsed" id="lnkQuestions2" href="#Questions" data-toggle="collapse" aria-expanded="false">
@@ -305,17 +271,9 @@
                         <a href="@(Url.Action("Index" , "Players"))" id="lnkPlayers2" class="nav-link"><i class="fas fa-users"></i>@Localizer["Players"]</a>
                     </li>
 
-                    <li class="mt-2 border-top nav-item d-flex">
-                        @* @if (Request.LogonUserIdentity.IsAuthenticated)
-                        {
-                        using (Html.BeginForm("Logout", "Logout", new { pageName = "Admin" }, FormMethod.Post, new { id = "logoutForm" }))
-                        {
-                        @Html.AntiForgeryToken()
-                        <a class="nav-link" href="javascript:document.getElementById('logoutForm').submit()">@ResourceManager.FindResource("Menu_Logout")</a>
-                        }
-                        }*@
-                        <a href="@(Url.Action("Logout" , "Profile"))" id="lnkLogout2" class="nav-link"><i class="fas fa-home"></i>@Localizer["Logout"]</a>
-                    </li>
+                    @*<li class="mt-2 border-top nav-item d-flex">
+                        <a href="@(Url.Action("Logout" , "Users"))" id="lnkLogout2" class="nav-link"><i class="fas fa-home"></i>@Localizer["Logout"]</a>
+                    </li>*@
                 </ul>
                 <!--/ side menu-->
             </div>
@@ -339,28 +297,35 @@
     </div>
 
     <script>
-        var generalSettings = {
-            pageSize: '@PaginationSettings.PageSize',
-            BaseURL: '@baseURL'
-        };
         var userLang = '@IsAr' == 'True' ? 'ar' : 'en';
         var IsArabic = '@IsAr' == 'True';
         var publicURls = {
             setCulture: '@Url.Action("SetCulture","Home")',
-            logout: '@Url.Action("Logout","Profile")',
+            //Users-Profile
+            logout: '@Url.Action("Logout","Users")',
+            UsersList: '@Url.Action("Index","Users")',
+            AddUser: '@Url.Action("AddUser","Users")',
+            DeleteUser: '@Url.Action("DeleteUser","Users")',
+
             //Categories
             Categories: '@Url.Action("Index","Questions")',
             AddCategory: '@Url.Action("AddCategory","Questions")',
-            DeleteCategory:'@Url.Action("DeleteCategory","Questions")',
-            DeleteCurrentCategoryImg:'@Url.Action("DeleteExistingImg","Questions")',
+            DeleteCategory: '@Url.Action("DeleteCategory","Questions")',
+            DeleteCurrentCategoryImg: '@Url.Action("DeleteExistingImg","Questions")',
             //Questions
             AddNewQuestion: '@Url.Action("AddQuestion","Questions")',
             GetQuestions: '@Url.Action("GetAllQuestions","Questions")',
             DeleteQuestion: '@Url.Action("DeleteQuestion","Questions")',
             //Players
-            PlayerList:'@Url.Action("Index","Players")',
-            AddNewPlayer:'@Url.Action("CreatePlayer","Players")',
+            PlayerList: '@Url.Action("Index","Players")',
+            AddNewPlayer: '@Url.Action("CreatePlayer","Players")',
             DeletePlayer: '@Url.Action("DeletePlayer","Players")',
+
+            //Competitions
+            CompetitionList:'@Url.Action("Index","Competitions")',
+            CreateNewCompetition: '@Url.Action("CreateCompetition","Competitions")',
+            DeleteCompetition:'@Url.Action("DeleteCompetition","Competitions")',
+            StartCompetition:'@Url.Action("StartCompetition","Competitions")',
         };
 
         var globalResources = {
@@ -370,15 +335,15 @@
             ChooseImg: '@Localizer["ChooseImg"]',
             InvalidAttachmentImg: '@Localizer["Message_InvalidImageAttachment"]',
             ErrorOccurred: '@Localizer["ErrorOccurred"]',
-            Actions:'@Localizer["Actions"]',
-            Yes:'@Localizer["Common_Yes"]',
+            Actions: '@Localizer["Actions"]',
+            Yes: '@Localizer["Common_Yes"]',
             No: '@Localizer["Common_No"]',
 
-            
+
             //Buttons
             Delete: '@Localizer["Delete"]',
             Edit: '@Localizer["Edit"]',
-            Cancel:'@Localizer["Cancel"]',
+            Cancel: '@Localizer["Cancel"]',
 
 
             //DataTable
@@ -389,12 +354,16 @@
             Previous: '@Localizer["Previous"]',
             Next: '@Localizer["Next"]',
             Last: '@Localizer["Last"]',
-            
+
+            //Users
+            Alert_DeleteUser: '@Localizer["Alert_DeleteUser"]',
+
+
             //Category
-            Alert_DeleteCategory:'@Localizer["Alert_DeleteCategory"]',
-            Alert_DeleteCategory_Text:'@Localizer["Alert_DeleteCategory_Text"]',
-            Alert_Btn_DeleteOnlyCategory:'@Localizer["Alert_Btn_DeleteOnlyCategory"]',
-            Alert_Btn_DeleteCategoryWithQuestion:'@Localizer["Alert_Btn_DeleteCategoryWithQuestion"]',
+            Alert_DeleteCategory: '@Localizer["Alert_DeleteCategory"]',
+            Alert_DeleteCategory_Text: '@Localizer["Alert_DeleteCategory_Text"]',
+            Alert_Btn_DeleteOnlyCategory: '@Localizer["Alert_Btn_DeleteOnlyCategory"]',
+            Alert_Btn_DeleteCategoryWithQuestion: '@Localizer["Alert_Btn_DeleteCategoryWithQuestion"]',
             Alert_DeleteQuestion: '@Localizer["Alert_DeleteQuestion"]',
 
 
@@ -405,11 +374,16 @@
             QuestionText: '@Localizer["QuestionText"]',
             QuestionTimer: '@Localizer["QuestionTimer"]',
             QuestionPoints: '@Localizer["QuestionPoint"]',
-            PleaseAddTwoOptions:'@Localizer["PleaseAddTwoOptionsAtLeast"]',
-            OptionRequired:'@Localizer["OptionRequired"]',
+            PleaseAddTwoOptions: '@Localizer["PleaseAddTwoOptionsAtLeast"]',
+            OptionRequired: '@Localizer["OptionRequired"]',
 
             //Players
-            Alert_DeletePlayer:'@Localizer["Alert_DeletePlayer"]'
+            Alert_DeletePlayer: '@Localizer["Alert_DeletePlayer"]',
+
+
+            //Competitons
+            Alert_DeleteCompetition: '@Localizer["Alert_DeleteCompetition"]',
+            StartCompetition:'@Localizer["StartCompetition"]',
         };
     </script>
 </body>

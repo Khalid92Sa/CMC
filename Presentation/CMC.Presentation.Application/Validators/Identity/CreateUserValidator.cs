@@ -15,22 +15,24 @@ namespace CMC.Presentation.Application.Validators.Identity
         {
             //Name
             RuleFor(a => a.Name).NotNull().WithMessage(localizer["FieldRequired"]);
-            
+
             //UserName
-            RuleFor(a => a.UserName).NotNull().WithMessage(localizer["FieldRequired"]);
+            When(a => !a.Id.HasValue, () =>
+            {
+                //Only in create user
+                RuleFor(a => a.UserName).NotNull().WithMessage(localizer["FieldRequired"]);
+            });
             
             //Email
             RuleFor(a => a.EmailAddress).NotNull().WithMessage(localizer["FieldRequired"])
-                .Matches(RegularExpressionsValidator.EmailAddress).WithMessage("EmailAddressInvalid")
+                .Matches(RegularExpressionsValidator.EmailAddress).WithMessage(localizer["EmailAddressInvalid"])
                 .MaximumLength(60).WithMessage(String.Format(localizer["FieldMaximumLength"], 60));
             
             //PhoneNumber
             RuleFor(a => a.PhoneNumber).NotNull().WithMessage(localizer["FieldRequired"]);
-            
-            //Roles
-            RuleFor(a => a.Roles)
-            .Must(roles => roles != null && roles.Count > 0 && roles.All(role => role.Id != 0))
-            .WithMessage(localizer["FieldRequired"]);
+
+            //Group
+            RuleFor(a => a.GroupId).NotNull().WithMessage(localizer["FieldRequired"]);
         }
     }
 }

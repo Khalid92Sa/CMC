@@ -1103,11 +1103,13 @@ D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Host.Base\bin\Debug\netcoreapp3.1\CMC.
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Host.Base\bin\Debug\netcoreapp3.1\CMC.Kernel.Infrastructure.Caching.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Host.Base\bin\Debug\netcoreapp3.1\CMC.Kernel.Infrastructure.Logging.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Host.Base\bin\Debug\netcoreapp3.1\CMC.Kernel.Infrastructure.Persistence.dll
+D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Host.Base\bin\Debug\netcoreapp3.1\CMC.Presentation.Domain.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Host.Base\bin\Debug\netcoreapp3.1\CMC.Kernel.Core.pdb
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Host.Base\bin\Debug\netcoreapp3.1\CMC.Kernel.Infrastructure.Logging.pdb
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Host.Base\bin\Debug\netcoreapp3.1\CMC.Kernel.Domain.pdb
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Host.Base\bin\Debug\netcoreapp3.1\CMC.Kernel.Infrastructure.Caching.pdb
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Host.Base\bin\Debug\netcoreapp3.1\CMC.Kernel.Infrastructure.Persistence.pdb
+D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Host.Base\bin\Debug\netcoreapp3.1\CMC.Presentation.Domain.pdb
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Host.Base\obj\Debug\netcoreapp3.1\CMC.Kernel.Host.Base.csproj.AssemblyReference.cache
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Host.Base\obj\Debug\netcoreapp3.1\CMC.Kernel.Host.Base.GeneratedMSBuildEditorConfig.editorconfig
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Host.Base\obj\Debug\netcoreapp3.1\CMC.Kernel.Host.Base.AssemblyInfoInputs.cache
@@ -1116,5 +1118,3 @@ D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Host.Base\obj\Debug\netcoreapp3.1\CMC.
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Host.Base\obj\Debug\netcoreapp3.1\CMC.Kernel.Host.Base.csproj.CopyComplete
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Host.Base\obj\Debug\netcoreapp3.1\CMC.Kernel.Host.Base.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Host.Base\obj\Debug\netcoreapp3.1\CMC.Kernel.Host.Base.pdb
-D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Host.Base\bin\Debug\netcoreapp3.1\CMC.Presentation.Domain.dll
-D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Host.Base\bin\Debug\netcoreapp3.1\CMC.Presentation.Domain.pdb

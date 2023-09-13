@@ -122,14 +122,20 @@ namespace CMC.Presentation.Application.Services.Questions
 
                 //Resize image in case image too large
                 string filePath = null;
-                byte[] resizedImageBytes = null;
-                if (categoryDTO.Img!=null && categoryDTO.Img.Length > 0)
+                if (categoryDTO.Img != null && categoryDTO.Img.Length > 0)
                 {
-
-                    resizedImageBytes = ImageProcessing.GetImageBytes(categoryDTO.Img);
-                    var imageName = Guid.NewGuid().ToString() + Path.GetExtension(categoryDTO.Img.FileName);
-                    var imagePath = Path.Combine(_env.WebRootPath, "assets", "images", "categories");
-                    filePath = Path.Combine(imagePath, imageName);
+                    using (var stream = categoryDTO.Img.OpenReadStream())
+                    {
+                        var imageName = Guid.NewGuid().ToString() + Path.GetExtension(categoryDTO.Img.FileName);
+                        var imagePath = Path.Combine(_env.WebRootPath, "assets", "images", "categories");
+                        filePath = Path.Combine(imagePath, imageName);
+                        
+                        using (var fileStream = new FileStream(filePath, FileMode.Create))
+                        {
+                            stream.CopyTo(fileStream);
+                        }
+                        imageToDeleteIfExist = filePath = $"\\{filePath.Substring(filePath.IndexOf("assets"))}";
+                    }
                 }
                 else
                     filePath = await _settingsService.GetValue<string>(SystemSettings.DefaultCategoryImgPath);
@@ -144,7 +150,7 @@ namespace CMC.Presentation.Application.Services.Questions
                         category.Id = lookup.Id;
                         category.NameEn = categoryDTO.NameEn;
                         category.NameAr = categoryDTO.NameAr;
-                        if (!string.IsNullOrEmpty(filePath) && resizedImageBytes != null)
+                        if (!string.IsNullOrEmpty(filePath))
                         {
                             //Means user update new image
                             if (!string.IsNullOrEmpty(lookup.Img) && !lookup.Img.Contains("default"))
@@ -155,7 +161,6 @@ namespace CMC.Presentation.Application.Services.Questions
                                     System.IO.File.Delete(imagePathToDelete);
                             }
 
-                            File.WriteAllBytes(filePath, resizedImageBytes);
                             filePath = $"\\{filePath.Substring(filePath.IndexOf("assets"))}";
                             imageToDeleteIfExist = filePath;
                         }
@@ -171,9 +176,6 @@ namespace CMC.Presentation.Application.Services.Questions
                 {
                     // Create new Category
                     var questionsCategoryLookup = await _lookupCategoryRepository.GetCategoryId(LookupTypes.QuestionsCategory);
-                    
-                    if (!string.IsNullOrEmpty(filePath) && resizedImageBytes != null)
-                        File.WriteAllBytes(filePath, resizedImageBytes);
 
                     imageToDeleteIfExist = filePath = $"\\{filePath.Substring(filePath.IndexOf("assets"))}";
 

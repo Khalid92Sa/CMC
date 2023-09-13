@@ -30,8 +30,6 @@
     @if (IsAr)
     {
         <!-- CSS -->
-        @*<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/css/select2.min.css" rel="stylesheet" />*@
-        <link type="text/css" rel="stylesheet" href="~/assets/shared/select2/select2.min.rtl.css" />
         <link type="text/css" rel="stylesheet" href="~/assets/shared/bootstrap/css/bootstrap.min.rtl.css" />
         <link type="text/css" rel="stylesheet" href="~/assets/shared/MDB-Free_4.8.0/css/mdb.min.rtl.css" />
         <link type="text/css" rel="stylesheet" href="~/assets/shared/MDB-Free_4.8.0/css/addons/datatables.min.rtl.css">
@@ -41,8 +39,6 @@
     else
     {
         <!-- CSS -->
-        @*<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/css/select2.min.css" rel="stylesheet" />*@
-        <link type="text/css" rel="stylesheet" href="~/assets/shared/select2/select2.min.css" />
         <link type="text/css" rel="stylesheet" href="~/assets/shared/bootstrap/css/bootstrap.min.css" />
         <link type="text/css" rel="stylesheet" href="~/assets/shared/MDB-Free_4.8.0/css/mdb.min.css" />
         <link type="text/css" rel="stylesheet" href="~/assets/shared/MDB-Free_4.8.0/css/addons/datatables.min.css">
@@ -59,9 +55,14 @@
     <script type="text/javascript" src="~/assets/shared/font-awesome-5.1/js/all.min.js"></script>
     <script type="text/javascript" src="~/assets/js/scripts.js"></script>
     <script type="text/javascript" src="~/assets/js/autologout.js"></script>
-
+    <script>
+        var generalSettings = {
+            pageSize: '@PaginationSettings.PageSize',
+            BaseURL: '@baseURL'
+        };
+    </script>
     <script type="text/javascript" src="~/assets/js/Application/GeneralClass.js"></script>
-    <script type="text/javascript" src="~/assets/js/Application/Login.js"></script>
+    <script type="text/javascript" src="~/assets/js/Application/Users.js"></script>
 
     <style>
         .input-validation-error {
@@ -109,6 +110,7 @@
         background: rgb(59, 132, 92); justify-content: center; align-items: center;">
         <img src="~/assets/images/spinner-transparent.gif" style="display: block; margin-left: auto; margin-right: auto; width: 111px;">
     </div>
+    
 </body>
 </html>
 

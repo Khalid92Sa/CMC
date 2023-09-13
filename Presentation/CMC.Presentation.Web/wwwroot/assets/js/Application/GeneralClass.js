@@ -7,7 +7,7 @@
 };
 
 var GeneralClass = {
-    pageSize: 10,
+    pageSize: generalSettings.pageSize,
     showLoading: function () {
         //$('#wait_overlay').show();
         $("#loading").css("display", "flex");
@@ -220,18 +220,6 @@ var GeneralClass = {
         $(subMenu).click();
         $(item).addClass('active').siblings().removeClass('active');
     },
-    AlertMessage: function (msg, title, type) {
-        $.notify({
-            title: title,
-            message: msg,
-            target: "_blank",
-        }, {
-            element: 'body',
-            type: type,
-            delay: 500,
-            timer: 1500,
-        });
-    },
     SweetAlert: function (msg, title, type, url) {
         Swal.fire({
             title: title,
@@ -259,7 +247,32 @@ var GeneralClass = {
         setTimeout(function () {
             $alert.hide("slow").data("active", false);
         }, 5000);
+    },
+    InitalizeDatePicker: function (txtDateId,minDate) {
+        $(function () {
+            var calendarG = $.calendars.umElQuraInstance("Gregorian", "ar-EG");
+            var options = {
+                calendar: calendarG,
+                dateFormat: 'yyyy/mm/dd',
+                monthsToShow: [1, 1],
+                showOtherMonths: true
+            };
+            if (minDate !== undefined) {
+                options.minDate = minDate;
+            }
+
+
+            //$('#' + txtDateId).calendarsPicker({
+            //    calendar: calendarG,
+            //    dateFormat: 'yyyy/mm/dd',
+            //    //yearRange: '1912:2029',
+            //    monthsToShow: [1, 1], showOtherMonths: true
+            //});
+            $('#' + txtDateId).calendarsPicker(options);
+            $('#' + txtDateId).keypress(function () { return false; });
+        });
     }
+
 }
 
 

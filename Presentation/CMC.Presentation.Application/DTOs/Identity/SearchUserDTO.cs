@@ -8,8 +8,7 @@ namespace CMC.Presentation.Application.DTOs.Identity
     public class SearchUserDTO : PagedRequest
     {
         public string Name { get; set; }
-        public string Email { get; set; }
-        public string RoleName { get; set; }
-        public int? RoleId { get; set; }
+        public string PhoneNumber { get; set; }
+        public int? GroupId { get; set; }
     }
 }

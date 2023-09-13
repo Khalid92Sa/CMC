@@ -1,0 +1,31 @@
+// Fonts
+// Arabic Font
+@font-face {
+    font-family: 'CoText_Trial_Lt';
+    src: url("../fonts/CoText_Trial_Lt.eot");
+    src: url("../fonts/CoText_Trial_Lt.eot") format("embedded-opentype"), url("../fonts/CoText_Trial_Lt.woff2") format("woff2"), url("../fonts/CoText_Trial_Lt.woff") format("woff"), url("../fonts/CoText_Trial_Lt.ttf") format("truetype"), url("../fonts/CoText_Trial_Lt.svg#CoText_Trial_Lt") format("svg"); }
+  
+  @font-face {
+    font-family: 'CoText_Trial_Rg';
+    src: url("../fonts/CoText_Trial_Rg.eot");
+    src: url("../fonts/CoText_Trial_Rg.eot") format("embedded-opentype"), url("../fonts/CoText_Trial_Rg.woff2") format("woff2"), url("../fonts/CoText_Trial_Rg.woff") format("woff"), url("../fonts/CoText_Trial_Rg.ttf") format("truetype"), url("../fonts/CoText_Trial_Rg.svg#CoText_Trial_Rg") format("svg"); }
+  
+  @font-face {
+    font-family: 'CoText_Trial_Bold';
+    src: url("../fonts/CoText_Trial_Bold.eot");
+    src: url("../fonts/CoText_Trial_Bold.eot") format("embedded-opentype"), url("../fonts/CoText_Trial_Bold.woff2") format("woff2"), url("../fonts/CoText_Trial_Bold.woff") format("woff"), url("../fonts/CoText_Trial_Bold.ttf") format("truetype"), url("../fonts/CoText_Trial_Bold.svg#CoText_Trial_Bold") format("svg"); }
+  
+
+    
+$RegularFont:'CoText_Trial_Rg' #{"/*rtl:'CoText_Trial_Rg'*/"};
+$BoldFont:'CoText_Trial_Bold' #{"/*rtl:'CoText_Trial_Bold'*/"};
+$smallText:.85rem;
+$bigText:1rem;
+$medText:.9rem;
+$vSmallText:.7rem;
+.fw-normal{
+    font-family:'CoText_Trial_Rg' #{"/*rtl:'CoText_Trial_Rg'*/"};
+}
+@mixin font-weight-bold{
+    font-family:'CoText_Trial_Bold' #{"/*rtl:'CoText_Trial_Bold'*/"};
+}

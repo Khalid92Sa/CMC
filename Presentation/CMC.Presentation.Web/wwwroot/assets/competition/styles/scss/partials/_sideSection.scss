@@ -1,0 +1,136 @@
+// CONFIG
+$SPACER_XS: 0.5rem;
+$SPACER_SM: 0.75rem;
+$SPACER: 1rem;
+$SPACER_MD: 1.5rem;
+$SPACER_LG: 2rem;
+$BORDER_RADIUS: 3px;
+$PROGRESS_HEIGHT: 600px;
+$PROGRESS_LIST_HEIGHT: 55px;
+$PROGRESS_COUNTER_WIDTH: 28px;
+$LIST_ITEM_WIDTH: 100px;
+$PROGRESS_BG: #392A60;
+$BODY_BG: #2E1F47;
+$ICON_COLOR: #F3597D;
+
+// THE GOOD STUFF
+.progressContainer {
+    position: relative;
+    width: 300px;
+    height: 100vh;
+    margin: 0 auto;
+    overflow: hidden;
+    padding: $SPACER_LG;
+    color: #fff;
+    background: $PROGRESS_BG;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+  }
+  
+  .progress {
+    position: relative;
+    padding: 0 $SPACER 0 3.5rem;
+    margin: $SPACER_LG 0 0;
+    list-style: none;
+  }
+  
+  .progress__item {
+    position: relative;
+    min-height: $PROGRESS_LIST_HEIGHT;
+    counter-increment: list;
+    padding-left: $SPACER_XS;
+    opacity: 0.6;
+    color: #000;
+    &:before {
+      content: "";
+      position: absolute;
+      left: -1.6rem;
+      top: 31px;
+      height: 40%;
+      border-left: 2px solid #ddd;
+    }
+    // &:after, svg {
+    //   content: counter(list);
+    //   position: absolute;
+    //   top: 0;
+    //   left: -2.5rem;
+    //   width: $PROGRESS_COUNTER_WIDTH;
+    //   height: $PROGRESS_COUNTER_WIDTH;
+    //   border-radius: 50%;
+    //   background: transparent;
+    //   color: #fff;
+    //   font-weight: 400;
+    //   font-size: 13px;
+    //   line-height: 2rem;
+    //   text-align: center;
+    //   border: 1px solid #fff;
+    // }
+    
+    svg {
+        position: absolute;
+        top: 0;
+        left: -2.4rem;
+        width: $PROGRESS_COUNTER_WIDTH;
+        height: $PROGRESS_COUNTER_WIDTH;
+        // border-radius: 50%;
+        // background: transparent;
+        // color: #fff;
+        // font-weight: 400;
+        // font-size: 13px;
+        line-height: 2rem;
+        // text-align: center;
+        // border: 1px solid #fff;
+      }
+      .stepIcon{
+        display: block;
+    }
+    .completedIcon{
+        display: none;
+    }
+    //Hide border for Last Step
+    &:last-child {
+      &:before {
+        border: none;
+      }
+    }
+    //Completed
+    &.completed {
+        opacity: 1;
+        color: #000;
+        &:before {
+            border-color: $accentColor;
+          }
+        .stepIcon{
+            display: none;
+        }
+        .completedIcon{
+            display: block;
+        }
+
+    //   &:after {
+    //     content: "\2713";
+    //     font-weight: 400;
+    //     background: #fff;
+    //     color: $PROGRESS_BG;
+    //   }
+    }
+    //Active
+    &.active {
+        opacity: 1;
+        color: #000;
+        .stepIcon{
+            fill:$accentColor;
+        }
+    //   &:after {
+    //     background: #fff;
+    //     color: $PROGRESS_BG;
+    //   }
+    }
+  }
+  
+  .progress__title {
+    padding: 0 0 $SPACER_XS;
+    margin: 0;
+    font-size: .9rem;
+  }
+  
+  

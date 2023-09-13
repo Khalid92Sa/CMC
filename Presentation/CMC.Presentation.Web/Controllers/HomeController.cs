@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 
 namespace CMC.Presentation.Web.Controllers
 {
-    [CheckSession]
     public class HomeController : BaseController
     {
         public HomeController()
@@ -22,6 +21,7 @@ namespace CMC.Presentation.Web.Controllers
 
         public IActionResult Index()
         {
+
             return View();
         }
 

@@ -54,11 +54,11 @@
                         </div>
                     </div>
                     <div class="col-12 text-center">
-                        <button type="button" class="btn btn-primary" style="width:10%" onclick="Players.CreateOrUpdate()">@Localizer["Save"]</button>
-                        <button type="button" class="btn btn-secondary" onclick="window.location.href='@Url.Action("Index", "Players")';" style="width:10%">@Localizer["Cancel"]</button>
+                        <button type="button" class="btn btn-primary" onclick="Players.CreateOrUpdate()">@Localizer["Save"]</button>
+                        <button type="button" class="btn btn-secondary" onclick="window.location.href='@Url.Action("Index", "Players")';">@Localizer["Cancel"]</button>
                         @if (Model.Id.HasValue)
                         {
-                            <button type="button" class="btn btn-danger" onclick="Players.DeleteCategory()" style="width:10%">@Localizer["Delete"]</button>
+                            <button type="button" class="btn btn-danger" id="btndelete_@Model.Id" onclick="Players.DeletePlayer(this)">@Localizer["Delete"]</button>
                         }
                     </div>
                 </div>
@@ -69,3 +69,8 @@
 
 <!-- end row -->
 <script src="~/assets/js/Application/Players.js"></script>
+
+<script>
+    GeneralClass.ActivationSubMenuItem('#lnkPlayers', '#lnkPlayers');
+    GeneralClass.ActivationSubMenuItem('#lnkPlayers2', '#lnkPlayers2');
+</script>

@@ -1,0 +1,118 @@
+// Borders
+.rounded-pill {
+    border-radius: 100rem;
+}
+
+.fit-cover {
+    object-fit: cover;
+}
+
+.badge {
+    font-size: 11px;
+    padding: .5em 1em;
+}
+
+.badge-success {
+    color: $success;
+    background-color: rgba(40, 167, 69, .2);
+}
+
+.badge-in-progress {
+    color: $primaryColor;
+    background-color: rgba(53, 68, 238, .2);
+}
+
+.badge-rejected {
+    color: $textDanger;
+    background-color: rgba(255, 53, 71, .2);
+}
+
+.badge-info {
+    color: $whiteColor;
+    background-color: $accentColor;
+    font-size: 12px;
+}
+
+.box-content {
+    box-sizing: content-box;
+}
+
+.rounded {
+    border-radius: 16px !important;
+}
+
+
+/*
+@media (min-width: 768px){
+    .pr-md-5, .px-md-5 {
+        padding-left: 4rem!important;
+    }
+    
+    .pl-md-5, .px-md-5 {
+        padding-left: 4rem!important;
+    }
+}
+*/
+
+
+/* Banking Monthly Transaction */
+
+.main-padding {
+    padding: 0 3rem;
+}
+
+.p-25rem {
+    padding: 2.5rem !important;
+}
+
+@media (max-width: 768px) {
+    .w-75,
+    .w-50 {
+        width: 100% !important;
+    }
+    p {
+        font-size: .7rem;
+    }
+    .main-padding {
+        padding: 0 1.3rem;
+    }
+    .p-25rem {
+        padding: 1.5rem !important;
+    }
+}
+
+.small,
+small {
+    font-size: 85%;
+    font-weight: 400;
+}
+
+.form-group {
+    margin-bottom: 1.3rem;
+}
+
+.text-underline {
+    text-decoration: underline;
+}
+.no-underline{
+    text-decoration: none; 
+}
+
+.Timer {
+    #circles {
+        //transform: rotate(-90deg);
+        transform-origin: center center;
+    }
+
+    circle {
+        opacity: .2;
+
+        &#path {
+            opacity: 1;
+        }
+
+        .finished & {
+            stroke: $secondaryColor;
+        }
+    }
+}
