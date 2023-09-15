@@ -65,6 +65,13 @@ namespace CMC.Presentation.Application.Services.Questions
         /// <param name="id"></param>
         /// <returns></returns>
         Task<Response> DeleteQuestion(int id);
+        /// <summary>
+        /// Get Random question for category in competition
+        /// </summary>
+        /// <param name="categoryId"></param>
+        /// <param name="questions"></param>
+        /// <returns></returns>
+        Task<Response<QuestionVM>> GetRandomQuestionPerCategory(int categoryId, List<int> questions);
 
     }
 }

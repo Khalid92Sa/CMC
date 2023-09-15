@@ -506,7 +506,13 @@
       "ar-JO": "إرفاق صورة"
     }
   },
-
+  {
+    "Key": "Back",
+    "LocalizedValue": {
+      "en-US": "Back",
+      "ar-JO": "رجوع"
+    }
+  },
 
 
 
@@ -1133,6 +1139,13 @@
     "LocalizedValue": {
       "en-US": "Choose",
       "ar-JO": "اختيار"
+    }
+  },
+  {
+    "Key": "Confirmed",
+    "LocalizedValue": {
+      "en-US": "Confirmed",
+      "ar-JO": "تأكيد"
     }
   }
 ]

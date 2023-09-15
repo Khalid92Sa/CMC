@@ -23,7 +23,7 @@
                         string points = CityMallplayer.Points == 0 || CityMallplayer.Points > 2 && CityMallplayer.Points < 11 ? Localizer["Points"].Value :
                         CityMallplayer.Points == 2 ? Localizer["TwoPoint"].Value : Localizer["Point"].Value;
                     }
-                    <div class="col-md-12 cityMallPlayers" data-player-Id="@CityMallplayer.Id" style="cursor:pointer">
+                    <div class="col-md-12 cityMallPlayers" data-player-Id="@CityMallplayer.Id" @*style="cursor:pointer"*@>
                         <div class="d-flex justify-content-center">
                             <img src="~/assets/competition/images/player.svg" style="width:100%" />
                         </div>
@@ -50,7 +50,7 @@
                             string OtherPlayerpoints = Otherplayer.Points == 0 || Otherplayer.Points > 2 && Otherplayer.Points < 11 ? Localizer["Points"].Value :
                             Otherplayer.Points == 2 ? Localizer["TwoPoint"].Value : Localizer["Point"].Value;
                         }
-                        <div class="col-md-12 OtherPlayers" data-player-Id="@Otherplayer.Id" style="cursor:pointer">
+                        <div class="col-md-12 OtherPlayers" data-player-Id="@Otherplayer.Id" @*style="cursor:pointer"*@>
                             <div class="d-flex justify-content-center">
                                 <img src="~/assets/competition/images/player.svg" style="width:100%" />
                             </div>

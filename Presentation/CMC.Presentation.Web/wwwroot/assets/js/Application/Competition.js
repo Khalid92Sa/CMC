@@ -1,7 +1,33 @@
-﻿const playersInCompetition = {
+﻿var playersInCompetition = {
     'CityMallPlayer': '',
     'OtherPlayer': ''
 };
+
+var playerTimer = {
+    'IsCityMallPlayer': '',
+    'PlayerId': '',
+    'IsTimerFinished': false,
+    'IsTimerStarted': false,
+    'IsFirstTime': true,
+    'EndTime': 0,
+    'IsPlayerAnswered': false, // This is to prevent duplicate confirm or submit answer, only one click on submit answer
+    'IsPlayerCityMallAnswered': false,
+    'IsOtherPlayerAnswered': false,
+    'IsTimerFinishedAfterAnswer': false
+};
+
+
+var CityMallPlayed = [];
+var OtherTeamPlayed = [];
+
+var timerDiv = `<div class="h4 h4-responsive text-primary bg-light-white dv-full-timer" style="position: absolute; width: 100%; border-radius: 2.2rem !important; ">
+                            <svg class="Timer" viewBox="0 0 100 100" id="timer">
+                                <g id="circles">
+                                    <circle cx="50" cy="50" r="20" fill="transparent" stroke="#9C59FE" stroke-width="20" />
+                                    <circle cx="50" cy="50" r="20" fill="transparent" stroke="#9C59FE" stroke-width="30" id="path" />
+                                </g>
+                            </svg>
+                        </div>`;
 
 var CompetitionList = {
     OnLoad: function () {
@@ -105,7 +131,7 @@ var CompetitionList = {
                     $(btnStart).append(pen);
                     btnStart.textContent = globalResources.StartCompetition;
                     div.append(btnStart);
-                    
+
                     return $(div).html();
                 }
             }
@@ -143,18 +169,14 @@ var CompetitionForm = {
         let player3 = $('#Team1_Player3');
         let player4 = $('#Team1_Player4');
         if (e !== undefined) {
-            debugger;
             let currentId = e.currentTarget.id;
             let $results = $('#select2-' + currentId + '-results');
-
-            // Delay execution for 500 milliseconds (adjust as needed)
             setTimeout(function () {
-                // Hide elements with matching IDs
                 $results.find("li[id$='-" + player1.val() + "']").css('display', 'none');
                 $results.find("li[id$='-" + player2.val() + "']").css('display', 'none');
                 $results.find("li[id$='-" + player3.val() + "']").css('display', 'none');
                 $results.find("li[id$='-" + player4.val() + "']").css('display', 'none');
-            }, 1); // Adjust the timeout duration as needed
+            }, 1);
         }
     },
     HandleOtherTeamDDL: function (e) {
@@ -163,18 +185,14 @@ var CompetitionForm = {
         let player3 = $('#Team2_Player3');
         let player4 = $('#Team2_Player4');
         if (e !== undefined) {
-            debugger;
             let currentId = e.currentTarget.id;
             let $results = $('#select2-' + currentId + '-results');
-
-            // Delay execution for 500 milliseconds (adjust as needed)
             setTimeout(function () {
-                // Hide elements with matching IDs
                 $results.find("li[id$='-" + player1.val() + "']").css('display', 'none');
                 $results.find("li[id$='-" + player2.val() + "']").css('display', 'none');
                 $results.find("li[id$='-" + player3.val() + "']").css('display', 'none');
                 $results.find("li[id$='-" + player4.val() + "']").css('display', 'none');
-            }, 1); // Adjust the timeout duration as needed
+            }, 1);
         }
     },
     CreateOrUpdate: function () {
@@ -302,7 +320,20 @@ var StartCompetition = {
                 StartCompetition.GoToPlayerVsPlayer();
             });
 
+            //Check Who is from City mall && other team has already played.
+            $('.cityMallPlayers').each(function (index, element) {
+                var currentPlayerId = parseInt($(this).attr('data-player-Id'));
+                if (CityMallPlayed.includes(currentPlayerId)) {
+                    $(this).css('pointer-events', 'none');
+                }
+            });
 
+            $('.OtherPlayers').each(function (index, element) {
+                var currentPlayerId = parseInt($(this).attr('data-player-Id'));
+                if (OtherTeamPlayed.includes(currentPlayerId)) {
+                    $(this).css('pointer-events', 'none');
+                }
+            });
         });
     },
     FullScreen: function () {
@@ -348,9 +379,16 @@ var StartCompetition = {
         if (playersInCompetition.CityMallPlayer == '' || playersInCompetition.OtherPlayer == '') {
             return;
         }
+
+        var parsCityPlayer = parseInt(playersInCompetition.CityMallPlayer);
+        var parsOtherPlayer = parseInt(playersInCompetition.OtherPlayer);
         var data = new FormData();
-        data.append('CityMallPlayerId', parseInt(playersInCompetition.CityMallPlayer));
-        data.append('OtherPlayerId', parseInt(playersInCompetition.OtherPlayer));
+        data.append('CityMallPlayerId', parsCityPlayer);
+        data.append('OtherPlayerId', parsOtherPlayer);
+
+        CityMallPlayed.push(parsCityPlayer);
+        OtherTeamPlayed.push(parsOtherPlayer);
+
         $.ajax({
             type: 'POST',
             url: publicURls.PlayerVsPlayer,
@@ -364,12 +402,13 @@ var StartCompetition = {
                         $('#img-goTo-category').on('click', function () {
                             StartCompetition.GoToCategories();
                         });
-                        $('.cityMallPlayers').on('click', function (e) {
-                            StartCompetition.SelectOnlyOnePlayer(e.currentTarget);
-                        });
-                        $('.OtherPlayers').on('click', function (e) {
-                            StartCompetition.SelectOnlyOnePlayer(e.currentTarget);
-                        });
+
+                        //$('.cityMallPlayers').on('click', function (e) {
+                        //    StartCompetition.SelectOnlyOnePlayer(e.currentTarget);
+                        //});
+                        //$('.OtherPlayers').on('click', function (e) {
+                        //    StartCompetition.SelectOnlyOnePlayer(e.currentTarget);
+                        //});
                     }
                 }
                 else {
@@ -382,21 +421,23 @@ var StartCompetition = {
         });
     },
     GoToCategories: function () {
-        if (playersInCompetition.CityMallPlayer == '' && playersInCompetition.OtherPlayer == '') {
-            return;
-        }
-        var playerId = playersInCompetition.CityMallPlayer != '' ? parseInt(playersInCompetition.CityMallPlayer) : parseInt(playersInCompetition.OtherPlayer);
-        var isCityMallPlayer = playersInCompetition.CityMallPlayer != '' ? true : false;
+        //if (playersInCompetition.CityMallPlayer == '' && playersInCompetition.OtherPlayer == '') {
+        //    return;
+        //}
+        //var playerId = playersInCompetition.CityMallPlayer != '' ? parseInt(playersInCompetition.CityMallPlayer) : parseInt(playersInCompetition.OtherPlayer);
+        //var isCityMallPlayer = playersInCompetition.CityMallPlayer != '' ? true : false;
+        //var data = new FormData();
+        //data.append('playerId', playerId);
+        //data.append('IsCityMallTeam', isCityMallPlayer);
 
-        var data = new FormData();
-        data.append('playerId', playerId);
-        data.append('IsCityMallTeam', isCityMallPlayer);
+
         $.ajax({
-            type: 'POST',
+            type: 'GET',
             url: publicURls.GetCategories,
-            data: data,
-            contentType: false,
-            processData: false,
+            dataType: 'json',
+            //data: data,
+            //contentType: false,
+            //processData: false,
             success: function (data) {
                 if (data.isSuccess) {
                     if (data.partial != '') {
@@ -419,6 +460,294 @@ var StartCompetition = {
         });
     },
     GoToQuestion: function (id) {
+        $.ajax({
+            type: 'GET',
+            url: publicURls.GoToQuestion + '?categoryId=' + id,
+            dataType: 'json',
+            success: function (data) {
+                if (data.isSuccess) {
+                    if (data.partial != '') {
 
+                        $('#dv-partial').html(data.partial);
+
+                        $('#btn-answer').on('click', function (e) {
+                            StartCompetition.AnswerOnQuestion();
+                        });
+
+                        StartCompetition.ResetObjects();
+
+                        $('#dv-cityMall-player, #dv-Other-player').on('click', function () {
+                            var id = $(this).attr('id');
+                            StartCompetition.StartTimeForPlayer(id);
+                        });
+
+                        setTimeout(function () {
+                            $('#dv-question-text').removeClass('d-none');
+                            $('#card-main').removeAttr('style');
+
+                            var delay = 1500;
+                            var counter = 1;
+                            var totalElements = $('#dv-answers-options').find('.col-6').length;
+                            var completedElements = 0;
+
+                            $('#dv-answers-options').find('.col-6').each(function () {
+                                var element = this;
+                                setTimeout(function () {
+                                    $(element).removeAttr('style');
+                                    completedElements++;
+                                    //if (completedElements === totalElements) {
+                                    //    $('#dv-confirm').removeAttr('style');
+                                    //}
+                                }, counter * delay);
+                                counter++;
+                            });
+                        }, 2000);
+                    }
+                }
+                else {
+                    GeneralClass.ShowErrorAlert(globalResources.ErrorOccurred);
+                }
+            },
+            error: function (e) {
+                GeneralClass.ShowErrorAlert(globalResources.ErrorOccurred);
+            }
+        });
+    },
+    StartTimeForPlayer: function (id) {
+        if (playerTimer.IsTimerStarted == true && playerTimer.IsTimerFinished != true) {
+            return;
+        }
+
+        // Prevent to re-click on same user who answered
+        var checkingPlayerId = $('#' + id).find('.hdn-cPlayer').val();
+        if (checkingPlayerId == playerTimer.PlayerId) {
+            return;
+        }
+
+        // Both players answeres
+        if (playerTimer.IsPlayerCityMallAnswered && playerTimer.IsOtherPlayerAnswered) {
+            return;
+        }
+
+        if (id == 'dv-cityMall-player') {
+            $('#dv-other-player-timer').find('.dv-full-timer').remove();
+            $('#dv-citymall-player-timer').append(timerDiv);
+            playerTimer.IsCityMallPlayer = true;
+            playerTimer.PlayerId = $('#' + id).find('.hdn-cPlayer').val();
+        } else {
+            $('#dv-citymall-player-timer').find('.dv-full-timer').remove();
+            $('#dv-other-player-timer').append(timerDiv);
+
+            playerTimer.IsCityMallPlayer = false;
+            playerTimer.PlayerId = $('#' + id).find('.hdn-oPlayer').val();
+        }
+
+        if (playerTimer.IsFirstTime != false) {
+            playerTimer.IsFirstTime = true;
+        }
+        StartCompetition.StartTimer();
+
+        playerTimer.IsTimerStarted = true;
+        playerTimer.IsTimerFinished = false;
+        playerTimer.IsPlayerAnswered = false;
+    },
+    StartTimer: function () {
+        document.documentElement.classList.remove('finished');
+        var questionTimer = 5000; // (parseInt($('#hdnQuestionTimer').val()) * 1000) + 1000;
+        var duration = playerTimer.IsFirstTime ? questionTimer : 11000;
+        var timer = document.getElementById('timer');
+        var circles = document.getElementById('circles');
+        var path = document.getElementById('path');
+
+        var startTime = Date.now();
+        playerTimer.EndTime = startTime + duration;
+        $('#dv-p-timer').removeClass('d-none');
+        StartCompetition.PTimer();
+
+        if (timer.animate) {
+            var pathLength = path.r.baseVal.value * 2 * Math.PI;
+            var player = path.animate([
+                { strokeDasharray: pathLength, strokeDashoffset: pathLength },
+                { strokeDasharray: pathLength, strokeDashoffset: 0 },
+            ], {
+                duration: duration,
+                iterations: 1,
+                fill: 'forwards'
+            });
+            circles.animate([
+                { transform: 'rotate(0deg)' },
+                { transform: 'rotate(-360deg)' }
+            ], {
+                duration: duration * 4,
+                iterations: Infinity,
+                fill: 'both'
+            });
+
+            var runningOutDelay = duration * .6;
+            var pathPlayer = timer.animate([
+                { transform: 'scale(.82) rotate(-90deg)' },
+                { transform: 'scale(1) rotate(-90deg)' },
+            ], {
+                duration: duration / 20,
+                delay: runningOutDelay,
+                iterations: 2,
+                direction: 'alternate',
+                fill: 'both'
+            });
+
+            pathPlayer.onfinish = function () {
+                if (player.playState === 'running') {
+                    pathPlayer.playbackRate = pathPlayer.playbackRate * 1.15;
+                    pathPlayer.currentTime = runningOutDelay;
+                    pathPlayer.play();
+                }
+            };
+
+            var startTime = performance.now();
+            player.onfinish = function () {
+                if (document.documentElement.classList.contains('finished')) {
+                    document.documentElement.classList.remove('finished');
+                } else {
+                    document.documentElement.classList.add('finished');
+                }
+                playerTimer.IsTimerFinished = true;
+                playerTimer.IsFirstTime = false;
+                StartCompetition.AnswerOnQuestion();
+            }
+        }
+    },
+    PTimer: function () {
+        var now = Date.now();
+        var remainingTime = Math.max(0, playerTimer.EndTime - now);
+
+        var seconds = Math.floor(remainingTime / 1000);
+        var minutes = Math.floor(seconds / 60);
+        seconds %= 60;
+
+        // Update the display
+        $('#p-timer').text(minutes.toString().padStart(2, '0') + ':' + seconds.toString().padStart(2, '0'));
+
+        if (remainingTime > 0) {
+            requestAnimationFrame(StartCompetition.PTimer);
+        }
+    },
+    StopTimer: function () {
+        setTimeout(function () {
+            $('#dv-other-player-timer').find('.dv-full-timer').remove();
+            $('#dv-citymall-player-timer').find('.dv-full-timer').remove();
+            $('#p-timer').text('');
+            $('#dv-p-timer').addClass('d-none');
+        },3000);
+    },
+    SelectAnAnswer: function (e) {
+        $('#dv-confirm').removeAttr('style');
+    },
+    AnswerOnQuestion: function () {
+
+        if (playerTimer.IsPlayerAnswered) {
+            return;
+        }
+
+        var playerId = playerTimer.PlayerId;
+        var isCityMall = playerTimer.IsCityMallPlayer;
+        var questionId = $('#hdnQuestionId').val();
+        var questionPoints = $('#hdnQuestionPoint').val();
+        var answerId = null;
+        var isCorrect = null;
+        var answerRadio = $('input[name="investmentExp"]:checked');
+        if (answerRadio.length > 0) {
+            answerId = answerRadio.data('id');
+            isCorrect = answerRadio.data('iscorrect');
+        }
+
+        var data = new FormData();
+        data.append("PlayerId", playerId);
+        data.append("IsCityMallPlayer", isCityMall);
+        data.append("QuestionId", questionId);
+        data.append("AnswerId", answerId);
+        data.append("IsCorrectAnswer", isCorrect);
+        data.append("Points", questionPoints);
+
+       
+        $.ajax({
+            type: 'POST',
+            url: publicURls.AnswerOnQuestion,
+            data: data,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                if (data.isSuccess) {
+                    playerTimer.IsPlayerAnswered = true;
+                    if (playerTimer.IsCityMallPlayer) {
+                        playerTimer.IsPlayerCityMallAnswered = true;
+                    }
+                    else {
+                        playerTimer.IsOtherPlayerAnswered = true;
+                    }
+
+                    if (data.correct) {
+                        //Run sound effect with modal success
+                        correctAnswerSound.play();
+                        $('#goodModal').modal('show');
+                        setTimeout(function () {
+                            $('#goodModal, #notCorrectModal').modal('hide');
+                            StartCompetition.OnLoad();
+                            $('#dv-partial').html(data.partial);
+                        }, 6000);
+                    }
+                    else {
+                        if (playerTimer.IsTimerFinished == true) {
+                            //InCase Timer Finished before player answered
+                            //Host must clicked on another player.
+                            timerFinishedSound.play();
+                            StartCompetition.StopTimer();
+                            playerTimer.IsTimerFinishedAfterAnswer = true;
+                        }
+                        else {
+                            //Run sound effect with modal wrong
+                            $('#notCorrectModal').modal('show');
+                            InCorrectAnswerSound.play();
+                            StartCompetition.StopTimer();
+                            setTimeout(function () {
+                                $('#notCorrectModal').modal('hide');
+                            }, 4000);
+                        }
+
+
+                        if (playerTimer.IsPlayerCityMallAnswered && playerTimer.IsOtherPlayerAnswered) {
+                            //Show home page button
+                            $('#dv-homePage').on('click', function () {
+                                StartCompetition.OnLoad();
+                                $('#dv-partial').html(data.partial);
+                            });
+
+                            $('#dv-homePage').removeAttr('style');
+
+                        }
+                    }
+                }
+                else {
+                    GeneralClass.ShowErrorAlert(globalResources.ErrorOccurred);
+                }
+            },
+            error: function (e) {
+                GeneralClass.ShowErrorAlert(globalResources.ErrorOccurred);
+            }
+        });
+
+    },
+    ResetObjects: function () {
+        playerTimer = {
+            'IsCityMallPlayer': '',
+            'PlayerId': '',
+            'IsTimerFinished': false,
+            'IsTimerStarted': false,
+            'IsFirstTime': true,
+            'EndTime': 0,
+            'IsPlayerAnswered': false, // This is to prevent duplicate confirm or submit answer, only one click on submit answer
+            'IsPlayerCityMallAnswered': false,
+            'IsOtherPlayerAnswered': false,
+            'IsTimerFinishedAfterAnswer': false
+        };
     }
 }

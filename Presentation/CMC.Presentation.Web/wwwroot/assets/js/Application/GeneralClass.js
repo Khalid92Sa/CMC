@@ -12,9 +12,7 @@ var GeneralClass = {
         //$('#wait_overlay').show();
         $("#loading").css("display", "flex");
     },
-
     hideLoading: function () {
-       // $('#wait_overlay').hide();
         setTimeout(function () {
             $("#loading").css("display", "none");
         }, 100);

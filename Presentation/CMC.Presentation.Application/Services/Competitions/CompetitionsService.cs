@@ -525,5 +525,42 @@ namespace CMC.Presentation.Application.Services.Competitions
                 throw ex;
             }
         }
+
+        /// <summary>
+        /// Players answered on questions
+        /// </summary>
+        /// <param name="answerOnQuestionDTO"></param>
+        /// <returns></returns>
+        public async Task<Response> AnswerOnQuestions(int competitionId, AnswerOnQuestionDTO answerOnQuestionDTO)
+        {
+            try
+            {
+                CompetitionQuestion competitionQuestion = new CompetitionQuestion();
+                competitionQuestion.CompetitionId = competitionId;
+                competitionQuestion.PlayerId = answerOnQuestionDTO.PlayerId;
+                competitionQuestion.IsTeam1 = answerOnQuestionDTO.IsCityMallPlayer;
+                competitionQuestion.QuestionId = answerOnQuestionDTO.QuestionId.Value;
+                competitionQuestion.AnswerId = answerOnQuestionDTO.AnswerId;
+                competitionQuestion.Point = answerOnQuestionDTO.Points;
+                competitionQuestion.IsCorrectAnswer = answerOnQuestionDTO.IsCorrectAnswer;
+                competitionQuestion.CreatedBy = int.Parse(_httpContextAccessor.HttpContext.Session.GetString("UserId"));
+                competitionQuestion.CreatedOn = DateTime.Now;
+
+                await _compQuestRepository.InsertAsync(competitionQuestion);
+                await _compQuestRepository.UnitOfWork.SaveChangesAsync();
+                return new Response()
+                {
+                    Succeeded = true
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response()
+                {
+                    Succeeded = false,
+                    Message = ex.Message
+                };
+            }
+        }
     }
 }

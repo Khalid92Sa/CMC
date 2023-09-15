@@ -33,22 +33,22 @@
     </script>
     <style>
         /* #starting-div {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url('/assets/competition/images/competition-start.jpg');
-            background-size: cover;
-            background-position: center;
-            animation: fadeOut 4s forwards;
-        }
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-image: url('/assets/competition/images/competition-start.jpg');
+                    background-size: cover;
+                    background-position: center;
+                    animation: fadeOut 4s forwards;
+                }
 
-        #next-content {
-            display: none;
-        }
-        */
-        
+                #next-content {
+                    display: none;
+                }
+                */
+
 
         .text-player-name-v {
             text-shadow: 4px 1px 2px black;
@@ -73,15 +73,54 @@
             @RenderBody()
         </div>
     </div>
+    <audio id="timerFinishedSound" preload="auto">
+        <source src="~/assets/competition/sounds/timer-finished.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="correctAnswerSound" preload="auto">
+        <source src="~/assets/competition/sounds/correct-answer.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="InCorrectAnswerSound" preload="auto">
+        <source src="~/assets/competition/sounds/incorrect-answer.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="WaitingBar" id="loading" style="display: none; opacity: 0.3; height: 100%; width: 100%; position: fixed; left: 0px; top: 0px;
+        z-index: 1999; background: rgb(59, 132, 92); justify-content: center; align-items: center;">
+        <img src="~/assets/images/spinner-transparent.gif" style="display: block; margin-left: auto; margin-right: auto; width:111px;" />
+    </div>
+
+    <div class="modal fade" id="goodModal" tabindex="-1" aria-labelledby="goodModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-transparent border-0 d-flex justify-content-center">
+                <div class="text-center">
+                    <img src="~/assets/competition/images/check.gif" style="width:300px" />
+                    <img src="~/assets/competition/images/good.gif" style="width:300px" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="notCorrectModal" tabindex="-1" aria-labelledby="notCorrectModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-transparent border-0 d-flex justify-content-center">
+                <div class="text-center">
+                    <img src="~/assets/competition/images/OhNo.gif" style="width:300px" />
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         var publicURls = {
             PlayerVsPlayer: '@Url.Action("PlayerVsPlayer","Competitions")',
-            GetCategories: '@Url.Action("GetCategories","Competitions")'
+            GetCategories: '@Url.Action("GetCategories","Competitions")',
+            GoToQuestion: '@Url.Action("GetQuestion","Competitions")',
+            AnswerOnQuestion: '@Url.Action("AnswerQuestion","Competitions")',
         }
 
         var globalResources = {
             ErrorOccurred: '@Localizer["ErrorOccurred"]'
         }
     </script>
+
+
 </body>
 </html>

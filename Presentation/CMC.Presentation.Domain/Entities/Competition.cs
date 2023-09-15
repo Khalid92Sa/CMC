@@ -28,6 +28,11 @@ namespace CMC.Presentation.Domain.Entities
         public virtual Team WinningTeam { get; set; }
 
 
+        public virtual int? ParentId { get; set; }
+        public virtual Competition Parent { get; set; }
+
+        public int? RoundCount { get; set; }
+
         public virtual ICollection<CompetitionQuestion> CompetitionQuestions { get; set; }
     }
 }

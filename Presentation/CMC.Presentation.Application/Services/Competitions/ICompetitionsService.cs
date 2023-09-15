@@ -51,5 +51,12 @@ namespace CMC.Presentation.Application.Services.Competitions
         /// </summary>
         /// <returns></returns>
         Task<Response<CompetitionStartDTO>> StartCompetiton(int id);
+
+        /// <summary>
+        /// Players answered on questions
+        /// </summary>
+        /// <param name="answerOnQuestionDTO"></param>
+        /// <returns></returns>
+        Task<Response> AnswerOnQuestions(int competitionId,AnswerOnQuestionDTO answerOnQuestionDTO);
     }
 }
