@@ -20,7 +20,7 @@ namespace CMC.Presentation.Domain.Entities
         public virtual int? PlayerId { get; set; }
         public virtual Player Player { get; set; }
 
-
+        public bool? IsTeam1 { get; set; }
         public int? Point { get; set; }
         public bool? IsCorrectAnswer { get; set; }
     }

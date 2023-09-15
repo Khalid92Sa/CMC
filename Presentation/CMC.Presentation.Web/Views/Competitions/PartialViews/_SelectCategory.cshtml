@@ -6,11 +6,11 @@
 }
 
 <div class="" style="z-index:-1000;">
-    <img class="min-vh-100" src="assets/images/Questions-Background.png" style="width:100%; position:absolute; top:0; left:0;" />
+    <img class="min-vh-100" src="~/assets/competition/images/Questions-Background.png" style="width:100%; position:absolute; top:0; left:0;" />
 </div>
 <div class="row m-0 w-100">
     <div class="col-md-12 text-center">
-        <img src="assets/images/Citymall.svg" />
+        <img src="~/assets/competition/images/Citymall.svg" />
     </div>
     <div class="col-md-10 offset-md-1 mt-5">
         <div class="row">
@@ -30,8 +30,8 @@
                                         <img src="@category.Img" alt="@categoryName" style="width:70%" />
                                     </div>
                                     <div class=" d-flex justify-content-center mt-2 mb-4">
-                                        <button class="button">
-                                            <span class="button-text select-category" data-Id="@category.Id">@Localizer["ChooseCategory"]</span>
+                                        <button class="button select-category" data-Id="@category.Id">
+                                            <span class="button-text" >@Localizer["ChooseCategory"]</span>
                                             <div class="fill-container"></div>
                                         </button>
                                     </div>

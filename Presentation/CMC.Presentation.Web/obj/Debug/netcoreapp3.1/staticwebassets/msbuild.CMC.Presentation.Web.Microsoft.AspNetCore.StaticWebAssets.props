@@ -720,6 +720,54 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\assets\competition\shared\bootstrap\js\bootstrap.min.js.map))</OriginalItemSpec>
     </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\assets\competition\sounds\correct-answer.mp3))">
+      <SourceType>Package</SourceType>
+      <SourceId>CMC.Presentation.Web</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/CMC.Presentation.Web</BasePath>
+      <RelativePath>assets\competition\sounds\correct-answer.mp3</RelativePath>
+      <AssetKind></AssetKind>
+      <AssetMode></AssetMode>
+      <AssetRole></AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\assets\competition\sounds\correct-answer.mp3))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\assets\competition\sounds\incorrect-answer.mp3))">
+      <SourceType>Package</SourceType>
+      <SourceId>CMC.Presentation.Web</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/CMC.Presentation.Web</BasePath>
+      <RelativePath>assets\competition\sounds\incorrect-answer.mp3</RelativePath>
+      <AssetKind></AssetKind>
+      <AssetMode></AssetMode>
+      <AssetRole></AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\assets\competition\sounds\incorrect-answer.mp3))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\assets\competition\sounds\timer-finished.mp3))">
+      <SourceType>Package</SourceType>
+      <SourceId>CMC.Presentation.Web</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/CMC.Presentation.Web</BasePath>
+      <RelativePath>assets\competition\sounds\timer-finished.mp3</RelativePath>
+      <AssetKind></AssetKind>
+      <AssetMode></AssetMode>
+      <AssetRole></AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\assets\competition\sounds\timer-finished.mp3))</OriginalItemSpec>
+    </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\assets\competition\styles\css\bootstrap-icons.css))">
       <SourceType>Package</SourceType>
       <SourceId>CMC.Presentation.Web</SourceId>
@@ -2736,6 +2784,22 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\assets\images\categories\23736ab7-c5bd-471c-aee1-93c0dfc8b5ce.jpg))</OriginalItemSpec>
     </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\assets\images\categories\2446a088-0e0f-41cf-822e-945a53cceb0a.png))">
+      <SourceType>Package</SourceType>
+      <SourceId>CMC.Presentation.Web</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/CMC.Presentation.Web</BasePath>
+      <RelativePath>assets\images\categories\2446a088-0e0f-41cf-822e-945a53cceb0a.png</RelativePath>
+      <AssetKind></AssetKind>
+      <AssetMode></AssetMode>
+      <AssetRole></AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\assets\images\categories\2446a088-0e0f-41cf-822e-945a53cceb0a.png))</OriginalItemSpec>
+    </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\assets\images\categories\77f79579-7a99-43c5-bd96-0b6d671e8e8a.jpg))">
       <SourceType>Package</SourceType>
       <SourceId>CMC.Presentation.Web</SourceId>
@@ -2751,6 +2815,22 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\assets\images\categories\77f79579-7a99-43c5-bd96-0b6d671e8e8a.jpg))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\assets\images\categories\8385a6c8-73fd-4edb-94fe-3b2ce7e4c90b.png))">
+      <SourceType>Package</SourceType>
+      <SourceId>CMC.Presentation.Web</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/CMC.Presentation.Web</BasePath>
+      <RelativePath>assets\images\categories\8385a6c8-73fd-4edb-94fe-3b2ce7e4c90b.png</RelativePath>
+      <AssetKind></AssetKind>
+      <AssetMode></AssetMode>
+      <AssetRole></AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\assets\images\categories\8385a6c8-73fd-4edb-94fe-3b2ce7e4c90b.png))</OriginalItemSpec>
     </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\assets\images\categories\8a3cb8cc-78e7-4eb4-9bcb-bf5a8cea0bee.jpg))">
       <SourceType>Package</SourceType>
@@ -2768,12 +2848,12 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\assets\images\categories\8a3cb8cc-78e7-4eb4-9bcb-bf5a8cea0bee.jpg))</OriginalItemSpec>
     </StaticWebAsset>
-    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\assets\images\categories\9587770f-323a-44ac-a582-9b0517a0fb41.png))">
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\assets\images\categories\8eda0978-96f7-4976-9ffd-c14dff3ebd58.png))">
       <SourceType>Package</SourceType>
       <SourceId>CMC.Presentation.Web</SourceId>
       <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
       <BasePath>_content/CMC.Presentation.Web</BasePath>
-      <RelativePath>assets\images\categories\9587770f-323a-44ac-a582-9b0517a0fb41.png</RelativePath>
+      <RelativePath>assets\images\categories\8eda0978-96f7-4976-9ffd-c14dff3ebd58.png</RelativePath>
       <AssetKind></AssetKind>
       <AssetMode></AssetMode>
       <AssetRole></AssetRole>
@@ -2782,14 +2862,14 @@
       <AssetTraitValue></AssetTraitValue>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      <OriginalItemSpec>$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\assets\images\categories\9587770f-323a-44ac-a582-9b0517a0fb41.png))</OriginalItemSpec>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\assets\images\categories\8eda0978-96f7-4976-9ffd-c14dff3ebd58.png))</OriginalItemSpec>
     </StaticWebAsset>
-    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\assets\images\categories\af0aa684-85ca-4805-968c-03c01b36b164.png))">
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\assets\images\categories\96883423-9a7e-4570-a119-ef78f2948df6.png))">
       <SourceType>Package</SourceType>
       <SourceId>CMC.Presentation.Web</SourceId>
       <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
       <BasePath>_content/CMC.Presentation.Web</BasePath>
-      <RelativePath>assets\images\categories\af0aa684-85ca-4805-968c-03c01b36b164.png</RelativePath>
+      <RelativePath>assets\images\categories\96883423-9a7e-4570-a119-ef78f2948df6.png</RelativePath>
       <AssetKind></AssetKind>
       <AssetMode></AssetMode>
       <AssetRole></AssetRole>
@@ -2798,7 +2878,7 @@
       <AssetTraitValue></AssetTraitValue>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      <OriginalItemSpec>$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\assets\images\categories\af0aa684-85ca-4805-968c-03c01b36b164.png))</OriginalItemSpec>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\assets\images\categories\96883423-9a7e-4570-a119-ef78f2948df6.png))</OriginalItemSpec>
     </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\assets\images\categories\c24d0faa-1959-4cd2-946f-5b652b144a87.jpg))">
       <SourceType>Package</SourceType>
@@ -2848,12 +2928,12 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\assets\images\categories\default.jpg))</OriginalItemSpec>
     </StaticWebAsset>
-    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\assets\images\categories\f062a170-5492-4187-ab99-a9b8952ec31e.png))">
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\assets\images\categories\e183ec1b-f09a-4199-8792-a61d57260389.png))">
       <SourceType>Package</SourceType>
       <SourceId>CMC.Presentation.Web</SourceId>
       <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
       <BasePath>_content/CMC.Presentation.Web</BasePath>
-      <RelativePath>assets\images\categories\f062a170-5492-4187-ab99-a9b8952ec31e.png</RelativePath>
+      <RelativePath>assets\images\categories\e183ec1b-f09a-4199-8792-a61d57260389.png</RelativePath>
       <AssetKind></AssetKind>
       <AssetMode></AssetMode>
       <AssetRole></AssetRole>
@@ -2862,7 +2942,7 @@
       <AssetTraitValue></AssetTraitValue>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      <OriginalItemSpec>$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\assets\images\categories\f062a170-5492-4187-ab99-a9b8952ec31e.png))</OriginalItemSpec>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\assets\images\categories\e183ec1b-f09a-4199-8792-a61d57260389.png))</OriginalItemSpec>
     </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\assets\images\categories\f5cfad61-6a00-4229-8a63-acad402e8578.png))">
       <SourceType>Package</SourceType>

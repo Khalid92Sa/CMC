@@ -1,0 +1,119 @@
+﻿@model CMC.Presentation.Application.DTOs.Competitions.CompetitionStartDTO
+
+@{
+    ViewData["Title"] = "";
+    bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
+}
+
+
+<div class="" style="z-index:-1000;">
+    <img class="min-vh-100" src="~/assets/competition/images/Questions-Background.png" style="width:100%; position:absolute; top:0; left:0;" />
+</div>
+<div class="col-md-10 offset-md-1 mt-5">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row mt-5 h-100">
+                <div class="animated fadeInUp col-md-3" id="dv-cityMall-player" style="cursor:pointer">
+                    <div class="d-flex justify-content-center position-relative" id="dv-citymall-player-timer">
+                        <img class="player image" src="~/assets/competition/images/player.svg" style="width:100%" />
+                    </div>
+                    <div class="h4 h4-responsive text-center mt-3 white-color">
+                        @{
+                            var playerCityMall = Model.TeamCityMall.Where(a => a.IsVSPlayer).SingleOrDefault();
+                            string points = playerCityMall.Points == 0 || playerCityMall.Points > 2 && playerCityMall.Points < 11 ? Localizer["Points"].Value :
+                            playerCityMall.Points == 2 ? Localizer["TwoPoint"].Value : Localizer["Point"].Value;
+                        }
+                        @playerCityMall.Name
+                        <input type="hidden" value="@playerCityMall.Id" class="hdn-cPlayer" />
+                    </div>
+                    <div class=" d-flex justify-content-center mt-3">
+                        <div class="py-2 px-3 text-center rounded-pill background-accent-color h6 h6-responsive" style="width: fit-content; direction: rtl;">
+                            @playerCityMall.Points @points
+                        </div>
+                    </div>
+                </div>
+                <div class="animated fadeInUpBig col-md-6" id="card-main" style="visibility:hidden">
+                    <div class="card rounded">
+                        <div class="card-body">
+                            <div class="h4 h4-responsive mt-3 d-none" id="dv-question-text">
+                                @{
+                                    string QuestionText = IsAr ? Model.CurrentQuestion.TextAr : Model.CurrentQuestion.TextEn;
+                                }
+                                @QuestionText
+                                <input type="hidden" id="hdnQuestionId" value="@Model.CurrentQuestion.Id" />
+                                <input type="hidden" id="hdnQuestionPoint" value="@Model.CurrentQuestion.Points" />
+                            </div>
+                            <div class="row mt-4" id="dv-answers-options">
+                                @foreach(var answer in Model.CurrentQuestion.Answers)
+                                {
+                                    string answerText = IsAr ? answer.TextAr : answer.TextEn;
+                                    <div class="col-6" style="visibility:hidden">
+                                        <label class="w-100">
+                                            <input type="radio" data-id="@answer.Id" name="investmentExp" class="card-input-element-payment" data-iscorrect="@answer.IsAnswer" onclick="StartCompetition.SelectAnAnswer(this)"  />
+                                            <div class="px-5 panel panel-default card-input-payment p-3 d-flex align-items-center justify-content-between">
+                                                <div class="d-flex justify-content-center w-100">
+                                                    @answerText
+                                                </div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                }
+                                
+                                <div class="col-md-12 mt-3" id="dv-confirm" style="visibility:hidden">
+                                    <div class=" d-flex justify-content-center mt-2 mb-4">
+                                        <button class="button" type="button" id="btn-answer">
+                                            <span class="button-text">@Localizer["Confirmed"]</span>
+                                            <div class="fill-container"></div>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 mt-3 d-none" id="dv-p-timer">
+                                    <div class=" d-flex justify-content-center mt-2 mb-4">
+                                        <input type="hidden" id="hdnQuestionTimer" value="@Model.CurrentQuestion.Time" />
+                                        <p style="font-size:xx-large;" id="p-timer"></p>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 mt-3" id="dv-homePage" style="visibility:hidden">
+                                    <div class=" d-flex justify-content-center mt-2 mb-4">
+                                        <a class="button" id="btn-goHomePage">
+                                            <span class="button-text">@Localizer["Back"]</span>
+                                            <div class="fill-container"></div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="animated fadeInUp col-md-3" id="dv-Other-player" style="cursor:pointer">
+                    <div class="d-flex justify-content-center position-relative" id="dv-other-player-timer">
+                        <img class="player image" src="~/assets/competition/images/player.svg" style="width:100%" />
+                    </div>
+                    <div class="h4 h4-responsive text-center mt-3 white-color">
+                        @{
+                            var otherPlayer = Model.OtherTeam.Where(a => a.IsVSPlayer).SingleOrDefault();
+                            string otherPoints = otherPlayer.Points == 0 || otherPlayer.Points > 2 && otherPlayer.Points < 11 ? Localizer["Points"].Value :
+                            otherPlayer.Points == 2 ? Localizer["TwoPoint"].Value : Localizer["Point"].Value;
+                        }
+                        @otherPlayer.Name
+                        <input type="hidden" value="@otherPlayer.Id" class="hdn-oPlayer" />
+                    </div>
+                    <div class=" d-flex justify-content-center mt-3">
+                        <div class="py-2 px-3 text-center rounded-pill background-accent-color h6 h6-responsive" style="width: fit-content; direction: rtl;">
+                            @otherPlayer.Points @otherPoints
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    playersInCompetition.CityMallPlayer = '';
+    playersInCompetition.OtherPlayer = '';
+    var timerFinishedSound = document.getElementById('timerFinishedSound');
+    var correctAnswerSound = document.getElementById('correctAnswerSound');
+    var InCorrectAnswerSound = document.getElementById('InCorrectAnswerSound');
+</script>

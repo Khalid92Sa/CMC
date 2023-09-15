@@ -1892,7 +1892,8 @@ D:\Profile\Projects\CMC\Presentation\CMC.Presentation.Web\obj\Debug\netcoreapp3.
 D:\Profile\Projects\CMC\Presentation\CMC.Presentation.Web\obj\Debug\netcoreapp3.1\Razor\Views\Competitions\Index.cshtml.g.cs
 D:\Profile\Projects\CMC\Presentation\CMC.Presentation.Web\obj\Debug\netcoreapp3.1\Razor\Views\Competitions\StartCompetition.cshtml.g.cs
 D:\Profile\Projects\CMC\Presentation\CMC.Presentation.Web\obj\Debug\netcoreapp3.1\Razor\Views\Competitions\PartialViews\_PlayerVsPlayer.cshtml.g.cs
-D:\Profile\Projects\CMC\Presentation\CMC.Presentation.Web\obj\Debug\netcoreapp3.1\Razor\Views\Competitions\PlayerVsPlayer.cshtml.g.cs
 D:\Profile\Projects\CMC\Presentation\CMC.Presentation.Web\obj\Debug\netcoreapp3.1\Razor\Views\Shared\_CompetitionLayout.cshtml.g.cs
 D:\Profile\Projects\CMC\Presentation\CMC.Presentation.Web\obj\Debug\netcoreapp3.1\Razor\Views\Competitions\PartialViews\_AllPlayers.cshtml.g.cs
 D:\Profile\Projects\CMC\Presentation\CMC.Presentation.Web\obj\Debug\netcoreapp3.1\Razor\Views\Competitions\PartialViews\_SelectCategory.cshtml.g.cs
+D:\Profile\Projects\CMC\Presentation\CMC.Presentation.Web\obj\Debug\netcoreapp3.1\Razor\Views\Competitions\PartialViews\_Question.cshtml.g.cs
+D:\Profile\Projects\CMC\Presentation\CMC.Presentation.Web\obj\Debug\netcoreapp3.1\Razor\Views\Competitions\PartialViews\_FullScoreTeams.cshtml.g.cs

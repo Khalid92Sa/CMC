@@ -16,6 +16,7 @@ using CMC.Presentation.Domain.Entities;
 using FluentValidation;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Diagnostics.Tracing.Parsers.AspNet;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using System;
@@ -124,17 +125,24 @@ namespace CMC.Presentation.Application.Services.Questions
                 string filePath = null;
                 if (categoryDTO.Img != null && categoryDTO.Img.Length > 0)
                 {
-                    using (var stream = categoryDTO.Img.OpenReadStream())
+                    try
                     {
-                        var imageName = Guid.NewGuid().ToString() + Path.GetExtension(categoryDTO.Img.FileName);
-                        var imagePath = Path.Combine(_env.WebRootPath, "assets", "images", "categories");
-                        filePath = Path.Combine(imagePath, imageName);
-                        
-                        using (var fileStream = new FileStream(filePath, FileMode.Create))
+                        using (var stream = categoryDTO.Img.OpenReadStream())
                         {
-                            stream.CopyTo(fileStream);
+                            var imageName = Guid.NewGuid().ToString() + Path.GetExtension(categoryDTO.Img.FileName);
+                            var imagePath = Path.Combine(_env.WebRootPath, "assets", "images", "categories");
+                            filePath = Path.Combine(imagePath, imageName);
+
+                            using (var fileStream = new FileStream(filePath, FileMode.Create))
+                            {
+                                stream.CopyTo(fileStream);
+                            }
+                            imageToDeleteIfExist = filePath = $"\\{filePath.Substring(filePath.IndexOf("assets"))}";
                         }
-                        imageToDeleteIfExist = filePath = $"\\{filePath.Substring(filePath.IndexOf("assets"))}";
+                    }
+                    catch (Exception ex)
+                    {
+                        filePath = await _settingsService.GetValue<string>(SystemSettings.DefaultCategoryImgPath);
                     }
                 }
                 else
@@ -555,7 +563,7 @@ namespace CMC.Presentation.Application.Services.Questions
                     questionVM.CategoryId = questionDb.CategoryID;
                     if(questionDb.Answers!=null && questionDb.Answers.Count > 0)
                     {
-                        questionDb.Answers.ToList().ForEach(answer =>
+                        questionDb.Answers.Where(a => a.IsDeleted != true).ToList().ForEach(answer =>
                         {
                             questionVM.Answers.Add(new AnswerOptions()
                             {
@@ -606,6 +614,66 @@ namespace CMC.Presentation.Application.Services.Questions
                 {
                     Message = ex.InnerException != null ? ex.InnerException.Message : ex.Message
                 };
+            }
+        }
+
+        /// <summary>
+        /// Get Random question for category in competition
+        /// </summary>
+        /// <param name="categoryId"></param>
+        /// <param name="questions"></param>
+        /// <returns></returns>
+        public async Task<Response<QuestionVM>> GetRandomQuestionPerCategory(int categoryId, List<int> questions)
+        {
+            try
+            {
+                var questionsDb = await _questionRepository.GetAll(a => a.CategoryID == categoryId && a.IsDeleted != true && !questions.Contains(a.Id))
+                    .Include(a=>a.Answers)
+                    .ToListAsync();
+
+                if (questionsDb.Count > 0)
+                {
+                    Random random = new Random();
+                    int randomIndex = random.Next(0, questionsDb.Count);
+                    var randomQuestion = questionsDb[randomIndex];
+
+                    if (randomQuestion != null)
+                    {
+                        List<AnswerOptions> answerOptions = new List<AnswerOptions>();
+                        foreach (var answer in randomQuestion.Answers.Where(a => a.IsDeleted != true).ToList())
+                        {
+                            AnswerOptions option = new AnswerOptions();
+                            option.Id = answer.Id;
+                            option.TextEn = answer.TextEn;
+                            option.TextAr = answer.TextAr;
+                            option.IsAnswer = answer.IsAnswer;
+                            answerOptions.Add(option);
+                        }
+
+                        return new Response<QuestionVM>()
+                        {
+                            Succeeded = true,
+                            Data = new QuestionVM()
+                            {
+                                Id = randomQuestion.Id,
+                                CategoryId = categoryId,
+                                TextAr = randomQuestion.TextAr,
+                                TextEn = randomQuestion.TextEn,
+                                Points = randomQuestion.Points,
+                                Time = randomQuestion.Timer,
+                                Answers = answerOptions
+                            }
+                        };
+                    }
+                    else
+                        return new Response<QuestionVM>() { Succeeded = false, StatusCode = (int)HttpStatusCode.NotFound };
+                }
+                else
+                    return new Response<QuestionVM>() { Succeeded = false , StatusCode = (int)HttpStatusCode.NotFound };
+            }
+            catch (Exception ex)
+            {
+                return new Response<QuestionVM>() { StatusCode = (int)HttpStatusCode.BadRequest };
             }
         }
     }
