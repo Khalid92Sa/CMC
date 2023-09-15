@@ -35,6 +35,7 @@
                         string Otherpoints = OtherTeamPoints == 0 || OtherTeamPoints > 2 && OtherTeamPoints < 11 ? Localizer["Points"].Value :
                         OtherTeamPoints == 2 ? Localizer["TwoPoint"].Value : Localizer["Point"].Value;
                     }
+
                     <span class="h2 h2-responsive d-flex justify-content-center text-center white-color">@Localizer["VisitorsTeam"]</span>
                     <span class="h1 h1-responsive d-flex justify-content-center text-center white-color pt-5">@OtherTeamPoints @Otherpoints</span>
                 </div>
