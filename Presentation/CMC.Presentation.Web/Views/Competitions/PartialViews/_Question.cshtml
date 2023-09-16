@@ -5,7 +5,12 @@
     bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
 }
 
-
+<style>
+    .bg-answer-border{
+        border: 2px solid #9C59FE;
+        background-color: rgba(156, 89, 254, 0.1);
+    }
+</style>
 <div class="" style="z-index:-1000;">
     <img class="min-vh-100" src="~/assets/competition/images/Questions-Background.png" style="width:100%; position:absolute; top:0; left:0;" />
 </div>
@@ -44,21 +49,36 @@
                                 <input type="hidden" id="hdnQuestionPoint" value="@Model.CurrentQuestion.Points" />
                             </div>
                             <div class="row mt-4" id="dv-answers-options">
-                                @foreach(var answer in Model.CurrentQuestion.Answers)
+                                @foreach (var answer in Model.CurrentQuestion.Answers)
                                 {
-                                    string answerText = IsAr ? answer.TextAr : answer.TextEn;
-                                    <div class="col-6" style="visibility:hidden">
-                                        <label class="w-100">
-                                            <input type="radio" data-id="@answer.Id" name="investmentExp" class="card-input-element-payment" data-iscorrect="@answer.IsAnswer" onclick="StartCompetition.SelectAnAnswer(this)"  />
-                                            <div class="px-5 panel panel-default card-input-payment p-3 d-flex align-items-center justify-content-between">
-                                                <div class="d-flex justify-content-center w-100">
-                                                    @answerText
+                                    if (answer.IsImg && !string.IsNullOrEmpty(answer.ImgPath))
+                                    {
+                                        <div class="col-6" style="visibility:hidden">
+                                            <label class="w-100">
+                                                <div class="p-3 d-flex align-items-center justify-content-between img-answer-options" style="cursor:pointer" data-id="@answer.Id" data-iscorrect="@answer.IsAnswer" onclick="StartCompetition.SelectAnAnswer(this)" data-isimg="true">
+                                                    <div class="d-flex justify-content-center w-100">
+                                                        <img src="@answer.ImgPath" style="width:50%">
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </label>
-                                    </div>
+                                            </label>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        string answerText = IsAr ? answer.TextAr : answer.TextEn;
+                                        <div class="col-6" style="visibility:hidden">
+                                            <label class="w-100">
+                                                <input type="radio" data-id="@answer.Id" name="investmentExp" class="card-input-element-payment" data-iscorrect="@answer.IsAnswer" onclick="StartCompetition.SelectAnAnswer(this)" data-isimg="false" />
+                                                <div class="px-5 panel panel-default card-input-payment p-3 d-flex align-items-center justify-content-between">
+                                                    <div class="d-flex justify-content-center w-100">
+                                                        @answerText
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    }
                                 }
-                                
+                                <input type="hidden" value="" id="hdnAnswerIdImg" />
                                 <div class="col-md-12 mt-3" id="dv-confirm" style="visibility:hidden">
                                     <div class=" d-flex justify-content-center mt-2 mb-4">
                                         <button class="button" type="button" id="btn-answer">

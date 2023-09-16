@@ -19,9 +19,10 @@ namespace CMC.Presentation.Application.DTOs.Competitions
         public TeamDTO WinningTeam { get; set; } = new TeamDTO();
         public int? Team1Score { get; set; }
         public int? Team2Score { get; set; }
-
+        public int QuestionCount { get; set; }
         public List<LookupModel> CityMallTeam { get; set; } = new List<LookupModel>();
         public List<LookupModel> OtherTeam { get; set; } = new List<LookupModel>();
         public List<LookupModel> Hosts { get; set; } = new List<LookupModel>();
+        public List<LatestCompeitionsScore> LatestScores { get; set; } = new List<LatestCompeitionsScore>();
     }
 }

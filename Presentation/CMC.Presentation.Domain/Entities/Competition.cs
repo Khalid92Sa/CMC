@@ -10,10 +10,10 @@ namespace CMC.Presentation.Domain.Entities
     {
         public string Name { get; set; }
         public virtual int Team1Id { get; set; }
-        public virtual Team Team1 { get; set; }
+        public virtual Team Team1 { get; set; } // CityMall
 
         public virtual int Team2Id { get; set; }
-        public virtual Team Team2 { get; set; }
+        public virtual Team Team2 { get; set; } // Other team
 
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
@@ -26,12 +26,10 @@ namespace CMC.Presentation.Domain.Entities
 
         public virtual int? WinningTeamId { get; set; }
         public virtual Team WinningTeam { get; set; }
+        public int? Team1Score { get; set; }
+        public int? Team2Score { get; set; }
 
-
-        public virtual int? ParentId { get; set; }
-        public virtual Competition Parent { get; set; }
-
-        public int? RoundCount { get; set; }
+        public int QuestionsCount { get; set; }
 
         public virtual ICollection<CompetitionQuestion> CompetitionQuestions { get; set; }
     }

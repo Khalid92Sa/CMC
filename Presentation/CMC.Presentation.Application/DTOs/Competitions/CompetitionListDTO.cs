@@ -10,5 +10,7 @@ namespace CMC.Presentation.Application.DTOs.Competitions
         public string HostName { get; set; }
         public string CompetitionName { get; set; }
         public string CompetitionStartDate { get; set; }
+        public string CompetitionEndDate { get; set;}
+        public bool IsFinished { get; set; }
     }
 }

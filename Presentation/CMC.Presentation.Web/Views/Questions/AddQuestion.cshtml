@@ -1,8 +1,17 @@
 ﻿@model CMC.Presentation.Application.DTOs.Questions.QuestionVM
 
+@using Microsoft.AspNetCore.Http;
+@using CMC.Kernel.Core.Constants
+@using CMC.Presentation.Application.DTOs.Identity
+@using Newtonsoft.Json
+@inject IHttpContextAccessor HttpContextAccessor
+
+
 @{
     ViewData["Title"] = Localizer["AddNewQuestion"].Value;
     bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
+    UserDTO userInfoDTO = HttpContextAccessor.HttpContext.Session.GetString("UserInfoDTO") != null ?
+      JsonConvert.DeserializeObject<UserDTO>(HttpContextAccessor.HttpContext.Session.GetString("UserInfoDTO")) : null;
 }
 
 <style>
@@ -116,6 +125,14 @@
                                 <input class="form-control" type="text" asp-for="Points" onkeypress="return GeneralClass.validationNumbersOnly(this,event)" />
                                 <span asp-validation-for="Points" class="text-danger"></span>
                             </div>
+                            <div class="form-group col-md-3">
+                                <label class="requiredLabel">@Localizer["AnswersType"]</label>
+                                <select id="ddlAnswersType" class="form-select w-100" asp-for="AnswertType" style="height:60%">
+                                    <option value="1">@Localizer["AnswersTypeText"]</option>
+                                    <option value="2">@Localizer["AnswersTypeImg"]</option>
+                                </select>
+                                <span asp-validation-for="AnswertType" class="text-danger"></span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -128,7 +145,7 @@
                 </div>
                 <div class="row mb-3">
 
-                    <div class="col-sm-10 dv-options">
+                    <div class="col-sm-10 dv-options dv-answers-text">
                         <div class="option" data-count="1">
                             <div class="option-row">
                                 <input type="hidden" id="hdn-option-id-1" />
@@ -145,63 +162,151 @@
                                     <input class="form-control margin-text-box option-textbox-en" type="text" id="txt-option-en-1" placeholder="@Localizer["Option1"] @Localizer["InEnglish"]" />
                                     <input class="form-control margin-text-box option-textbox-ar" type="text" id="txt-option-ar-1" placeholder="@Localizer["Option1"] @Localizer["InArabic"]" />
                                 }
+                                <span class="text-danger field-validation-valid" data-valmsg-replace="true" style="margin:0 20px"></span>
+                            </div>
+                            <div class="option" data-count="2">
+                                <div class="option-row">
+                                    <input type="hidden" id="hdn-option-id-2" />
+                                    <label class="option-label">
+                                        <input class="form-check-input" type="radio" name="correctOption" id="chk-option-2" onchange="Questions.SelectAnswer(this)">
+                                    </label>
+
+                                    @if (IsAr)
+                                    {
+                                        <input class="form-control margin-text-box option-textbox-ar" type="text" id="txt-option-ar-2" placeholder="@Localizer["Option2"] @Localizer["InArabic"]" />
+                                        <input class="form-control margin-text-box option-textbox-en" type="text" id="txt-option-en-2" placeholder="@Localizer["Option2"] @Localizer["InEnglish"]" />
+                                    }
+                                    else
+                                    {
+                                        <input class="form-control margin-text-box option-textbox-en" type="text" id="txt-option-en-2" placeholder="@Localizer["Option2"] @Localizer["InEnglish"]" />
+                                        <input class="form-control margin-text-box option-textbox-ar" type="text" id="txt-option-ar-2" placeholder="@Localizer["Option2"] @Localizer["InArabic"]" />
+                                    }
+                                </div>
+                                <span class="text-danger field-validation-valid" data-valmsg-replace="true" style="margin:0 20px"></span>
+                            </div>
+                            <div class="option" data-count="3">
+                                <div class="option-row">
+                                    <input type="hidden" id="hdn-option-id-3" />
+                                    <label class="option-label">
+                                        <input class="form-check-input" type="radio" name="correctOption" id="chk-option-3" onchange="Questions.SelectAnswer(this)">
+                                    </label>
+                                    @if (IsAr)
+                                    {
+                                        <input class="form-control margin-text-box option-textbox-ar" type="text" id="txt-option-ar-3" placeholder="@Localizer["Option3"] @Localizer["InArabic"]" />
+                                        <input class="form-control margin-text-box option-textbox-en" type="text" id="txt-option-en-3" placeholder="@Localizer["Option3"] @Localizer["InEnglish"]" />
+                                    }
+                                    else
+                                    {
+                                        <input class="form-control margin-text-box option-textbox-en" type="text" id="txt-option-en-3" placeholder="@Localizer["Option3"] @Localizer["InEnglish"]" />
+                                        <input class="form-control margin-text-box option-textbox-ar" type="text" id="txt-option-ar-3" placeholder="@Localizer["Option3"] @Localizer["InArabic"]" />
+                                    }
+                                </div>
+                                <span class="text-danger field-validation-valid" data-valmsg-replace="true" style="margin:0 20px"></span>
+                            </div>
+                            <div class="option" data-count="4">
+                                <div class="option-row">
+                                    <input type="hidden" id="hdn-option-id-4" />
+                                    <label class="option-label">
+                                        <input class="form-check-input" type="radio" name="correctOption" id="chk-option-4" onchange="Questions.SelectAnswer(this)">
+                                    </label>
+                                    @if (IsAr)
+                                    {
+                                        <input class="form-control margin-text-box option-textbox-ar" type="text" id="txt-option-ar-4" placeholder="@Localizer["Option4"] @Localizer["InArabic"]" />
+                                        <input class="form-control margin-text-box option-textbox-en" type="text" id="txt-option-en-4" placeholder="@Localizer["Option4"] @Localizer["InEnglish"]" />
+                                    }
+                                    else
+                                    {
+                                        <input class="form-control margin-text-box option-textbox-en" type="text" id="txt-option-en-4" placeholder="@Localizer["Option4"] @Localizer["InEnglish"]" />
+                                        <input class="form-control margin-text-box option-textbox-ar" type="text" id="txt-option-ar-4" placeholder="@Localizer["Option4"] @Localizer["InArabic"]" />
+                                    }
+                                </div>
+                            </div>
+                            <span class="text-danger field-validation-valid" data-valmsg-replace="true" style="margin:0 20px;"></span>
+                        </div>
+                    </div>
+
+
+                    <div class="col-sm-10 dv-options dv-answers-images d-none">
+                        <div class="option" data-count="1">
+                            <div class="option-row">
+                                <input type="hidden" id="hdn-option-img-id-1" />
+                                <label class="option-label">
+                                    <input class="form-check-input" type="radio" name="correctOptionImg" id="chk-option-img-1" onchange="Questions.SelectAnswer(this)">
+                                </label>
+
+                                <div class="form-group col-md-6 d-flex flex-column d-flex" style="margin:0 -15px;">
+                                    <div class="custom-file">
+                                        <input type="file" name="Img" class="custom-file-input" id="answer-img-1" style="cursor:pointer" data-answer="1"
+                                               placeholder="@Localizer["ChooseImg"].Value" accept=".jpg, .jpeg, .png">
+                                        <label class="custom-file-label upload-btn" for="file">
+                                            <span id="lblImageName-1">@Localizer["ChooseImg"]</span>
+                                            <span class="danger"></span> <i id="lblImgStatus-1" class="fas fa-upload"></i>
+                                        </label>
+                                    </div>
+                                    <span id="answer-Img-invalid-1" class="text-danger field-validation-error"></span>
+                                </div>
                             </div>
                             <span class="text-danger field-validation-valid" data-valmsg-replace="true" style="margin:0 20px"></span>
                         </div>
                         <div class="option" data-count="2">
                             <div class="option-row">
-                                <input type="hidden" id="hdn-option-id-2" />
+                                <input type="hidden" id="hdn-option-img-id-2" />
                                 <label class="option-label">
-                                    <input class="form-check-input" type="radio" name="correctOption" id="chk-option-2" onchange="Questions.SelectAnswer(this)">
+                                    <input class="form-check-input" type="radio" name="correctOptionImg" id="chk-option-img-2" onchange="Questions.SelectAnswer(this)">
                                 </label>
-                                @if (IsAr)
-                                {
-                                    <input class="form-control margin-text-box option-textbox-ar" type="text" id="txt-option-ar-2" placeholder="@Localizer["Option2"] @Localizer["InArabic"]" />
-                                    <input class="form-control margin-text-box option-textbox-en" type="text" id="txt-option-en-2" placeholder="@Localizer["Option2"] @Localizer["InEnglish"]" />
-                                }
-                                else
-                                {
-                                    <input class="form-control margin-text-box option-textbox-en" type="text" id="txt-option-en-2" placeholder="@Localizer["Option2"] @Localizer["InEnglish"]" />
-                                    <input class="form-control margin-text-box option-textbox-ar" type="text" id="txt-option-ar-2" placeholder="@Localizer["Option2"] @Localizer["InArabic"]" />
-                                }
+
+                                <div class="form-group col-md-6 d-flex flex-column d-flex" style="margin:0 -15px;">
+                                    <div class="custom-file">
+                                        <input type="file" name="Img" class="custom-file-input" id="answer-img-2" style="cursor:pointer" data-answer="2"
+                                               placeholder="@Localizer["ChooseImg"].Value" accept=".jpg, .jpeg, .png">
+                                        <label class="custom-file-label upload-btn" for="file">
+                                            <span id="lblImageName-2">@Localizer["ChooseImg"]</span>
+                                            <span class="danger"></span> <i id="lblImgStatus-2" class="fas fa-upload"></i>
+                                        </label>
+                                    </div>
+                                    <span id="answer-Img-invalid-2" class="text-danger field-validation-error"></span>
+                                </div>
                             </div>
                             <span class="text-danger field-validation-valid" data-valmsg-replace="true" style="margin:0 20px"></span>
                         </div>
                         <div class="option" data-count="3">
                             <div class="option-row">
-                                <input type="hidden" id="hdn-option-id-3" />
+                                <input type="hidden" id="hdn-option-img-id-3" />
                                 <label class="option-label">
-                                    <input class="form-check-input" type="radio" name="correctOption" id="chk-option-3" onchange="Questions.SelectAnswer(this)">
+                                    <input class="form-check-input" type="radio" name="correctOptionImg" id="chk-option-img-3" onchange="Questions.SelectAnswer(this)">
                                 </label>
-                                @if (IsAr)
-                                {
-                                    <input class="form-control margin-text-box option-textbox-ar" type="text" id="txt-option-ar-3" placeholder="@Localizer["Option3"] @Localizer["InArabic"]" />
-                                    <input class="form-control margin-text-box option-textbox-en" type="text" id="txt-option-en-3" placeholder="@Localizer["Option3"] @Localizer["InEnglish"]" />
-                                }
-                                else
-                                {
-                                    <input class="form-control margin-text-box option-textbox-en" type="text" id="txt-option-en-3" placeholder="@Localizer["Option3"] @Localizer["InEnglish"]" />
-                                    <input class="form-control margin-text-box option-textbox-ar" type="text" id="txt-option-ar-3" placeholder="@Localizer["Option3"] @Localizer["InArabic"]" />
-                                }
+
+                                <div class="form-group col-md-6 d-flex flex-column d-flex" style="margin:0 -15px;">
+                                    <div class="custom-file">
+                                        <input type="file" name="Img" class="custom-file-input" id="answer-img-3" data-answer="3" style="cursor:pointer" placeholder="@Localizer["ChooseImg"].Value" accept=".jpg, .jpeg, .png">
+                                        <label class="custom-file-label upload-btn" for="file">
+                                            <span id="lblImageName-3">@Localizer["ChooseImg"]</span>
+                                            <span class="danger"></span> <i id="lblImgStatus-3" class="fas fa-upload"></i>
+                                        </label>
+                                    </div>
+                                    <span id="answer-Img-invalid-3" class="text-danger field-validation-error"></span>
+                                </div>
                             </div>
                             <span class="text-danger field-validation-valid" data-valmsg-replace="true" style="margin:0 20px"></span>
                         </div>
                         <div class="option" data-count="4">
                             <div class="option-row">
-                                <input type="hidden" id="hdn-option-id-4" />
+                                <input type="hidden" id="hdn-option-img-id-4" />
                                 <label class="option-label">
-                                    <input class="form-check-input" type="radio" name="correctOption" id="chk-option-4" onchange="Questions.SelectAnswer(this)">
+                                    <input class="form-check-input" type="radio" name="correctOptionImg" id="chk-option-img-4" onchange="Questions.SelectAnswer(this)">
                                 </label>
-                                @if (IsAr)
-                                {
-                                    <input class="form-control margin-text-box option-textbox-ar" type="text" id="txt-option-ar-4" placeholder="@Localizer["Option4"] @Localizer["InArabic"]" />
-                                    <input class="form-control margin-text-box option-textbox-en" type="text" id="txt-option-en-4" placeholder="@Localizer["Option4"] @Localizer["InEnglish"]" />
-                                }
-                                else
-                                {
-                                    <input class="form-control margin-text-box option-textbox-en" type="text" id="txt-option-en-4" placeholder="@Localizer["Option4"] @Localizer["InEnglish"]" />
-                                    <input class="form-control margin-text-box option-textbox-ar" type="text" id="txt-option-ar-4" placeholder="@Localizer["Option4"] @Localizer["InArabic"]" />
-                                }
+
+                                <div class="form-group col-md-6 d-flex flex-column d-flex" style="margin:0 -15px;">
+                                    <div class="custom-file">
+                                        <input type="file" name="Img" class="custom-file-input" id="answer-img-4" data-answer="4" style="cursor:pointer"
+                                               placeholder="@Localizer["ChooseImg"].Value" accept=".jpg, .jpeg, .png">
+                                        <label class="custom-file-label upload-btn" for="file">
+                                            <span id="lblImageName-4">@Localizer["ChooseImg"]</span>
+                                            <span class="danger"></span> <i id="lblImgStatus-4" class="fas fa-upload"></i>
+                                        </label>
+                                    </div>
+                                    <span id="answer-Img-invalid-4" class="text-danger field-validation-error"></span>
+                                </div>
                             </div>
                             <span class="text-danger field-validation-valid" data-valmsg-replace="true" style="margin:0 20px;"></span>
                         </div>
@@ -215,8 +320,8 @@
     </div>
     <div class="col-12 text-center">
         <button type="button" class="btn btn-primary" onclick="Questions.AddNewQuestion()">@Localizer["Save"]</button>
-        <button type="button" class="btn btn-secondary" onclick="window.location.href='@Url.Action("Index", "Questions")';">@Localizer["Cancel"]</button>
-        @if (Model.Id.HasValue)
+        <button type="button" class="btn btn-secondary" onclick="window.location.href='@Url.Action("AddCategory", "Questions",new { id = Model.CategoryId })';">@Localizer["Cancel"]</button>
+        @if (Model.Id.HasValue && userInfoDTO.PermissionCodes.Contains(PermissionCodes.WebQuestionsDelete))
         {
             <button type="button" onclick="Questions.DeleteQuestion(this)" data-category="@Model.CategoryId" id="btndelete_@Model.Id" class="btn btn-danger">@Localizer["Delete"]</button>
         }
@@ -229,6 +334,7 @@
 
 
 <script>
+    Questions.OnLoad();
     GeneralClass.ActivationSubMenuItem('#lnkQuestions', '#lnkQuestionAdd');
     GeneralClass.ActivationSubMenuItem('#lnkQuestions2', '#lnkQuestionAdd2');
 </script>
@@ -257,7 +363,7 @@
         </script>
         counter++;
     }
-   
+
 }
 
 

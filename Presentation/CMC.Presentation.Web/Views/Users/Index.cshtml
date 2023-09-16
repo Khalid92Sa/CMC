@@ -1,6 +1,17 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Http;
+@using Microsoft.AspNetCore.Mvc;
+@using System.Globalization;
+@using System.Threading
+@using CMC.Kernel.Core.Constants
+@using CMC.Presentation.Application.DTOs.Identity
+@using Newtonsoft.Json
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
     ViewData["Title"] = Localizer["UsersIndexTitle"].Value;
     bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
+    UserDTO userInfoDTO = HttpContextAccessor.HttpContext.Session.GetString("UserInfoDTO") != null ?
+       JsonConvert.DeserializeObject<UserDTO>(HttpContextAccessor.HttpContext.Session.GetString("UserInfoDTO")) : null;
 }
 
 <div class="flex flex-column justify-content-center align-items-center">
@@ -9,9 +20,12 @@
             <h6 class="mb-0">@Localizer["UsersIndexTitle"]</h6>
         </div>
         <div class="col-5">
-            <div class="formBtn d-flex justify-content-end">
-                <a href="@Url.Action("AddUser","Users")" style="white-space:nowrap;" class="btn btn-outline-primary mx-0">@Localizer["AddUser"]</a>
-            </div>
+            @if (userInfoDTO.PermissionCodes.Contains(PermissionCodes.WebUsersAdd))
+            {
+                <div class="formBtn d-flex justify-content-end">
+                    <a href="@Url.Action("AddUser","Users")" style="white-space:nowrap;" class="btn btn-outline-primary mx-0">@Localizer["AddUser"]</a>
+                </div>
+            }
         </div>
     </div>
     <div class="card">
@@ -72,4 +86,6 @@
     Users.OnLoad();
     GeneralClass.ActivationSubMenuItem('#lnkSystemMangement', '#lnkUsers');
     GeneralClass.ActivationSubMenuItem('#lnkSystemMangement2', '#lnkUsers2');
+    var CanDelete = '@ViewData["CanDelete"]' == 'True';
+    var CanCreate = '@ViewData["CanCreate"]' == 'True';
 </script>

@@ -68,6 +68,7 @@ var CompetitionList = {
             },
             { data: "competitionName", sortable: false, name: "Competition Name", autoWidth: true },
             { data: "competitionStartDate", sortable: false, name: "Competition Start Date", autoWidth: true },
+            { data: "competitionEndDate", sortable: false, name: "Competition End Date", autoWidth: true },
             { data: "hostName", sortable: false, name: "Host Name", autoWidth: true },
             {
                 "data": "Id",
@@ -76,7 +77,8 @@ var CompetitionList = {
                 "render": function (Id, type, row) {
                     var div = document.createElement('div');
 
-                    if (CanCreate) {
+                    if (CanCreate && !row.isFinished) {
+                        // If Can Create and still the competition not started, he can edit
                         var btnUpdate = document.createElement('a');
                         $(btnUpdate).attr('id', 'btnUpdate_' + row.id);
                         $(btnUpdate).attr('title', globalResources.Edit);
@@ -86,6 +88,18 @@ var CompetitionList = {
                         $(pen).addClass('fas fa-pen');
                         $(btnUpdate).append(pen);
                         div.append(btnUpdate);
+                    }
+                    else {
+                        // Competition already finished, then only view scores.
+                        var btnView = document.createElement('a');
+                        $(btnView).attr('id', 'btnView_' + row.id);
+                        $(btnView).attr('title', globalResources.ViewCompetitionScores);
+                        $(btnView).attr('onclick', 'CompetitionForm.ViewCompetitionScores(this)');
+                        $(btnView).addClass('mx-1 action bg-accent');
+                        var pen = document.createElement('i');
+                        $(pen).addClass('fas fa-eye');
+                        $(btnView).append(pen);
+                        div.append(btnView);
                     }
 
 
@@ -116,22 +130,35 @@ var CompetitionList = {
             },
             { data: "competitionName", sortable: false, name: "Competition Name", autoWidth: true },
             { data: "competitionStartDate", sortable: false, name: "Competition Start Date", autoWidth: true },
+            { data: "competitionEndDate", sortable: false, name: "Competition End Date", autoWidth: true },
             {
                 "data": "Id",
                 "name": "Id",
                 "autoWidth": true,
                 "render": function (Id, type, row) {
                     var div = document.createElement('div');
-                    var btnStart = document.createElement('a');
-                    $(btnStart).attr('id', 'btnStart_' + row.id);
-                    $(btnStart).attr('onclick', 'CompetitionForm.StartCompetition(this)');
-                    $(btnStart).addClass('mx-1 action bg-accent');
-                    var pen = document.createElement('i');
-                    $(pen).addClass('fas fa-pen');
-                    $(btnStart).append(pen);
-                    btnStart.textContent = globalResources.StartCompetition;
-                    div.append(btnStart);
-
+                    if (row.isFinished) {
+                        var btnView = document.createElement('a');
+                        $(btnView).attr('id', 'btnView_' + row.id);
+                        $(btnView).attr('onclick', 'CompetitionForm.ViewCompetitionScores(this)');
+                        $(btnView).addClass('mx-1 action bg-accent');
+                        var pen = document.createElement('i');
+                        $(pen).addClass('fas fa-pen');
+                        $(btnView).append(pen);
+                        btnView.textContent = globalResources.ViewCompetitionScores;
+                        div.append(btnView);
+                    }
+                    else {
+                        var btnStart = document.createElement('a');
+                        $(btnStart).attr('id', 'btnStart_' + row.id);
+                        $(btnStart).attr('onclick', 'CompetitionForm.StartCompetition(this)');
+                        $(btnStart).addClass('mx-1 action bg-accent');
+                        var pen = document.createElement('i');
+                        $(pen).addClass('fas fa-pen');
+                        $(btnStart).append(pen);
+                        btnStart.textContent = globalResources.StartCompetition;
+                        div.append(btnStart);
+                    }
                     return $(div).html();
                 }
             }
@@ -196,7 +223,7 @@ var CompetitionForm = {
         }
     },
     CreateOrUpdate: function () {
-        $('.field-validation-valid').hide();
+        $('.field-validation-valid').html('').hide();
         $.ajax({
             type: 'POST',
             url: $('#form-competition').attr('action'),
@@ -274,7 +301,7 @@ var CompetitionForm = {
                                 if ($("#pagination").length > 0) {
                                     //Delete from Pagination
                                     $("#pagination").twbsPagination('destroy');
-                                    Players.GetAllWithPager(1, GeneralClass.pageSize);
+                                    CompetitionList.GetAllWithPager(1, GeneralClass.pageSize);
                                 }
                                 else {
                                     //Delete from question page.
@@ -297,17 +324,24 @@ var CompetitionForm = {
         var value = $(e).attr('id');
         var id = value.split("_")[1];
         window.location.href = publicURls.StartCompetition + '?id=' + id;
+    },
+    ViewCompetitionScores: function (e) {
+        var value = $(e).attr('id');
+        var id = value.split("_")[1];
+        window.location.href = publicURls.ViewCompetition + '?id=' + id;
     }
 }
 
 var StartCompetition = {
     OnLoad: function () {
         $(document).ready(function () {
-            //setTimeout(function () {
-            //    $('#starting-div').fadeOut(4000, function () {
-            //        $('#next-content').fadeIn();
-            //    });
-            //}, 500); // 4 seconds
+            if (!_isTest) {
+                setTimeout(function () {
+                    $('#starting-div').fadeOut(1000, function () {
+                        $('#next-content').fadeIn();
+                    });
+                }, 5000);
+            }
 
             $('.cityMallPlayers').on('click', function (e) {
                 StartCompetition.SelectCityMallPlayer(e.currentTarget);
@@ -389,36 +423,41 @@ var StartCompetition = {
         CityMallPlayed.push(parsCityPlayer);
         OtherTeamPlayed.push(parsOtherPlayer);
 
-        $.ajax({
-            type: 'POST',
-            url: publicURls.PlayerVsPlayer,
-            data: data,
-            contentType: false,
-            processData: false,
-            success: function (data) {
-                if (data.isSuccess) {
-                    if (data.partial != '') {
-                        $('#dv-partial').html(data.partial);
-                        $('#img-goTo-category').on('click', function () {
-                            StartCompetition.GoToCategories();
-                        });
+        if (isFinalCompetition) {
+            StartCompetition.GoToCategories();
+        }
+        else {
+            $.ajax({
+                type: 'POST',
+                url: publicURls.PlayerVsPlayer,
+                data: data,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    if (data.isSuccess) {
+                        if (data.partial != '') {
+                            $('#dv-partial').html(data.partial);
+                            $('#img-goTo-category').on('click', function () {
+                                StartCompetition.GoToCategories();
+                            });
 
-                        //$('.cityMallPlayers').on('click', function (e) {
-                        //    StartCompetition.SelectOnlyOnePlayer(e.currentTarget);
-                        //});
-                        //$('.OtherPlayers').on('click', function (e) {
-                        //    StartCompetition.SelectOnlyOnePlayer(e.currentTarget);
-                        //});
+                            //$('.cityMallPlayers').on('click', function (e) {
+                            //    StartCompetition.SelectOnlyOnePlayer(e.currentTarget);
+                            //});
+                            //$('.OtherPlayers').on('click', function (e) {
+                            //    StartCompetition.SelectOnlyOnePlayer(e.currentTarget);
+                            //});
+                        }
                     }
-                }
-                else {
+                    else {
+                        GeneralClass.ShowErrorAlert(globalResources.ErrorOccurred);
+                    }
+                },
+                error: function (e) {
                     GeneralClass.ShowErrorAlert(globalResources.ErrorOccurred);
                 }
-            },
-            error: function (e) {
-                GeneralClass.ShowErrorAlert(globalResources.ErrorOccurred);
-            }
-        });
+            });
+        }
     },
     GoToCategories: function () {
         //if (playersInCompetition.CityMallPlayer == '' && playersInCompetition.OtherPlayer == '') {
@@ -475,6 +514,7 @@ var StartCompetition = {
                         });
 
                         StartCompetition.ResetObjects();
+                        $('#hdnAnswerIdImg').val('');
 
                         $('#dv-cityMall-player, #dv-Other-player').on('click', function () {
                             var id = $(this).attr('id');
@@ -529,6 +569,19 @@ var StartCompetition = {
             return;
         }
 
+        var isImgAnswer = $('.img-answer-options').length > 0;
+        if (isImgAnswer) {
+            if ($('.img-answer-options.bg-answer-border').length > 0) {
+                $('#dv-confirm').removeAttr('style');
+            }
+        }
+        else {
+            var isAnsweredSelected = $('input[name="investmentExp"]:checked');
+            if (isAnsweredSelected.length > 0) {
+                $('#dv-confirm').removeAttr('style');
+            }
+        }
+
         if (id == 'dv-cityMall-player') {
             $('#dv-other-player-timer').find('.dv-full-timer').remove();
             $('#dv-citymall-player-timer').append(timerDiv);
@@ -553,7 +606,7 @@ var StartCompetition = {
     },
     StartTimer: function () {
         document.documentElement.classList.remove('finished');
-        var questionTimer = 5000; // (parseInt($('#hdnQuestionTimer').val()) * 1000) + 1000;
+        var questionTimer = _isTest ? 10000 : (parseInt($('#hdnQuestionTimer').val()) * 1000) + 1000;
         var duration = playerTimer.IsFirstTime ? questionTimer : 11000;
         var timer = document.getElementById('timer');
         var circles = document.getElementById('circles');
@@ -637,10 +690,19 @@ var StartCompetition = {
             $('#dv-citymall-player-timer').find('.dv-full-timer').remove();
             $('#p-timer').text('');
             $('#dv-p-timer').addClass('d-none');
-        },3000);
+        }, 500);
     },
     SelectAnAnswer: function (e) {
-        $('#dv-confirm').removeAttr('style');
+
+        if ($(e).attr('data-isimg') == 'true') {
+            $('.img-answer-options').removeClass('bg-answer-border');
+            $(e).addClass('bg-answer-border');
+            $('#hdnAnswerIdImg').val($(e).attr('data-id'));
+        }
+
+        if (playerTimer.PlayerId != '') {
+            $('#dv-confirm').removeAttr('style');
+        }
     },
     AnswerOnQuestion: function () {
 
@@ -654,10 +716,17 @@ var StartCompetition = {
         var questionPoints = $('#hdnQuestionPoint').val();
         var answerId = null;
         var isCorrect = null;
-        var answerRadio = $('input[name="investmentExp"]:checked');
-        if (answerRadio.length > 0) {
-            answerId = answerRadio.data('id');
-            isCorrect = answerRadio.data('iscorrect');
+        var isImgAnswer = $('.img-answer-options').length > 0;
+        if (isImgAnswer) {
+            answerId = $('#hdnAnswerIdImg').val();
+            isCorrect = $('.img-answer-options.bg-answer-border').attr('data-iscorrect');
+        }
+        else {
+            var answerRadio = $('input[name="investmentExp"]:checked');
+            if (answerRadio.length > 0) {
+                answerId = answerRadio.data('id');
+                isCorrect = answerRadio.data('iscorrect');
+            }
         }
 
         var data = new FormData();
@@ -668,7 +737,7 @@ var StartCompetition = {
         data.append("IsCorrectAnswer", isCorrect);
         data.append("Points", questionPoints);
 
-       
+
         $.ajax({
             type: 'POST',
             url: publicURls.AnswerOnQuestion,
@@ -692,6 +761,10 @@ var StartCompetition = {
                         setTimeout(function () {
                             $('#goodModal, #notCorrectModal').modal('hide');
                             StartCompetition.OnLoad();
+                            if (data.reset) {
+                                StartCompetition.ResetPlayed();
+                            }
+
                             $('#dv-partial').html(data.partial);
                         }, 6000);
                     }
@@ -708,6 +781,8 @@ var StartCompetition = {
                             $('#notCorrectModal').modal('show');
                             InCorrectAnswerSound.play();
                             StartCompetition.StopTimer();
+                            playerTimer.IsTimerStarted = false;
+                            playerTimer.IsFirstTime = false;
                             setTimeout(function () {
                                 $('#notCorrectModal').modal('hide');
                             }, 4000);
@@ -718,6 +793,9 @@ var StartCompetition = {
                             //Show home page button
                             $('#dv-homePage').on('click', function () {
                                 StartCompetition.OnLoad();
+                                if (data.reset) {
+                                    StartCompetition.ResetPlayed();
+                                }
                                 $('#dv-partial').html(data.partial);
                             });
 
@@ -749,5 +827,132 @@ var StartCompetition = {
             'IsOtherPlayerAnswered': false,
             'IsTimerFinishedAfterAnswer': false
         };
+    },
+    ResetPlayed: function () {
+        CityMallPlayed = [];
+        OtherTeamPlayed = [];
+    },
+    GetFullScore: function () {
+        $.ajax({
+            type: 'GET',
+            url: publicURls.GetFullScore,
+            dataType: 'json',
+            success: function (data) {
+                if (data.isSuccess) {
+                    if (data.partial != '') {
+                        $('#dv-partial').html(data.partial);
+                    }
+                }
+                else {
+                    GeneralClass.ShowErrorAlert(globalResources.ErrorOccurred);
+                }
+            },
+            error: function (e) {
+                GeneralClass.ShowErrorAlert(globalResources.ErrorOccurred);
+            }
+        });
+    },
+    OnLoadFullScore: function () {
+
+        $('#go-home-page-bg').on('click', function () {
+            $("#loading").css("display", "flex");
+            $('#next-content').fadeOut(2000, function () {
+                $('#starting-div').fadeIn();
+            });
+
+            setTimeout(function () {
+                window.location.href = publicURls.Logout;
+            }, 5000);
+               
+        });
+        $('.full-team-score-name').on('click', function (e) {
+            var currentElem = e.currentTarget;
+            var teamName = $(currentElem).attr('data-score');
+            var isCityMall = teamName == 'city-mall';
+            StartCompetition.GetTeamScoreDetails(isCityMall);
+        });
+    },
+    GetTeamScoreDetails: function (isCityMall) {
+        //Go to Teams scores.
+        $.ajax({
+            type: 'GET',
+            url: publicURls.GetScoreDetails,
+            dataType: 'json',
+            success: function (data) {
+                if (data.isSuccess) {
+                    if (data.partial != '') {
+                        $('#dv-partial').html(data.partial);
+
+                        if (isCityMall) {
+                            $('#dv-OtherTeamScores').hide();
+                            $('#dv-CityMallScores').show();
+                        }
+                        else {
+                            $('#dv-CityMallScores').hide();
+                            $('#dv-OtherTeamScores').show();
+                        }
+                    }
+                }
+                else {
+                    GeneralClass.ShowErrorAlert(globalResources.ErrorOccurred);
+                }
+            },
+            error: function (e) {
+                GeneralClass.ShowErrorAlert(globalResources.ErrorOccurred);
+            }
+        });
+    },
+    OnLoadScoresDetails: function () {
+        $('.title-team-name').on('click', function (e) {
+            //Get other team
+            var currentElem = e.currentTarget;
+            var teamName = $(currentElem).attr('data-name');
+            if (teamName == 'city-mall') {
+                // if user clicked on city mall, means change the values to be other team
+                $('#dv-CityMallScores').hide();
+                $('#dv-OtherTeamScores').show();
+            }
+            else {
+                $('#dv-OtherTeamScores').hide();
+                $('#dv-CityMallScores').show();
+            }
+        });
+
+        $('#btn-back').on('click', function () {
+            //Go To Full Score
+            StartCompetition.GetFullScore();
+        });
+
+
+        $('.player-modal-details').on('click', function (e) {
+            var playerId = $(this).attr('data-player-Id');
+            var isCityMall = $(this).attr('data-city-mall');
+
+            StartCompetition.GetModalDetails(playerId, isCityMall);
+        });
+    },
+    GetModalDetails: function (playerId, isCityMall) {
+        $.ajax({
+            type: 'GET',
+            url: publicURls.GetModalPlayer + '?playerId=' + playerId + '&isCityMall=' + isCityMall,
+            dataType: 'json',
+            success: function (data) {
+                if (data.isSuccess) {
+                    if (data.partial != '') {
+                        $('#dv-modal-score').html(data.partial);
+                        $('#staticBackdrop').modal('show');
+                    }
+                }
+                else {
+                    GeneralClass.ShowErrorAlert(globalResources.ErrorOccurred);
+                }
+            },
+            error: function (e) {
+                GeneralClass.ShowErrorAlert(globalResources.ErrorOccurred);
+            }
+        }); 
+    },
+    CloseModal: function () {
+        $('#staticBackdrop').modal('hide');
     }
 }

@@ -38,7 +38,7 @@
         $('#lblImgStatus').addClass('fa-upload');
     },
     CreateOrUpdate: function () {
-        $('.field-validation-valid').hide();
+        $('.field-validation-valid').html('').hide();
         var data = new FormData();
         data.append("Id", $("#Id").val());
         data.append("NameEn", $("#NameEn").val());
@@ -267,28 +267,30 @@
                 "name": "Id",
                 "autoWidth": true,
                 "render": function (Id, type, row) {
-                    var btnUpdate = document.createElement('a');
-                    $(btnUpdate).attr('id', 'btnUpdate_' + row.id);
-                    $(btnUpdate).attr('title', globalResources.Edit);
-                    $(btnUpdate).attr('onclick', 'Questions.EditQuestion(this)');
-                    $(btnUpdate).addClass('mx-1 action bg-accent');
-                    var pen = document.createElement('i');
-                    $(pen).addClass('fas fa-pen');
-                    $(btnUpdate).append(pen);
-                   
-
-                    var btndelete = document.createElement('a');
-                    $(btndelete).attr('id', 'btndelete_' + row.id);
-                    $(btndelete).attr('title', globalResources.Delete);
-                    $(btndelete).attr('onclick', 'Questions.DeleteQuestion(this)');
-                    $(btndelete).addClass('mx-1 action bg-danger');
-                    var pen = document.createElement('i');
-                    $(pen).addClass('fas fa-trash');
-                    $(btndelete).append(pen);
-
                     var div = document.createElement('div');
-                    div.append(btnUpdate);
-                    div.append(btndelete);
+                    if (CanCreate) {
+                        var btnUpdate = document.createElement('a');
+                        $(btnUpdate).attr('id', 'btnUpdate_' + row.id);
+                        $(btnUpdate).attr('title', globalResources.Edit);
+                        $(btnUpdate).attr('onclick', 'Questions.EditQuestion(this)');
+                        $(btnUpdate).addClass('mx-1 action bg-accent');
+                        var pen = document.createElement('i');
+                        $(pen).addClass('fas fa-pen');
+                        $(btnUpdate).append(pen);
+                        div.append(btnUpdate);
+                    }
+
+                    if (CanDelete) {
+                        var btndelete = document.createElement('a');
+                        $(btndelete).attr('id', 'btndelete_' + row.id);
+                        $(btndelete).attr('title', globalResources.Delete);
+                        $(btndelete).attr('onclick', 'Questions.DeleteQuestion(this)');
+                        $(btndelete).addClass('mx-1 action bg-danger');
+                        var pen = document.createElement('i');
+                        $(pen).addClass('fas fa-trash');
+                        $(btndelete).append(pen);
+                        div.append(btndelete);
+                    }
                     return $(div).html();
                 }
             }
@@ -299,149 +301,277 @@
 }
 
 var Questions = {
+    OnLoad: function () {
+
+        $('#ddlAnswersType').on('change', function () {
+            if ($(this).val() == 2) {
+                $('.dv-answers-text').addClass('d-none');
+                $('.dv-answers-images').removeClass('d-none');
+            }
+            else {
+                $('.dv-answers-text').removeClass('d-none');
+                $('.dv-answers-images').addClass('d-none');
+            }
+        });
+
+        $('.custom-file-input').change(function (e) {
+            var currentAnswerNum = $(this).attr('data-answer');
+            $("#answer-Img-invalid-" + currentAnswerNum).text("");
+            if ($(this).get(0).files.length > 0) {
+                var currentFile = $(this).get(0).files;
+                var ext = currentFile[0].name;
+                var extt = ext.split('.').pop().toLowerCase();
+                if (extt != "png" && extt != "jpg" && extt != "jpeg") {
+                    $("#answer-Img-invalid-" + currentAnswerNum).text(globalResources.InvalidAttachmentImg);
+                    $("#answer-Img-invalid-" + currentAnswerNum).css("display", "block");
+                    Questions.ClearAnswerAttachment($(this), globalResources.ChooseImg, currentAnswerNum);
+                    return false;
+                }
+
+                $('#lblImageName-' + currentAnswerNum).text(currentFile[0].name);
+                $('#lblImgStatus-' + currentAnswerNum).removeClass('fa-upload');
+                $('#lblImgStatus-' + currentAnswerNum).addClass('fa-check-circle');
+            }
+        });
+    },
+    ClearAnswerAttachment(fileInput, defaultMessage,num) {
+        $(fileInput).val('');
+        $('#lblImageName-'+num).text(defaultMessage);
+        $('#lblImgStatus-' + num).removeClass('fa-check-circle');
+        $('#lblImgStatus-' + num).addClass('fa-upload');
+    },
     AddNewQuestion: function () {
         $('.field-validation-valid').html('').hide();
         var data = new FormData();
-        debugger;
         data.append("Id", $('#Id').val());
         data.append("CategoryId", $('#ddlCategories').val());
         data.append("TextEn", $("#TextEn").val().trim());
         data.append("TextAr", $("#TextAr").val().trim());
         data.append("Time", $("#Time").val().trim());
         data.append("Points", $("#Points").val().trim());
+        data.append("AnswertType", $("#ddlAnswersType").val());
 
         //Answers
         isvalid = true;
         if ($("#ddlCategories").val() != '' && $("#Time").val() != '' && $("#Points").val() != '') {
             if ((IsArabic && $("#TextAr").val() != '') || (!IsArabic && $("#TextEn").val() != '')) {
-                //Check which mandatory textbox to check based on Language
-                if (IsArabic) {
-                    if ($('#txt-option-ar-1').val() == '' || $('#txt-option-ar-2').val() == '') {
-                        $('#lbl-generic-error').html(globalResources.PleaseAddTwoOptions).show();
+
+                if ($('#ddlAnswersType').val() == 1) {
+                    // Text answers
+                    //Check which mandatory textbox to check based on Language
+                    if (IsArabic) {
+                        if ($('#txt-option-ar-1').val() == '' || $('#txt-option-ar-2').val() == '') {
+                            $('#lbl-generic-error').html(globalResources.PleaseAddTwoOptions).show();
+                            return false;
+                        }
+                        else {
+                            $('#lbl-generic-error').html('').hide();
+                        }
+                    }
+                    else {
+                        if ($('#txt-option-en-1').val() == '' || $('#txt-option-en-2').val() == '') {
+                            $('#lbl-generic-error').html(globalResources.PleaseAddTwoOptions).show();
+                            return false;
+                        }
+                        else {
+                            $('#lbl-generic-error').html('').hide();
+                        }
+                    }
+
+
+                    // Option 1
+                    var option1Id = $('#hdn-option-id-1');
+                    var option1Ar = $('#txt-option-ar-1');
+                    var option1En = $('#txt-option-en-1');
+                    var checkOption1 = $('#chk-option-1').is(':checked');
+
+                    // Option 2
+                    var option2Id = $('#hdn-option-id-2');
+                    var option2Ar = $('#txt-option-ar-2');
+                    var option2En = $('#txt-option-en-2');
+                    var checkOption2 = $('#chk-option-2').is(':checked');
+
+                    // Option 3
+                    var option3Id = $('#hdn-option-id-3');
+                    var option3Ar = $('#txt-option-ar-3');
+                    var option3En = $('#txt-option-en-3');
+                    var checkOption3 = $('#chk-option-3').is(':checked');
+
+                    // Option 4
+                    var option4Id = $('#hdn-option-id-4');
+                    var option4Ar = $('#txt-option-ar-4');
+                    var option4En = $('#txt-option-en-4');
+                    var checkOption4 = $('#chk-option-4').is(':checked');
+
+
+                    var isValid = true;
+                    //Validate Options
+                    if (IsArabic) {
+                        //Option 1 Arabic
+                        if (option1Ar.val().trim() == '') {
+                            $(option1Ar).parent().next().html(globalResources.OptionRequired).show();
+                            isValid = false;
+                        }
+                        else {
+                            $(option1Ar).parent().next().html('').hide();
+                        }
+
+                        //Option 2 Arabic
+                        if (option2Ar.val().trim() == '') {
+                            $(option2Ar).parent().next().html(globalResources.OptionRequired).show();
+                            isValid = false;
+                        }
+                        else {
+                            $(option2Ar).parent().next().html('').hide();
+                        }
+                    }
+                    else {
+                        //Option 1 English
+                        if (option1En.val().trim() == '') {
+                            $(option1En).parent().next().html(globalResources.OptionRequired).show();
+                            isValid = false;
+                        }
+                        else {
+                            $(option1En).parent().next().html('').hide();
+                        }
+
+                        //Option 2 English
+                        if (option2En.val().trim() == '') {
+                            $(option2En).parent().next().html(globalResources.OptionRequired).show();
+                            isValid = false;
+                        }
+                        else {
+                            $(option2En).parent().next().html('').hide();
+                        }
+                    }
+
+                    if (!isValid) {
+                        return false;
+                    }
+
+
+
+                    //Check if answer is selected or not
+                    if (!checkOption1 && !checkOption2 && !checkOption3 && !checkOption4) {
+                        $('#lbl-generic-error').html(globalResources.PleaseSelectCorrectAnswerBeforeContinue).show();
                         return false;
                     }
                     else {
                         $('#lbl-generic-error').html('').hide();
                     }
+
+
+                    //Add Option 1 to Data
+                    data.append('Answers[' + 0 + '].TextEn', option1En.val().trim());
+                    data.append('Answers[' + 0 + '].TextAr', option1Ar.val().trim());
+                    data.append('Answers[' + 0 + '].IsAnswer', checkOption1);
+                    data.append('Answers[' + 0 + '].Id', option1Id.val());
+
+                    //Add Option 2 to Data
+                    data.append('Answers[' + 1 + '].TextEn', option2En.val().trim());
+                    data.append('Answers[' + 1 + '].TextAr', option2Ar.val().trim());
+                    data.append('Answers[' + 1 + '].IsAnswer', checkOption2);
+                    data.append('Answers[' + 1 + '].Id', option2Id.val());
+
+
+                    //Add Option 3 to Data
+                    data.append('Answers[' + 2 + '].TextEn', option3En.val().trim());
+                    data.append('Answers[' + 2 + '].TextAr', option3Ar.val().trim());
+                    data.append('Answers[' + 2 + '].IsAnswer', checkOption3);
+                    data.append('Answers[' + 2 + '].Id', option3Id.val());
+
+
+                    //Add Option 4 to Data
+                    data.append('Answers[' + 3 + '].TextEn', option4En.val().trim());
+                    data.append('Answers[' + 3 + '].TextAr', option4Ar.val().trim());
+                    data.append('Answers[' + 3 + '].IsAnswer', checkOption4);
+                    data.append('Answers[' + 3 + '].Id', option4Id.val());
                 }
                 else {
-                    if ($('#txt-option-en-1').val() == '' || $('#txt-option-en-2').val() == '') {
-                        $('#lbl-generic-error').html(globalResources.PleaseAddTwoOptions).show();
+                    // Images Answeres
+                    if ($('#answer-img-1').val() == '' || $('#answer-img-2').val() == '') {
+                        $('#lbl-generic-error').html(globalResources.PleaseAddTwoImagesAtLeast).show();
                         return false;
                     }
                     else {
                         $('#lbl-generic-error').html('').hide();
                     }
-                }
 
 
-                // Option 1
-                var option1Id = $('#hdn-option-id-1');
-                var option1Ar = $('#txt-option-ar-1');
-                var option1En = $('#txt-option-en-1');
-                var checkOption1 = $('#chk-option-1').is(':checked');
+                    // Option 1
+                    var option1ImgId = $('#hdn-option-img-id-1');
+                    var option1Img = $('#answer-img-1');
+                    var checkOptionImg1 = $('#chk-option-img-1').is(':checked');
 
-                // Option 2
-                var option2Id = $('#hdn-option-id-2');
-                var option2Ar = $('#txt-option-ar-2');
-                var option2En = $('#txt-option-en-2');
-                var checkOption2 = $('#chk-option-2').is(':checked');
+                    // Option 2
+                    var option2ImgId = $('#hdn-option-img-id-2');
+                    var option2Img = $('#answer-img-2');
+                    var checkOptionImg2 = $('#chk-option-img-2').is(':checked');
 
-                // Option 3
-                var option3Id = $('#hdn-option-id-3');
-                var option3Ar = $('#txt-option-ar-3');
-                var option3En = $('#txt-option-en-3');
-                var checkOption3 = $('#chk-option-3').is(':checked');
+                    // Option 3
+                    var option3ImgId = $('#hdn-option-img-id-3');
+                    var option3Img = $('#answer-img-3');
+                    var checkOptionImg3 = $('#chk-option-img-3').is(':checked');
 
-                // Option 4
-                var option4Id = $('#hdn-option-id-4');
-                var option4Ar = $('#txt-option-ar-4');
-                var option4En = $('#txt-option-en-4');
-                var checkOption4 = $('#chk-option-4').is(':checked');
+                    // Option 4
+                    var option4ImgId = $('#hdn-option-img-id-4');
+                    var option4Img = $('#answer-img-4');
+                    var checkOptionImg4 = $('#chk-option-img-4').is(':checked');
 
 
-                var isValid = true;
-                //Validate Options
-                if (IsArabic) {
-                    //Option 1 Arabic
-                    if (option1Ar.val().trim() == '') {
-                        $(option1Ar).parent().next().html(globalResources.OptionRequired).show();
-                        isValid = false;
+                    if (!checkOptionImg1 && !checkOptionImg2 && !checkOptionImg3 && !checkOptionImg4) {
+                        $('#lbl-generic-error').html(globalResources.PleaseSelectCorrectAnswerBeforeContinue).show();
+                        return false;
                     }
                     else {
-                        $(option1Ar).parent().next().html('').hide();
+                        $('#lbl-generic-error').html('').hide();
                     }
 
-                    //Option 2 Arabic
-                    if (option2Ar.val().trim() == '') {
-                        $(option2Ar).parent().next().html(globalResources.OptionRequired).show();
-                        isValid = false;
-                    }
-                    else {
-                        $(option2Ar).parent().next().html('').hide();
-                    }
-                }
-                else {
-                    //Option 1 English
-                    if (option1En.val().trim() == '') {
-                        $(option1En).parent().next().html(globalResources.OptionRequired).show();
-                        isValid = false;
-                    }
-                    else {
-                        $(option1En).parent().next().html('').hide();
-                    }
+                    var option1ImgName = $('#answer-img-1').val().split('\\').pop(); // Get the file name
+                    var option2ImgName = $('#answer-img-2').val().split('\\').pop();
+                    var option3ImgName = $('#answer-img-3').val().split('\\').pop();
+                    var option4ImgName = $('#answer-img-4').val().split('\\').pop();
 
-                    //Option 2 English
-                    if (option2En.val().trim() == '') {
-                        $(option2En).parent().next().html(globalResources.OptionRequired).show();
-                        isValid = false;
+                    var existingFileNames = [option1ImgName, option2ImgName, option3ImgName, option4ImgName];
+
+                    var isOption1Unique = Questions.CheckDuplicatedFiles(option1ImgName, existingFileNames);
+                    var isOption2Unique = Questions.CheckDuplicatedFiles(option2ImgName, existingFileNames);
+                    var isOption3Unique = Questions.CheckDuplicatedFiles(option3ImgName, existingFileNames);
+                    var isOption4Unique = Questions.CheckDuplicatedFiles(option4ImgName, existingFileNames);
+                    if (isOption1Unique || isOption2Unique || isOption3Unique || isOption4Unique) {
+                        $('#lbl-generic-error').html(globalResources.Message_PleaseCheckDuplicatedAnsweresImage).show();
+                        return false;
                     }
                     else {
-                        $(option2En).parent().next().html('').hide();
+                        $('#lbl-generic-error').html('').hide();
+                    }
+
+                    //Add Option 1 to Data
+                    data.append('Answers[' + 0 + '].Img', $(option1Img).get(0).files[0]);
+                    data.append('Answers[' + 0 + '].IsAnswer', checkOptionImg1);
+                    data.append('Answers[' + 0 + '].Id', option1ImgId.val());
+
+                    //Add Option 2 to Data
+                    data.append('Answers[' + 1 + '].Img', $(option2Img).get(0).files[0]);
+                    data.append('Answers[' + 1 + '].IsAnswer', checkOptionImg2);
+                    data.append('Answers[' + 1 + '].Id', option2ImgId.val());
+
+
+                    //Add Option 3 to Data
+                    if ($(option3Img).val() != '') {
+                        data.append('Answers[' + 2 + '].Img', $(option3Img).get(0).files[0]);
+                        data.append('Answers[' + 2 + '].IsAnswer', checkOptionImg3);
+                        data.append('Answers[' + 2 + '].Id', option3ImgId.val());
+                    }
+                    
+
+                    //Add Option 4 to Data
+                    if ($(option4Img).val() != '') {
+                        data.append('Answers[' + 3 + '].Img', $(option4Img).get(0).files[0]);
+                        data.append('Answers[' + 3 + '].IsAnswer', checkOptionImg4);
+                        data.append('Answers[' + 3 + '].Id', option4ImgId.val());
                     }
                 }
-
-                if (!isValid) {
-                    return false;
-                }
-
-
-
-                //Check if answer is selected or not
-                if (!checkOption1 && !checkOption2 && !checkOption3 && !checkOption4) {
-                    $('#lbl-generic-error').html(globalResources.PleaseSelectCorrectAnswerBeforeContinue).show();
-                    return false;
-                }
-                else {
-                    $('#lbl-generic-error').html('').hide();
-                }
-
-
-                //Add Option 1 to Data
-                data.append('Answers[' + 0 + '].TextEn', option1En.val().trim());
-                data.append('Answers[' + 0 + '].TextAr', option1Ar.val().trim());
-                data.append('Answers[' + 0 + '].IsAnswer', checkOption1);
-                data.append('Answers[' + 0 + '].Id', option1Id.val());
-
-                //Add Option 2 to Data
-                data.append('Answers[' + 1 + '].TextEn', option2En.val().trim());
-                data.append('Answers[' + 1 + '].TextAr', option2Ar.val().trim());
-                data.append('Answers[' + 1 + '].IsAnswer', checkOption2);
-                data.append('Answers[' + 1 + '].Id', option2Id.val());
-
-
-                //Add Option 3 to Data
-                data.append('Answers[' + 2 + '].TextEn', option3En.val().trim());
-                data.append('Answers[' + 2 + '].TextAr', option3Ar.val().trim());
-                data.append('Answers[' + 2 + '].IsAnswer', checkOption3);
-                data.append('Answers[' + 2 + '].Id', option3Id.val());
-
-
-                //Add Option 4 to Data
-                data.append('Answers[' + 3 + '].TextEn', option4En.val().trim());
-                data.append('Answers[' + 3 + '].TextAr', option4Ar.val().trim());
-                data.append('Answers[' + 3 + '].IsAnswer', checkOption4);
-                data.append('Answers[' + 3 + '].Id', option4Id.val());
             }
         }
 
@@ -484,7 +614,19 @@ var Questions = {
             }
         });
     },
+    CheckDuplicatedFiles: function (name, array) {
+        if (name == '') {
+            return false;
+        }
+        else {
+            return !(array.indexOf(name) === array.lastIndexOf(name));
+        }
+    },
     SelectAnswer: function (e) {
+
+        if ($('#ddlAnswersType').val() == 2) {
+            return;
+        }
         //clear all green color on other textbox
         var nameCurrentRadio = $(e).attr('name');
         var radioOptions = $('input[name=' + nameCurrentRadio + ']');

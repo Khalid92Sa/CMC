@@ -22,7 +22,9 @@
                         string points = player.Points == 0 || player.Points > 2 && player.Points < 11 ? Localizer["Points"].Value :
                         player.Points == 2 ? Localizer["TwoPoint"].Value : Localizer["Point"].Value;
 
-                        <div class="col-md-6 cityMallPlayers" data-player-Id="@player.Id" style="cursor:pointer">
+                        string classNameCity = Model.TeamCityMall.Count == 1 ? "col-md-12" : "col-md-6";
+
+                        <div class="@classNameCity cityMallPlayers" data-player-Id="@player.Id" style="cursor:pointer">
                             <div class="d-flex justify-content-center">
                                 <img src="~/assets/competition/images/player.svg" style="width:100%" />
                             </div>
@@ -50,7 +52,9 @@
                             string points = player.Points == 0 || player.Points > 2 && player.Points < 11 ? Localizer["Points"].Value :
                             player.Points == 2 ? Localizer["TwoPoint"].Value : Localizer["Point"].Value;
 
-                            <div class="col-md-6 OtherPlayers" data-player-Id="@player.Id" style="cursor:pointer">
+                            string classNameOther = Model.OtherTeam.Count == 1 ? "col-md-12" : "col-md-6";
+
+                            <div class="@classNameOther OtherPlayers" data-player-Id="@player.Id" style="cursor:pointer">
                                 <div class="d-flex justify-content-center">
                                     <img src="~/assets/competition/images/player.svg" style="width:100%" />
                                 </div>
@@ -70,3 +74,6 @@
         </div>
     </div>
 </div>
+<script>
+    var isFinalCompetition = '@Model.TeamCityMall.Count' == '1';
+</script>

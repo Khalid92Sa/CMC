@@ -9,37 +9,39 @@
     <img class="min-vh-100" src="~/assets/competition/images/Home-Background.png" style="width:100%; position:absolute; top:0; left:0;" />
 </div>
 <div class="row m-0 w-100">
-    <div class="col-md-12 text-center">
+    <div class="col-md-12 text-center" id="go-home-page-bg" style="cursor:pointer">
         <img src="~/assets/competition/images/Citymall.svg" />
     </div>
     <div class="col-md-10 offset-md-1 mt-5">
         <div class="row">
             @{
                 int CityMallPoints = Model.TeamCityMall.Sum(a => a.Points);
-
                 string points = CityMallPoints == 0 || CityMallPoints > 2 && CityMallPoints < 11 ? Localizer["Points"].Value :
                 CityMallPoints == 2 ? Localizer["TwoPoint"].Value : Localizer["Point"].Value;
             }
-            <div class="animated fadeInDownBig col-md-4" style="padding-top:10%">
-                <span class="h1 h1-responsive d-flex justify-content-center text-center">@Localizer["CityMallTeam"]</span>
+            <div class="animated fadeInDownBig col-md-4 full-team-score-name" style="padding-top:10%;cursor:pointer" data-score="city-mall">
+                <span class="h1 h1-responsive d-flex justify-content-center text-center" style="">@Localizer["CityMallTeam"]</span>
                 <span class="h1 h1-responsive d-flex justify-content-center text-center pt-5">@CityMallPoints @points</span>
             </div>
             <div class="animated fadeInDownBig col-md-4 d-flex align-items-center justify-content-center">
-                <img src="~/assets/competition/images/VS.svg" id="img-vs" style="cursor:pointer" />
+                <img src="~/assets/competition/images/VS.svg" />
             </div>
-            <div class="animated fadeInDownBig col-md-4" style="padding-top:10%">
-                <div>
-                    @{
-                        int OtherTeamPoints = Model.OtherTeam.Sum(a => a.Points);
-
-                        string Otherpoints = OtherTeamPoints == 0 || OtherTeamPoints > 2 && OtherTeamPoints < 11 ? Localizer["Points"].Value :
-                        OtherTeamPoints == 2 ? Localizer["TwoPoint"].Value : Localizer["Point"].Value;
-                    }
-
-                    <span class="h2 h2-responsive d-flex justify-content-center text-center white-color">@Localizer["VisitorsTeam"]</span>
-                    <span class="h1 h1-responsive d-flex justify-content-center text-center white-color pt-5">@OtherTeamPoints @Otherpoints</span>
-                </div>
+            @{
+                int OtherTeamPoints = Model.OtherTeam.Sum(a => a.Points);
+                string Otherpoints = OtherTeamPoints == 0 || OtherTeamPoints > 2 && OtherTeamPoints < 11 ? Localizer["Points"].Value :
+                OtherTeamPoints == 2 ? Localizer["TwoPoint"].Value : Localizer["Point"].Value;
+            }
+            <div class="animated fadeInDownBig col-md-4 full-team-score-name" style="padding-top:10%;cursor:pointer" data-score="visitors">
+                <span class="h2 h2-responsive d-flex justify-content-center text-center white-color" style="cursor:pointer">@Localizer["VisitorsTeam"]</span>
+                <span class="h1 h1-responsive d-flex justify-content-center text-center white-color pt-5">@OtherTeamPoints @Otherpoints</span>
             </div>
         </div>
     </div>
 </div>
+
+
+<script>
+    $(document).ready(function () {
+        StartCompetition.OnLoadFullScore();
+    });
+</script>

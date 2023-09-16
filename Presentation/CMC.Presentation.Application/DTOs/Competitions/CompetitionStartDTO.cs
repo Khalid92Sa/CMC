@@ -14,6 +14,7 @@ namespace CMC.Presentation.Application.DTOs.Competitions
         public List<LookupModel> Categories { get; set; } = new List<LookupModel>();
         public List<QuestionVM> Questions { get; set; } = new List<QuestionVM>();
         public QuestionVM CurrentQuestion { get; set; } = new QuestionVM();
+        public int TotalQuestion { get; set; }
     }
 
     public class CompetitionsPlayerDTO

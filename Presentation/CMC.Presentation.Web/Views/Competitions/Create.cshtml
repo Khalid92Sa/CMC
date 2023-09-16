@@ -1,7 +1,17 @@
 ﻿@model CMC.Presentation.Application.DTOs.Competitions.CompetitionsDTO
+
+@using Microsoft.AspNetCore.Http;
+@using CMC.Kernel.Core.Constants
+@using CMC.Presentation.Application.DTOs.Identity
+@using Newtonsoft.Json
+@inject IHttpContextAccessor HttpContextAccessor
+
 @{
     ViewData["Title"] = Model.Id.HasValue ? Localizer["EditCompetition"].Value : Localizer["CreateCompetition"].Value;
     bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
+
+    UserDTO userInfoDTO = HttpContextAccessor.HttpContext.Session.GetString("UserInfoDTO") != null ?
+      JsonConvert.DeserializeObject<UserDTO>(HttpContextAccessor.HttpContext.Session.GetString("UserInfoDTO")) : null;
 }
 
 
@@ -45,6 +55,11 @@
                                         <option value="">@Localizer["Select"]</option>
                                     </select>
                                     <span asp-validation-for="HostID" class="text-danger"></span>
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label class="requiredLabel">@Localizer["Questions"]</label>
+                                    <input class="form-control" type="text" asp-for="QuestionCount" onkeypress="return GeneralClass.validationNumbersOnly(this,event)" autocomplete="off" />
+                                    <span asp-validation-for="QuestionCount" class="text-danger"></span>
                                 </div>
                             </div>
                         </div>
@@ -118,7 +133,11 @@
                     <div class="col-12 text-center">
                         <button type="button" class="btn btn-primary" onclick="CompetitionForm.CreateOrUpdate()">@Localizer["Save"]</button>
                         <button type="button" class="btn btn-secondary" onclick="window.location.href='@Url.Action("Index", "Competitions")';">@Localizer["Cancel"]</button>
-                        @if (Model.Id.HasValue)
+                        @if(Model.LatestScores!=null && Model.LatestScores.Count > 0)
+                        {
+                            <button type="button" class="btn btn-info" id="btnScoreModal" onclick="OpenModalScore()">@Localizer["ViewLastCompeitionScores"]</button>
+                        }
+                        @if (Model.Id.HasValue && userInfoDTO.PermissionCodes.Contains(PermissionCodes.WebCompetitionDelete))
                         {
                             <button type="button" class="btn btn-danger" onclick="CompetitionForm.DeleteCompetition()">@Localizer["Delete"]</button>
                         }
@@ -129,6 +148,62 @@
     </div>
 </form>
 
+
+@if(Model.LatestScores!=null && Model.LatestScores.Count > 0)
+{
+    int counter = 1;
+    <div class="modal fade" id="LatestScoresModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">@Localizer["ViewLastCompeitionScores"]</h5>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-sm table-striped NoPagenation">
+                        <thead>
+                            <tr>
+                                <th scope="col" style="width:70px;">#</th>
+                                <th scope="col">@Localizer["CompetitionName"]</th>
+                                <th scope="col">@Localizer["CompetitionEndDate"]</th>
+                                <th scope="col">@Localizer["WinningTeam"]</th>
+                                <th scope="col">@Localizer["WinningPlayerFromCityMall"]</th>
+                                <th scope="col">@Localizer["WinningPlayerFromOtherTeam"]</th>
+                            </tr>
+                            @foreach(var player in Model.LatestScores)
+                            {
+                                <tr>
+                                    <td>
+                                        @counter
+                                    </td>
+                                    <td>
+                                        @player.CompeititonName
+                                    </td>
+                                    <td>
+                                        @player.EndDate.Value.ToString("dd-MM-yyyy")
+                                    </td>
+                                    <td>
+                                        @player.WinningTeamName
+                                    </td>
+                                    <td>
+                                        @player.WinningCityMallPlayerName / @player.CityMallPlayerPoints @Localizer["Points"]
+                                    </td>
+                                    <td>
+                                        @player.WinningOtherPlayerName / @player.OtherPlayerPoints @Localizer["Points"]
+                                    </td>
+                                </tr>
+                                counter++;
+                            }
+                        </thead>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()" data-bs-dismiss="modal">@Localizer["Close"]</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 <!-- end row -->
 <script src="~/assets/js/Application/Competition.js"></script>
 
@@ -136,4 +211,10 @@
     CompetitionForm.OnLoad();
     GeneralClass.ActivationSubMenuItem('#lnkCompetitions', '#lnkCompetitions');
     GeneralClass.ActivationSubMenuItem('#lnkCompetitions2', '#lnkCompetitions2');
+    function OpenModalScore() {
+        $('#LatestScoresModal').modal('show');
+    }
+    function closeModal(){
+        $('#LatestScoresModal').modal('hide');
+    }
 </script>

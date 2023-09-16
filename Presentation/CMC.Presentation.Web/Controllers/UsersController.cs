@@ -48,6 +48,9 @@ namespace CMC.Presentation.Web.Controllers
         [RolePermission(PermissionCodes.WebUsersView)]
         public async Task<IActionResult> Index()
         {
+            var loggedInUser = _userService.GetLoggedInUser();
+            ViewData["CanDelete"] = loggedInUser.PermissionCodes.Contains(PermissionCodes.WebUsersDelete);
+            ViewData["CanCreate"] = loggedInUser.PermissionCodes.Contains(PermissionCodes.WebUsersAdd);
             ViewBag.Groups = await _groupPermissionService.GetGroups();
             return View();
         }

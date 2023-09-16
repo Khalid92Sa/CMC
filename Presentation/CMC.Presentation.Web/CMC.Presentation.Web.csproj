@@ -19,4 +19,8 @@
     <ProjectReference Include="..\CMC.Presentation.Application\CMC.Presentation.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\assets\images\answeres\" />
+  </ItemGroup>
+
 </Project>

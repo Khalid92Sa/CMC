@@ -10,7 +10,8 @@ namespace CMC.Presentation.Domain.Entities
         public string TextEn { get; set; }
         public string TextAr { get; set; }
         public bool IsAnswer { get; set; }
-
+        public bool? IsImg { get; set; }
+        public string ImgPath { get; set; }
 
         public virtual int QuestionId { get; set; }
         public virtual Question Question{ get; set; }

@@ -426,6 +426,7 @@ namespace CMC.Presentation.Application.Services.Questions
         /// <returns></returns>
         public async Task<Response> AddQuestions(QuestionVM questionVM)
         {
+            string imageToDeleteIfExist = "";
             try
             {
                 bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
@@ -512,13 +513,52 @@ namespace CMC.Presentation.Application.Services.Questions
                     question.CreatedBy = int.Parse(_httpContextAccessor.HttpContext.Session.GetString("UserId"));
                     question.CreatedOn = DateTime.Now;
                     List<Answer> answers = new List<Answer>();
-                    List<AnswerOptions> answersVM = IsAr ? questionVM.Answers.Where(a => !string.IsNullOrEmpty(a.TextAr)).ToList() : questionVM.Answers.Where(a => !string.IsNullOrEmpty(a.TextEn)).ToList();
+                    List<AnswerOptions> answersVM = new List<AnswerOptions>();
+                    if (questionVM.AnswertType == (int)AnswersTypes.Text)
+                        answersVM = IsAr ? questionVM.Answers.Where(a => !string.IsNullOrEmpty(a.TextAr)).ToList() : questionVM.Answers.Where(a => !string.IsNullOrEmpty(a.TextEn)).ToList();
+                    else
+                        answersVM = questionVM.Answers.Where(a => a.Img != null).ToList();
+
                     foreach (var ans in answersVM)
                     {
                         Answer answer = new Answer();
                         answer.IsAnswer = ans.IsAnswer;
-                        answer.TextEn = ans.TextEn;
-                        answer.TextAr = ans.TextAr;
+                        if(questionVM.AnswertType == (int)AnswersTypes.Text)
+                        {
+                            answer.TextEn = ans.TextEn;
+                            answer.TextAr = ans.TextAr;
+                        }
+                        else
+                        {
+                            // Upload the image to database attachments
+                            if (ans.Img != null)
+                            {
+                                try
+                                {
+                                    using (var stream = ans.Img.OpenReadStream())
+                                    {
+                                        var imageName = Guid.NewGuid().ToString() + Path.GetExtension(ans.Img.FileName);
+                                        var imagePath = Path.Combine(_env.WebRootPath, "assets", "images", "answeres");
+                                        string filePath = Path.Combine(imagePath, imageName);
+
+                                        using (var fileStream = new FileStream(filePath, FileMode.Create))
+                                        {
+                                            stream.CopyTo(fileStream);
+                                        }
+                                        answer.IsImg = true;
+                                        answer.ImgPath = imageToDeleteIfExist = $"\\{filePath.Substring(filePath.IndexOf("assets"))}";
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    return new Response()
+                                    {
+                                        Succeeded = false
+                                    };
+                                }
+                            }
+                        }
+
                         answer.CreatedBy = int.Parse(_httpContextAccessor.HttpContext.Session.GetString("UserId"));
                         answer.CreatedOn = DateTime.Now;
                         answers.Add(answer);
@@ -538,6 +578,9 @@ namespace CMC.Presentation.Application.Services.Questions
             }
             catch (Exception ex)
             {
+                var imagePathToDelete = Path.Combine(_env.WebRootPath, "assets", "images", "answeres", Path.GetFileName(imageToDeleteIfExist));
+                System.IO.File.Delete(imagePathToDelete);
+
                 throw ex;
             }
         }
@@ -646,6 +689,8 @@ namespace CMC.Presentation.Application.Services.Questions
                             option.Id = answer.Id;
                             option.TextEn = answer.TextEn;
                             option.TextAr = answer.TextAr;
+                            option.IsImg = answer.IsImg ?? false;
+                            option.ImgPath = answer.ImgPath;
                             option.IsAnswer = answer.IsAnswer;
                             answerOptions.Add(option);
                         }
