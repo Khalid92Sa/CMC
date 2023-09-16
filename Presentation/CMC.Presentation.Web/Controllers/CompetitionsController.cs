@@ -4,13 +4,16 @@ using CMC.Kernel.Core.Enums;
 using CMC.Kernel.Core.Infrastructure;
 using CMC.Presentation.Application.ActionFilters;
 using CMC.Presentation.Application.DTOs.Competitions;
+using CMC.Presentation.Application.DTOs.Players;
 using CMC.Presentation.Application.Services.Competitions;
 using CMC.Presentation.Application.Services.Identity.Interfaces;
 using CMC.Presentation.Application.Services.Players;
 using CMC.Presentation.Application.Services.Questions;
 using CMC.Presentation.Application.Services.Settings;
+using CMC.Presentation.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.Extensions.Localization;
 using Newtonsoft.Json;
@@ -101,6 +104,13 @@ namespace CMC.Presentation.Web.Controllers
                 competitionsDTO.CityMallTeam = cityMallTeam.Data;
                 competitionsDTO.OtherTeam = otherTeam.Data;
                 competitionsDTO.Hosts = await _userService.GetHosts();
+                var lastScores = await _competitionsService.GetLatestScores();
+                if (lastScores.Succeeded)
+                    competitionsDTO.LatestScores = lastScores.Data;
+
+                if (competitionsDTO.QuestionCount < 1)
+                    competitionsDTO.QuestionCount = 1;
+
                 return View("Create", competitionsDTO);
             }
             catch (Exception ex)
@@ -147,9 +157,11 @@ namespace CMC.Presentation.Web.Controllers
         {
             try
             {
+                _httpContextAccessor.HttpContext.Session.Remove("CompetitionScoreDetails");
                 var competitionStart = await _competitionsService.StartCompetiton(id);
                 if (competitionStart.Succeeded)
                 {
+
                     PartialViewResult otpPartialView = PartialView("PartialViews/_FullScoreTeams", competitionStart.Data);
                     string viewContent = ConvertViewToString(this.ControllerContext, otpPartialView, _viewEngine);
                     ViewData["Partial"] = viewContent;
@@ -165,6 +177,25 @@ namespace CMC.Presentation.Web.Controllers
             }
         }
 
+
+        [RolePermission(PermissionCodes.WebCompetitionCreate, PermissionCodes.WebCompetitionStart)]
+        public async Task<IActionResult> ViewCompetition(int id)
+        {
+            try
+            {
+                ViewCompetitionScoresDTO viewScore = new ViewCompetitionScoresDTO();
+                var data = await _competitionsService.ViewCompetitionScore(id);
+                if (data.Succeeded)
+                    viewScore = data.Data;
+
+                return View("View", viewScore);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
 
         [HttpPost]
         [RolePermission(PermissionCodes.WebCompetitionStart)]
@@ -216,6 +247,15 @@ namespace CMC.Presentation.Web.Controllers
                 //    otherPlayer.IsStarting = true;
                 //}
 
+
+                if(currentCompetition.TeamCityMall.Count == 1 && !currentCompetition.TeamCityMall.Where(a => a.IsVSPlayer).Any())
+                {
+                    //Means Final 
+                    currentCompetition.TeamCityMall.FirstOrDefault().IsVSPlayer = true;
+                    currentCompetition.OtherTeam.FirstOrDefault().IsVSPlayer = true;
+
+                }
+
                 if (currentCompetition.Categories == null || currentCompetition.Categories.Count == 0)
                     currentCompetition.Categories = await _questionsService.GetCategories();
 
@@ -266,7 +306,6 @@ namespace CMC.Presentation.Web.Controllers
             }
         }
 
-
         [HttpPost]
         [RolePermission(PermissionCodes.WebCompetitionStart)]
         public async Task<IActionResult> AnswerQuestion(AnswerOnQuestionDTO answerOnQuestionDTO)
@@ -275,12 +314,16 @@ namespace CMC.Presentation.Web.Controllers
             {
                 bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
                 var currentCompetition = JsonConvert.DeserializeObject<CompetitionStartDTO>(_httpContextAccessor.HttpContext.Session.GetString("CompetitionStart"));
+                
+                //Get Specific player who ansewred on question
                 CompetitionsPlayerDTO competitionsPlayerDTO = null;
                 if (answerOnQuestionDTO.IsCityMallPlayer)
                     competitionsPlayerDTO = currentCompetition.TeamCityMall.Where(a => a.Id == answerOnQuestionDTO.PlayerId).SingleOrDefault();
                 else
                     competitionsPlayerDTO = currentCompetition.OtherTeam.Where(a => a.Id == answerOnQuestionDTO.PlayerId).SingleOrDefault();
 
+
+                // Get Details of question and answer
                 CompetitonQuestions competitonQuestion = new CompetitonQuestions();
                 competitonQuestion.QuestionId = answerOnQuestionDTO.QuestionId;
                 var question = await _questionsService.GetQuestion(answerOnQuestionDTO.QuestionId.Value);
@@ -302,17 +345,153 @@ namespace CMC.Presentation.Web.Controllers
                 }
                 competitionsPlayerDTO.competitonQuestions.Add(competitonQuestion);
 
-
+                // Add details to database.
                 var resultAddOnDb = await _competitionsService.AnswerOnQuestions(currentCompetition.Id, answerOnQuestionDTO);
-
 
                 var competitonString = JsonConvert.SerializeObject(currentCompetition);
                 _httpContextAccessor.HttpContext.Session.SetString("CompetitionStart", competitonString);
 
-                PartialViewResult otpPartialView = PartialView("PartialViews/_AllPlayers", currentCompetition);
-                string viewContent = ConvertViewToString(this.ControllerContext, otpPartialView, _viewEngine);
-                return Json(new { isSuccess = true, correct = IsAnswer, partial = viewContent });
+                string viewContent = "";
+                bool IsFinished = false;
+                bool ResetPlayers = false;
+                //Check if the score is the same
+                int CityMallPoints = currentCompetition.TeamCityMall.Sum(a => a.Points);
+                int OtherTeamPoints = currentCompetition.OtherTeam.Sum(a => a.Points);
 
+
+                //Check if the rounds finished
+                if (currentCompetition.Questions.Count >= currentCompetition.TotalQuestion)
+                {
+                    if (CityMallPoints == OtherTeamPoints)
+                        ResetPlayers = true;
+                    else
+                        IsFinished = true;
+                }
+                else if (currentCompetition.TotalQuestion > currentCompetition.TeamCityMall.Count)
+                    ResetPlayers = true;
+
+
+
+
+                if (IsFinished)
+                {
+                    //Update Competition with Winning team and scores.
+                    CompetitionsDTO competitionsDTO = new CompetitionsDTO();
+                    competitionsDTO.Id = currentCompetition.Id;
+
+                    if (CityMallPoints > OtherTeamPoints)
+                    {
+                        var cityMallPlayer = currentCompetition.TeamCityMall.OrderByDescending(a => a.Points).FirstOrDefault();
+                        competitionsDTO.WinningPlayer = new PlayerDTO()
+                        {
+                            Id = cityMallPlayer.Id,
+                            IsEmployee = true
+                        };
+                    }
+                    else
+                    {
+                        var OtherWinningPlaye = currentCompetition.OtherTeam.OrderByDescending(a => a.Points).FirstOrDefault();
+                        competitionsDTO.WinningPlayer = new PlayerDTO()
+                        {
+                            Id = OtherWinningPlaye.Id,
+                        };
+                    }
+
+                    competitionsDTO.Team1Score = CityMallPoints;
+                    competitionsDTO.Team2Score = OtherTeamPoints;
+                    var resultFinishCompetition = await _competitionsService.FinishCompetition(competitionsDTO);
+
+                    PartialViewResult otpPartialView = PartialView("PartialViews/_FullScoreTeams", currentCompetition);
+                    viewContent = ConvertViewToString(this.ControllerContext, otpPartialView, _viewEngine);
+                }
+                else
+                {
+                    PartialViewResult otpPartialView = PartialView("PartialViews/_AllPlayers", currentCompetition);
+                    viewContent = ConvertViewToString(this.ControllerContext, otpPartialView, _viewEngine);
+                }
+
+
+                return Json(new { isSuccess = true, correct = IsAnswer, partial = viewContent, finished = IsFinished, reset = ResetPlayers });
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { isSuccess = false });
+            }
+        }
+
+        [HttpGet]
+        [RolePermission(PermissionCodes.WebCompetitionStart)]
+        public IActionResult GetFullScore()
+        {
+            try
+            {
+                _httpContextAccessor.HttpContext.Session.Remove("CompetitionScoreDetails");
+
+                var currentCompetition = JsonConvert.DeserializeObject<CompetitionStartDTO>(_httpContextAccessor.HttpContext.Session.GetString("CompetitionStart"));
+                PartialViewResult otpPartialView = PartialView("PartialViews/_FullScoreTeams", currentCompetition);
+                string viewContent = ConvertViewToString(this.ControllerContext, otpPartialView, _viewEngine);
+                return Json(new { isSuccess = true, partial = viewContent });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { isSuccess = false });
+            }
+        }
+
+        [HttpGet]
+        [RolePermission(PermissionCodes.WebCompetitionStart)]
+        public IActionResult GetScoreDetails()
+        {
+            try
+            {
+                var currentCompetition = JsonConvert.DeserializeObject<CompetitionStartDTO>(_httpContextAccessor.HttpContext.Session.GetString("CompetitionStart"));
+                PartialViewResult otpPartialView = PartialView("PartialViews/_TeamScoreDetails", currentCompetition);
+                string viewContent = ConvertViewToString(this.ControllerContext, otpPartialView, _viewEngine);
+                return Json(new { isSuccess = true, partial = viewContent, });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { isSuccess = false });
+            }
+        }
+
+        [HttpGet]
+        [RolePermission(PermissionCodes.WebCompetitionCreate,PermissionCodes.WebCompetitionStart)]
+        public IActionResult GetModalPlayer(int playerId,bool isCityMall)
+        {
+            try
+            {
+                if(string.IsNullOrEmpty(_httpContextAccessor.HttpContext.Session.GetString("CompetitionScoreDetails")) && string.IsNullOrEmpty(_httpContextAccessor.HttpContext.Session.GetString("CompetitionStart")))
+                    return Json(new { isSuccess = false });
+
+                if (!string.IsNullOrEmpty(_httpContextAccessor.HttpContext.Session.GetString("CompetitionStart")))
+                {
+
+                    var currentCompetition = JsonConvert.DeserializeObject<CompetitionStartDTO>(_httpContextAccessor.HttpContext.Session.GetString("CompetitionStart"));
+                    CompetitionsPlayerDTO competitionsPlayerDTO = null;
+                    if (isCityMall)
+                        competitionsPlayerDTO = currentCompetition.TeamCityMall.Where(a => a.Id == playerId).SingleOrDefault();
+                    else
+                        competitionsPlayerDTO = currentCompetition.OtherTeam.Where(a => a.Id == playerId).SingleOrDefault();
+
+                    PartialViewResult otpPartialView = PartialView("PartialViews/_PlayerScoreModal", competitionsPlayerDTO);
+                    string viewContent = ConvertViewToString(this.ControllerContext, otpPartialView, _viewEngine);
+                    return Json(new { isSuccess = true, partial = viewContent, });
+                }
+                else
+                {
+                    var currentCompetition = JsonConvert.DeserializeObject<ViewCompetitionScoresDTO>(_httpContextAccessor.HttpContext.Session.GetString("CompetitionScoreDetails"));
+                    CompetitionsPlayerDTO competitionsPlayerDTO = null;
+                    if (isCityMall)
+                        competitionsPlayerDTO = currentCompetition.TeamCityMall.Where(a => a.Id == playerId).SingleOrDefault();
+                    else
+                        competitionsPlayerDTO = currentCompetition.OtherTeam.Where(a => a.Id == playerId).SingleOrDefault();
+
+                    PartialViewResult otpPartialView = PartialView("PartialViews/_PlayerScoreModal", competitionsPlayerDTO);
+                    string viewContent = ConvertViewToString(this.ControllerContext, otpPartialView, _viewEngine);
+                    return Json(new { isSuccess = true, partial = viewContent, });
+                }
             }
             catch (Exception ex)
             {

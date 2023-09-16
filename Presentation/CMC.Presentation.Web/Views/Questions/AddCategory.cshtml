@@ -1,7 +1,16 @@
 ﻿@model CMC.Presentation.Application.DTOs.Questions.CategoryDTO
+
+@using Microsoft.AspNetCore.Http;
+@using CMC.Kernel.Core.Constants
+@using CMC.Presentation.Application.DTOs.Identity
+@using Newtonsoft.Json
+@inject IHttpContextAccessor HttpContextAccessor
+
 @{
     ViewData["Title"] = Model.Id.HasValue ? Localizer["EditCategory"].Value : Localizer["AddNewCategory"].Value;
     bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
+    UserDTO userInfoDTO = HttpContextAccessor.HttpContext.Session.GetString("UserInfoDTO") != null ?
+      JsonConvert.DeserializeObject<UserDTO>(HttpContextAccessor.HttpContext.Session.GetString("UserInfoDTO")) : null;
 }
 
 <form method="post" id="form-category" enctype="multipart/form-data" asp-controller="Questions" asp-action="AddCategory">
@@ -135,4 +144,6 @@
     Categories.OnLoad();
     GeneralClass.ActivationSubMenuItem('#lnkQuestions', '#lnkQuestionCategory');
     GeneralClass.ActivationSubMenuItem('#lnkQuestions2', '#lnkQuestionCategory2');
+    var CanDelete = '@userInfoDTO.PermissionCodes.Contains(PermissionCodes.WebQuestionsDelete)' == 'True';
+    var CanCreate = '@userInfoDTO.PermissionCodes.Contains(PermissionCodes.WebQuestionsCreate)' == 'True';
 </script>

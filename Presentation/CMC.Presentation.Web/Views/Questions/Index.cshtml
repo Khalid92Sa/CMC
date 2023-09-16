@@ -1,7 +1,17 @@
 ﻿@model List<CMC.Kernel.Infrastructure.Caching.Model.LookupModel>
+
+    @using Microsoft.AspNetCore.Http;
+@using CMC.Kernel.Core.Constants
+@using CMC.Presentation.Application.DTOs.Identity
+@using Newtonsoft.Json
+@inject IHttpContextAccessor HttpContextAccessor
+
+
 @{
     ViewData["Title"] = Localizer["QuestionsBank"].Value;
     bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
+    UserDTO userInfoDTO = HttpContextAccessor.HttpContext.Session.GetString("UserInfoDTO") != null ?
+      JsonConvert.DeserializeObject<UserDTO>(HttpContextAccessor.HttpContext.Session.GetString("UserInfoDTO")) : null;
 }
 
 <style>
@@ -58,9 +68,12 @@
             else
             {
                 <div class="d-flex flex-row row mt-4 mb-5">
-                    <div class="col-12 col-md-4 py-3 px-4">
+                    @if (userInfoDTO.PermissionCodes.Contains(PermissionCodes.WebQuestionsCreate))
+                    {
+                         <div class="col-12 col-md-4 py-3 px-4">
                         <a class="btn btn-primary w-50 mx-0" href="@Url.Action("AddCategory","Questions")">@Localizer["Add"]</a>
                     </div>
+                    }
                 </div>
                
                 <div class="row justify-content-between">
@@ -97,4 +110,7 @@
 <script>
     GeneralClass.ActivationSubMenuItem('#lnkQuestions', '#lnkQuestionCategory');
     GeneralClass.ActivationSubMenuItem('#lnkQuestions2', '#lnkQuestionCategory2');
+    var CanDelete = '@userInfoDTO.PermissionCodes.Contains(PermissionCodes.WebQuestionsDelete)' == 'True';
+    var CanCreate = '@userInfoDTO.PermissionCodes.Contains(PermissionCodes.WebQuestionsCreate)' == 'True';
+
 </script>

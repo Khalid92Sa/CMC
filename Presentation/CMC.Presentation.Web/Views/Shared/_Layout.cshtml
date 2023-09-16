@@ -181,36 +181,49 @@
                                                 <a class="nav-link text-primary pl-5" id="lnkUsers" href="@Url.Action("Index", "Users")">@Localizer["Menu_UsersAccountsManagement"]</a>
                                             </li>
                                         }
-                                        @if (userInfoDTO.PermissionCodes.Contains(PermissionCodes.SystemSettings))
+                                        @*@if (userInfoDTO.PermissionCodes.Contains(PermissionCodes.SystemSettings))
                                         {
                                             <li>
                                                 <a class="nav-link text-primary pl-5" id="lnkSettings" href="@Url.Action("Index", "Settings")">@Localizer["Menu_Settings"]</a>
+                                            </li>
+                                        }*@
+                                    </ul>
+                                </li>
+                            }
+                            @if (userInfoDTO.PermissionCodes.Contains(PermissionCodes.WebCompetitionView))
+                            {
+                                <li>
+                                    <a href="@(Url.Action("Index" , "Competitions"))" id="lnkCompetitions" class="nav-link"><i class="fas fa-home"></i>@Localizer["Competitions"]</a>
+                                </li>
+                            }
+                            @if (userInfoDTO.PermissionCodes.Contains(PermissionCodes.WebQuestionsView) || userInfoDTO.PermissionCodes.Contains(PermissionCodes.WebQuestionsCreate))
+                            {
+                                <li>
+                                    <a class="nav-link dropdown-toggle collapsed" id="lnkQuestions" href="#Questions" data-toggle="collapse" aria-expanded="false">
+                                        <i class="fas fa-question-circle"></i> @Localizer["QuestionsBank"]
+                                    </a>
+                                    <ul class="list-unstyled collapse" id="Questions">
+                                        @if (userInfoDTO.PermissionCodes.Contains(PermissionCodes.WebQuestionsView))
+                                        {
+                                            <li>
+                                                <a class="nav-link text-primary pl-5" id="lnkQuestionCategory" href="@Url.Action("Index", "Questions")">@Localizer["QuestionCategory"]</a>
+                                            </li>
+                                        }
+                                        @if (userInfoDTO.PermissionCodes.Contains(PermissionCodes.WebQuestionsCreate))
+                                        {
+                                            <li>
+                                                <a class="nav-link text-primary pl-5" id="lnkQuestionAdd" href="@Url.Action("AddQuestion", "Questions")">@Localizer["AddQuestions"]</a>
                                             </li>
                                         }
                                     </ul>
                                 </li>
                             }
-                            <li>
-                                <a href="@(Url.Action("Index" , "Competitions"))" id="lnkCompetitions" class="nav-link"><i class="fas fa-home"></i>@Localizer["Competitions"]</a>
-                            </li>
-                            <li>
-                                <a class="nav-link dropdown-toggle collapsed" id="lnkQuestions" href="#Questions" data-toggle="collapse" aria-expanded="false">
-                                    <i class="fas fa-question-circle"></i> @Localizer["QuestionsBank"]
-                                </a>
-                                <ul class="list-unstyled collapse" id="Questions">
-                                    <li>
-                                        <a class="nav-link text-primary pl-5" id="lnkQuestionCategory" href="@Url.Action("Index", "Questions")">@Localizer["QuestionCategory"]</a>
-                                    </li>
-
-                                    <li>
-                                        <a class="nav-link text-primary pl-5" id="lnkQuestionAdd" href="@Url.Action("AddQuestion", "Questions")">@Localizer["AddQuestions"]</a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li>
-                                <a href="@(Url.Action("Index" , "Players"))" id="lnkPlayers" class="nav-link"><i class="fas fa-users"></i>@Localizer["Players"]</a>
-                            </li>
-
+                            @if (userInfoDTO.PermissionCodes.Contains(PermissionCodes.WebPlayerView))
+                            {
+                                <li>
+                                    <a href="@(Url.Action("Index" , "Players"))" id="lnkPlayers" class="nav-link"><i class="fas fa-users"></i>@Localizer["Players"]</a>
+                                </li>
+                            }
                           @*  <li class="mt-2 border-top nav-item d-flex">
                                 <a href="@(Url.Action("Logout" , "Users"))" id="lnkLogout" class="nav-link"><i class="fas fa-home"></i>@Localizer["Logout"]</a>
                             </li>*@
@@ -241,35 +254,50 @@
                                         <a class="nav-link text-primary pl-5" id="lnkUsers2" href="@Url.Action("Index", "Users")">@Localizer["Menu_UsersAccountsManagement"]</a>
                                     </li>
                                 }
-                                @if (userInfoDTO.PermissionCodes.Contains(PermissionCodes.SystemSettings))
+                                @*@if (userInfoDTO.PermissionCodes.Contains(PermissionCodes.SystemSettings))
                                 {
                                     <li>
                                         <a class="nav-link text-primary pl-5" id="lnkSettings2" href="@Url.Action("Index", "Settings")">@Localizer["Menu_Settings"]</a>
                                     </li>
-                                }
+                                }*@
                             </ul>
                         </li>
                     }
-                    <li>
-                        <a href="@(Url.Action("Index" , "Competitions"))" id="lnkCompetitions2" class="nav-link"><i class="fas fa-home"></i>@Localizer["Competitions"]</a>
-                    </li>
-                    <li>
+                    @if (userInfoDTO.PermissionCodes.Contains(PermissionCodes.WebCompetitionView))
+                    {
+                        <li>
+                            <a href="@(Url.Action("Index" , "Competitions"))" id="lnkCompetitions2" class="nav-link"><i class="fas fa-home"></i>@Localizer["Competitions"]</a>
+                        </li>
+                    }
+
+                    @if (userInfoDTO.PermissionCodes.Contains(PermissionCodes.WebQuestionsView) || userInfoDTO.PermissionCodes.Contains(PermissionCodes.WebQuestionsCreate))
+                    {
+                         <li>
                         <a class="nav-link dropdown-toggle collapsed" id="lnkQuestions2" href="#Questions" data-toggle="collapse" aria-expanded="false">
                             <i class="fas fa-question-circle"></i> @Localizer["QuestionsBank"]
                         </a>
                         <ul class="list-unstyled collapse" id="Questions">
-                            <li>
-                                <a class="nav-link text-primary pl-5" id="lnkQuestionCategory2" href="@Url.Action("Index", "Questions")">@Localizer["QuestionCategory"]</a>
-                            </li>
-
-                            <li>
-                                <a class="nav-link text-primary pl-5" id="lnkQuestionAdd2" href="@Url.Action("AddQuestion", "Questions")">@Localizer["AddQuestions"]</a>
-                            </li>
+                                @if (userInfoDTO.PermissionCodes.Contains(PermissionCodes.WebQuestionsView))
+                                {
+                                    <li>
+                                        <a class="nav-link text-primary pl-5" id="lnkQuestionCategory2" href="@Url.Action("Index", "Questions")">@Localizer["QuestionCategory"]</a>
+                                    </li>
+                                }
+                                @if (userInfoDTO.PermissionCodes.Contains(PermissionCodes.WebQuestionsCreate))
+                                {
+                                    <li>
+                                        <a class="nav-link text-primary pl-5" id="lnkQuestionAdd2" href="@Url.Action("AddQuestion", "Questions")">@Localizer["AddQuestions"]</a>
+                                    </li>
+                                }
                         </ul>
                     </li>
-                    <li>
-                        <a href="@(Url.Action("Index" , "Players"))" id="lnkPlayers2" class="nav-link"><i class="fas fa-users"></i>@Localizer["Players"]</a>
-                    </li>
+                    }
+                    @if (userInfoDTO.PermissionCodes.Contains(PermissionCodes.WebPlayerView))
+                    {
+                        <li>
+                            <a href="@(Url.Action("Index" , "Players"))" id="lnkPlayers2" class="nav-link"><i class="fas fa-users"></i>@Localizer["Players"]</a>
+                        </li>
+                    }
 
                     @*<li class="mt-2 border-top nav-item d-flex">
                         <a href="@(Url.Action("Logout" , "Users"))" id="lnkLogout2" class="nav-link"><i class="fas fa-home"></i>@Localizer["Logout"]</a>
@@ -325,7 +353,9 @@
             CompetitionList:'@Url.Action("Index","Competitions")',
             CreateNewCompetition: '@Url.Action("CreateCompetition","Competitions")',
             DeleteCompetition:'@Url.Action("DeleteCompetition","Competitions")',
-            StartCompetition:'@Url.Action("StartCompetition","Competitions")',
+            StartCompetition: '@Url.Action("StartCompetition","Competitions")',
+            ViewCompetition: '@Url.Action("ViewCompetition","Competitions")',
+            GetModalPlayer: '@Url.Action("GetModalPlayer","Competitions")',
         };
 
         var globalResources = {
@@ -338,6 +368,7 @@
             Actions: '@Localizer["Actions"]',
             Yes: '@Localizer["Common_Yes"]',
             No: '@Localizer["Common_No"]',
+
 
 
             //Buttons
@@ -375,7 +406,9 @@
             QuestionTimer: '@Localizer["QuestionTimer"]',
             QuestionPoints: '@Localizer["QuestionPoint"]',
             PleaseAddTwoOptions: '@Localizer["PleaseAddTwoOptionsAtLeast"]',
+            PleaseAddTwoImagesAtLeast:'@Localizer["PleaseAddTwoImagesAtLeast"]',
             OptionRequired: '@Localizer["OptionRequired"]',
+            Message_PleaseCheckDuplicatedAnsweresImage:'@Localizer["Message_PleaseCheckDuplicatedAnsweresImage"]',
 
             //Players
             Alert_DeletePlayer: '@Localizer["Alert_DeletePlayer"]',
@@ -384,6 +417,7 @@
             //Competitons
             Alert_DeleteCompetition: '@Localizer["Alert_DeleteCompetition"]',
             StartCompetition:'@Localizer["StartCompetition"]',
+            ViewCompetitionScores: '@Localizer["ViewCompetitionScores"]',
         };
     </script>
 </body>

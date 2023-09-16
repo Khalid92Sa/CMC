@@ -17,7 +17,9 @@ namespace CMC.Kernel.Core.Constants
 
 
         //Players
-        public const string WebPlayerView = "Web.Players.View";
+        public const string WebPlayerView = "Web.Player.View";
+        public const string WebPlayerCreate = "Web.Player.Create";
+        public const string WebPlayerDelete = "Web.Player.Delete";
 
 
         //Competitions
@@ -25,5 +27,12 @@ namespace CMC.Kernel.Core.Constants
         public const string WebCompetitionCreate = "Web.Competition.Create";
         public const string WebCompetitionDelete = "Web.Competition.Delete";
         public const string WebCompetitionStart = "Web.Competition.Start";
+
+
+        //Questions
+        public const string WebQuestionsView = "Web.Questions.View";
+        public const string WebQuestionsCreate = "Web.Questions.Create";
+        public const string WebQuestionsDelete = "Web.Questions.Delete";
+
     }
 }

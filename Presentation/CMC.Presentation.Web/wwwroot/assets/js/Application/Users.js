@@ -82,29 +82,31 @@ var Users = {
                 "name": "Id",
                 "autoWidth": true,
                 "render": function (Id, type, row) {
-                    var btnUpdate = document.createElement('a');
-                    $(btnUpdate).attr('id', 'btnUpdate_' + row.id);
-                    $(btnUpdate).attr('title', globalResources.Edit);
-                    $(btnUpdate).attr('onclick', 'Users.EditUser(this)');
-                    $(btnUpdate).addClass('mx-1 action bg-accent');
-                    var pen = document.createElement('i');
-                    $(pen).addClass('fas fa-pen');
-                    $(btnUpdate).append(pen);
-
-
-
-                    var btndelete = document.createElement('a');
-                    $(btndelete).attr('id', 'btndelete_' + row.id);
-                    $(btndelete).attr('title', globalResources.Delete);
-                    $(btndelete).attr('onclick', 'Users.DeleteUser(this)');
-                    $(btndelete).addClass('mx-1 action bg-danger');
-                    var pen = document.createElement('i');
-                    $(pen).addClass('fas fa-trash');
-                    $(btndelete).append(pen);
-
                     var div = document.createElement('div');
-                    div.append(btnUpdate);
-                    div.append(btndelete);
+                    if (CanCreate) {
+                        var btnUpdate = document.createElement('a');
+                        $(btnUpdate).attr('id', 'btnUpdate_' + row.id);
+                        $(btnUpdate).attr('title', globalResources.Edit);
+                        $(btnUpdate).attr('onclick', 'Users.EditUser(this)');
+                        $(btnUpdate).addClass('mx-1 action bg-accent');
+                        var pen = document.createElement('i');
+                        $(pen).addClass('fas fa-pen');
+                        $(btnUpdate).append(pen);
+                        div.append(btnUpdate);
+                    }
+                   
+
+                    if (CanDelete) {
+                        var btndelete = document.createElement('a');
+                        $(btndelete).attr('id', 'btndelete_' + row.id);
+                        $(btndelete).attr('title', globalResources.Delete);
+                        $(btndelete).attr('onclick', 'Users.DeleteUser(this)');
+                        $(btndelete).addClass('mx-1 action bg-danger');
+                        var pen = document.createElement('i');
+                        $(pen).addClass('fas fa-trash');
+                        $(btndelete).append(pen);
+                        div.append(btndelete);
+                    }
 
                     return $(div).html();
                 }
@@ -113,7 +115,7 @@ var Users = {
         Grid.fillGrid('#tblUsers', data.data, columns, true, [], '#pagination', data.totalCount, GeneralClass.pageSize, 'Users');
     },
     CreateOrUpdate: function () {
-        $('.field-validation-valid').hide();
+        $('.field-validation-valid').html('').hide();
         $.ajax({
             type: 'POST',
             url: $('#form-user').attr('action'),

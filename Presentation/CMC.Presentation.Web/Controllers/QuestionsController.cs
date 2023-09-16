@@ -42,6 +42,7 @@ namespace CMC.Presentation.Web.Controllers
         /// Show all categories
         /// </summary>
         /// <returns></returns>
+        [RolePermission(PermissionCodes.WebQuestionsView)]
         public async Task<IActionResult> Index()
         {
             var categories = await _questionsService.GetCategories();
@@ -52,6 +53,8 @@ namespace CMC.Presentation.Web.Controllers
         /// Add Category
         /// </summary>
         /// <returns></returns>
+        [RolePermission(PermissionCodes.WebQuestionsCreate)]
+
         public async Task<IActionResult> AddCategory(int? id)
         {
             try
@@ -79,6 +82,7 @@ namespace CMC.Presentation.Web.Controllers
         /// <param name="categoryDTO"></param>
         /// <returns></returns>
         [HttpPost]
+        [RolePermission(PermissionCodes.WebQuestionsCreate)]
         public async Task<IActionResult> AddCategory(CategoryDTO categoryDTO)
         {
             try
@@ -100,6 +104,7 @@ namespace CMC.Presentation.Web.Controllers
         /// <param name="withQuestions"></param>
         /// <returns></returns>
         [HttpPost]
+        [RolePermission(PermissionCodes.WebQuestionsDelete)]
         public async Task<IActionResult> DeleteCategory(int id, bool withQuestions)
         {
             try
@@ -119,6 +124,7 @@ namespace CMC.Presentation.Web.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpPost]
+        [RolePermission(PermissionCodes.WebQuestionsCreate)]
         public async Task<IActionResult> DeleteExistingImg(int id)
         {
             try
@@ -138,6 +144,7 @@ namespace CMC.Presentation.Web.Controllers
         /// <param name="searchQuestionDTO"></param>
         /// <returns></returns>
         [HttpGet]
+        [RolePermission(PermissionCodes.WebQuestionsView)]
         public async Task<IActionResult> GetAllQuestions([FromQuery] SearchQuestionDTO searchQuestionDTO)
         {
             var result = await _questionsService.GetAllQuestions(searchQuestionDTO);
@@ -151,6 +158,7 @@ namespace CMC.Presentation.Web.Controllers
         /// Add new Question
         /// </summary>
         /// <returns></returns>
+        [RolePermission(PermissionCodes.WebQuestionsCreate)]
         public async Task<IActionResult> AddQuestion(int? id)
         {
             try
@@ -187,6 +195,7 @@ namespace CMC.Presentation.Web.Controllers
         /// </summary>
         /// <param name="question"></param>
         /// <returns></returns>
+        [RolePermission(PermissionCodes.WebQuestionsCreate)]
         [HttpPost]
         public async Task<IActionResult> AddQuestion(QuestionVM question)
         {
@@ -203,6 +212,7 @@ namespace CMC.Presentation.Web.Controllers
         }
 
         [HttpDelete]
+        [RolePermission(PermissionCodes.WebQuestionsDelete)]
         public async Task<IActionResult> DeleteQuestion(int id)
         {
             try

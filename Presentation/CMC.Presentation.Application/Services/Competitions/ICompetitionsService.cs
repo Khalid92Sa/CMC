@@ -19,6 +19,12 @@ namespace CMC.Presentation.Application.Services.Competitions
         Task<Response> AddOrUpdateCompetition(CompetitionsDTO competitionsDTO);
 
         /// <summary>
+        /// Finish competition
+        /// </summary>
+        /// <param name="competitionsDTO"></param>
+        /// <returns></returns>
+        Task<Response> FinishCompetition(CompetitionsDTO competitionsDTO);
+        /// <summary>
         /// Get all competitions for Host
         /// </summary>
         /// <param name="hostId"></param>
@@ -38,6 +44,19 @@ namespace CMC.Presentation.Application.Services.Competitions
         /// <param name="Id"></param>
         /// <returns></returns>
         Task<Response<CompetitionsDTO>> GetCompetition(int Id);
+
+        /// <summary>
+        /// Get Competition for view score
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
+        Task<Response<ViewCompetitionScoresDTO>> ViewCompetitionScore(int Id);
+
+        /// <summary>
+        /// Get Latest scores for last competitions
+        /// </summary>
+        /// <returns></returns>
+        Task<Response<List<LatestCompeitionsScore>>> GetLatestScores();
 
         /// <summary>
         /// Delete Competition

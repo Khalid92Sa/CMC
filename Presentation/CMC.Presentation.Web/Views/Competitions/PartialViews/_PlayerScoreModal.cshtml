@@ -1,0 +1,40 @@
+﻿@model CMC.Presentation.Application.DTOs.Competitions.CompetitionsPlayerDTO
+
+@{
+    ViewData["Title"] = "";
+    bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
+}
+
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">@Model.Name</h5>
+            </div>
+            <div class="modal-body">
+                <p>@Localizer["Points"]: @Model.Points</p>
+                <p>@Localizer["Questions"]</p>
+                <ul>
+                    @foreach(var question in Model.competitonQuestions)
+                    {
+                        <li>
+                           @question.QuestionText
+                            <ul>
+                                @{
+                                    string color = question.IsCorrectAnswer == true ? "text-success" : "text-danger";
+                                }
+                                <li class="@color">
+                                    @question.AnswerText
+                                </li>
+                            </ul>
+                        </li>
+                    }
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btnCloseModal" onclick="StartCompetition.CloseModal()">@Localizer["Close"]</button>
+            </div>
+        </div>
+    </div>
+</div>

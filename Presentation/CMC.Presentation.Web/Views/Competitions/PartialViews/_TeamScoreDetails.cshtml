@@ -1,0 +1,136 @@
+﻿@model CMC.Presentation.Application.DTOs.Competitions.CompetitionStartDTO
+
+@{
+    ViewData["Title"] = "";
+    bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
+}
+
+<div style="z-index:-1000; background-repeat:repeat-y;">
+    <img class="min-vh-100" src="~/assets/competition/images/Home-Background.png" style="width:100%; position:absolute; top:0; left:0;" />
+</div>
+<div class="row m-0 w-100">
+    <div class="col-md-12 text-center" style="cursor:pointer" id="btn-back">
+        <img src="~/assets/competition/images/Citymall.svg" />
+    </div>
+    <div class="col-md-12 mt-5" id="dv-CityMallScores">
+        <div class="row">
+            <div class="animated fadeInDownBig col-md-12">
+                <span class="h2 h2-responsive d-flex justify-content-center text-center title-team-name" data-name="city-mall" style="cursor:pointer">@Localizer["CityMallTeam"]</span>
+                <div class="row mt-5 animated fadeInUpBig justify-content-center">
+                    @{
+                        var TopPlayer = Model.TeamCityMall.OrderByDescending(a => a.Points).FirstOrDefault();
+                        string TopPoints = TopPlayer.Points == 0 || TopPlayer.Points > 2 && TopPlayer.Points < 11 ? Localizer["Points"].Value :
+                        TopPlayer.Points == 2 ? Localizer["TwoPoint"].Value : Localizer["Point"].Value;
+                    }
+                    <div class="col-md-4 player-modal-details" data-player-Id="@TopPlayer.Id" data-city-mall="true" style="cursor:pointer">
+                        <div class="d-flex justify-content-center">
+                            <img src="~/assets/competition/images/player.svg" style="width:40%" />
+                        </div>
+                        <div class="h4 h4-responsive text-center mt-3">
+                            @TopPlayer.Name
+                        </div>
+                        <div class=" d-flex justify-content-center mt-2">
+                            <div class="py-2 px-3 text-center rounded-pill background-accent-color h6 h6-responsive" style="width:fit-content; direction:rtl;">
+                                @TopPlayer.Points @TopPoints
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="animated fadeInDownBig col-md-12">
+                <div class="row mt-5 animated fadeInUpBig">
+                    @{
+                        var OtherCityMallList = Model.TeamCityMall.Where(a => a != TopPlayer).OrderByDescending(a => a.Points).ToList();
+                    }
+                    @foreach (var player in OtherCityMallList)
+                    {
+                        string points = player.Points == 0 || player.Points > 2 && player.Points < 11 ? Localizer["Points"].Value :
+                        player.Points == 2 ? Localizer["TwoPoint"].Value : Localizer["Point"].Value;
+
+                        <div class="col-md-4 player-modal-details" data-player-Id="@player.Id" data-city-mall="true" style="cursor:pointer">
+                            <div class="d-flex justify-content-center">
+                                <img src="~/assets/competition/images/player.svg" style="width:40%" />
+                            </div>
+                            <div class="h4 h4-responsive text-center mt-3">
+                                @player.Name
+                            </div>
+                            <div class=" d-flex justify-content-center mt-2">
+                                <div class="py-2 px-3 text-center rounded-pill background-accent-color h6 h6-responsive" style="width:fit-content; direction:rtl;">
+                                    @player.Points @points
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-12 mt-5" id="dv-OtherTeamScores" style="display:none">
+        <div class="row">
+            <div class="animated fadeInDownBig col-md-12">
+                <span class="h2 h2-responsive d-flex justify-content-center text-center title-team-name" data-name="other-team" style="cursor:pointer">@Localizer["VisitorsTeam"]</span>
+                <div class="row mt-5 animated fadeInUpBig justify-content-center">
+                    @{
+                        var otherTopPlayer = Model.OtherTeam.OrderByDescending(a => a.Points).FirstOrDefault();
+                        string otherTopPoints = otherTopPlayer.Points == 0 || otherTopPlayer.Points > 2 && otherTopPlayer.Points < 11 ? Localizer["Points"].Value :
+                        otherTopPlayer.Points == 2 ? Localizer["TwoPoint"].Value : Localizer["Point"].Value;
+                    }
+                    <div class="col-md-4 player-modal-details" data-player-Id="@otherTopPlayer.Id" data-city-mall="false" style="cursor:pointer">
+                        <div class="d-flex justify-content-center">
+                            <img src="~/assets/competition/images/player.svg" style="width:40%" />
+                        </div>
+                        <div class="h4 h4-responsive text-center mt-3">
+                            @otherTopPlayer.Name
+                        </div>
+                        <div class=" d-flex justify-content-center mt-2">
+                            <div class="py-2 px-3 text-center rounded-pill background-accent-color h6 h6-responsive" style="width:fit-content; direction:rtl;">
+                                @otherTopPlayer.Points @otherTopPoints
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="animated fadeInDownBig col-md-12">
+                <div class="row mt-5 animated fadeInUpBig">
+                    @{
+                        var OtherTeamList = Model.OtherTeam.Where(a => a != otherTopPlayer).OrderByDescending(a => a.Points).ToList();
+                    }
+                    @foreach (var player in OtherTeamList)
+                    {
+                        string points = player.Points == 0 || player.Points > 2 && player.Points < 11 ? Localizer["Points"].Value :
+                        player.Points == 2 ? Localizer["TwoPoint"].Value : Localizer["Point"].Value;
+
+                        <div class="col-md-4 player-modal-details" data-player-Id="@player.Id" data-city-mall="false" style="cursor:pointer">
+                            <div class="d-flex justify-content-center">
+                                <img src="~/assets/competition/images/player.svg" style="width:40%" />
+                            </div>
+                            <div class="h4 h4-responsive text-center mt-3">
+                                @player.Name
+                            </div>
+                            <div class=" d-flex justify-content-center mt-2">
+                                <div class="py-2 px-3 text-center rounded-pill background-accent-color h6 h6-responsive" style="width:fit-content; direction:rtl;">
+                                    @player.Points @points
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="dv-modal-score">
+   
+</div>
+
+<script>
+    $(document).ready(function () {
+        StartCompetition.OnLoadScoresDetails();
+    });
+</script>

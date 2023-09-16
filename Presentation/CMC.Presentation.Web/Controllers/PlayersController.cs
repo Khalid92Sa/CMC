@@ -31,7 +31,7 @@ namespace CMC.Presentation.Web.Controllers
             _settingService = settingsService;
         }
 
-        //[RolePermission(PermissionCodes.WebPlayerView)]
+        [RolePermission(PermissionCodes.WebPlayerView)]
 
         public IActionResult Index()
         {
@@ -39,6 +39,7 @@ namespace CMC.Presentation.Web.Controllers
         }
 
         [HttpGet]
+        [RolePermission(PermissionCodes.WebPlayerView)]
         public async Task<IActionResult> GetAllPlayers([FromQuery] SearchPlayersDTO searchPlayerDto)
         {
             var result = await _playerService.GetPlayers(searchPlayerDto);
@@ -51,6 +52,7 @@ namespace CMC.Presentation.Web.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        [RolePermission(PermissionCodes.WebPlayerCreate)]
         public async Task<IActionResult> CreatePlayer(int? id)
         {
             try
@@ -71,6 +73,7 @@ namespace CMC.Presentation.Web.Controllers
 
 
         [HttpPost]
+        [RolePermission(PermissionCodes.WebPlayerCreate)]
         public async Task<IActionResult> CreatePlayer(PlayerDTO playerDTO)
         {
             try
@@ -93,6 +96,7 @@ namespace CMC.Presentation.Web.Controllers
         /// <param name="withQuestions"></param>
         /// <returns></returns>
         [HttpDelete]
+        [RolePermission(PermissionCodes.WebPlayerDelete)]
         public async Task<IActionResult> DeletePlayer(int id)
         {
             try

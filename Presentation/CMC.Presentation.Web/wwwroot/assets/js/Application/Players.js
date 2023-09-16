@@ -56,29 +56,34 @@ var Players = {
                 "name": "Id",
                 "autoWidth": true,
                 "render": function (Id, type, row) {
-                    var btnUpdate = document.createElement('a');
-                    $(btnUpdate).attr('id', 'btnUpdate_' + row.id);
-                    $(btnUpdate).attr('title', globalResources.Edit);
-                    $(btnUpdate).attr('onclick', 'Players.EditPlayer(this)');
-                    $(btnUpdate).addClass('mx-1 action bg-accent');
-                    var pen = document.createElement('i');
-                    $(pen).addClass('fas fa-pen');
-                    $(btnUpdate).append(pen);
-                    
-
-
-                    var btndelete = document.createElement('a');
-                    $(btndelete).attr('id', 'btndelete_' + row.id);
-                    $(btndelete).attr('title', globalResources.Delete);
-                    $(btndelete).attr('onclick', 'Players.DeletePlayer(this)');
-                    $(btndelete).addClass('mx-1 action bg-danger');
-                    var pen = document.createElement('i');
-                    $(pen).addClass('fas fa-trash');
-                    $(btndelete).append(pen);
-
                     var div = document.createElement('div');
-                    div.append(btnUpdate);
-                    div.append(btndelete);
+
+                    if (CanCreate) {
+                        var btnUpdate = document.createElement('a');
+                        $(btnUpdate).attr('id', 'btnUpdate_' + row.id);
+                        $(btnUpdate).attr('title', globalResources.Edit);
+                        $(btnUpdate).attr('onclick', 'Players.EditPlayer(this)');
+                        $(btnUpdate).addClass('mx-1 action bg-accent');
+                        var pen = document.createElement('i');
+                        $(pen).addClass('fas fa-pen');
+                        $(btnUpdate).append(pen);
+                        div.append(btnUpdate);
+
+                    }
+
+                    if (CanDelete) {
+                        var btndelete = document.createElement('a');
+                        $(btndelete).attr('id', 'btndelete_' + row.id);
+                        $(btndelete).attr('title', globalResources.Delete);
+                        $(btndelete).attr('onclick', 'Players.DeletePlayer(this)');
+                        $(btndelete).addClass('mx-1 action bg-danger');
+                        var pen = document.createElement('i');
+                        $(pen).addClass('fas fa-trash');
+                        $(btndelete).append(pen);
+
+                        div.append(btndelete);
+                    }
+                   
 
                     return $(div).html();
                 }
@@ -87,7 +92,7 @@ var Players = {
         Grid.fillGrid('#tblPlayers', data.data, columns, true, [], '#pagination', data.totalCount, GeneralClass.pageSize, 'Players');
     },
     CreateOrUpdate: function () {
-        $('.field-validation-valid').hide();
+        $('.field-validation-valid').html('').hide();
         $.ajax({
             type: 'POST',
             url: $('#form-player').attr('action'),

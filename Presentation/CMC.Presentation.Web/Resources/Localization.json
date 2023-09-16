@@ -71,6 +71,13 @@
     }
   },
   {
+    "Key": "Message_PleaseCheckDuplicatedAnsweresImage",
+    "LocalizedValue": {
+      "en-US": "Please check your attachments, there is duplicate answers",
+      "ar-JO": "يرجى التحقق من المرفقات، هناك إجابات مكررة"
+    }
+  },
+  {
     "Key": "PleaseSelectCorrectAnswerBeforeContinue",
     "LocalizedValue": {
       "en-US": "Please select a correct answer before continue",
@@ -82,6 +89,13 @@
     "LocalizedValue": {
       "en-US": "Please add at least first two options in English",
       "ar-JO": "يرجى إضافة أول خيارين على الأقل بالعربية"
+    }
+  },
+  {
+    "Key": "PleaseAddTwoImagesAtLeast",
+    "LocalizedValue": {
+      "en-US": "Please attach at least first two Images",
+      "ar-JO": "يرجى إرفاق أول صورتين على الأقل"
     }
   },
   {
@@ -486,6 +500,13 @@
     }
   },
   {
+    "Key": "Close",
+    "LocalizedValue": {
+      "en-US": "Close",
+      "ar-JO": "إغلاق"
+    }
+  },
+  {
     "Key": "Delete",
     "LocalizedValue": {
       "en-US": "Delete",
@@ -798,6 +819,27 @@
     }
   },
   {
+    "Key": "AnswersType",
+    "LocalizedValue": {
+      "en-US": "Answers type",
+      "ar-JO": "نوع الاجابة"
+    }
+  },
+  {
+    "Key": "AnswersTypeText",
+    "LocalizedValue": {
+      "en-US": "Text",
+      "ar-JO": "نص"
+    }
+  },
+  {
+    "Key": "AnswersTypeImg",
+    "LocalizedValue": {
+      "en-US": "Image",
+      "ar-JO": "صور"
+    }
+  },
+  {
     "Key": "Options",
     "LocalizedValue": {
       "en-US": "Options",
@@ -974,10 +1016,24 @@
     }
   },
   {
+    "Key": "TeamsMustHaveSamePlayerCount",
+    "LocalizedValue": {
+      "en-US": "Teams must have same player count",
+      "ar-JO": "يجب أن يكون لدى الفرق نفس عدد اللاعبين"
+    }
+  },
+  {
     "Key": "PleaseSelectAtLeastOnePlayerFromSecondTeam",
     "LocalizedValue": {
       "en-US": "Please select at least one player for second team",
       "ar-JO": "يرجى اختيار لاعب واحد على الأقل للفريق الثاني"
+    }
+  },
+  {
+    "Key": "QuestionCountMustBeGreaterThanOrEqualToPlayerCount",
+    "LocalizedValue": {
+      "en-US": "Question count must be greater than or equal to player count",
+      "ar-JO": "يجب أن يكون عدد الأسئلة أكبر من أو يساوي عدد اللاعبين"
     }
   },
   {
@@ -1006,6 +1062,13 @@
     "LocalizedValue": {
       "en-US": "Competition start date",
       "ar-JO": "تاريخ بدء المسابقة"
+    }
+  },
+  {
+    "Key": "CompetitionEndDate",
+    "LocalizedValue": {
+      "en-US": "Competition end date",
+      "ar-JO": "تاريخ انتهاء المسابقة"
     }
   },
   {
@@ -1146,6 +1209,76 @@
     "LocalizedValue": {
       "en-US": "Confirmed",
       "ar-JO": "تأكيد"
+    }
+  },
+  {
+    "Key": "Questions",
+    "LocalizedValue": {
+      "en-US": "Questions",
+      "ar-JO": "الأسئلة"
+    }
+  },
+  {
+    "Key": "ViewCompetitionScores",
+    "LocalizedValue": {
+      "en-US": "View Scores",
+      "ar-JO": "عرض النتائج"
+    }
+  },
+  {
+    "Key": "ViewCompetitionScoresTitle",
+    "LocalizedValue": {
+      "en-US": "View Scores for competition",
+      "ar-JO": "عرض النتائج لمسابقة"
+    }
+  },
+  {
+    "Key": "WinningTeamInformation",
+    "LocalizedValue": {
+      "en-US": "Winning team information",
+      "ar-JO": "معلومات الفريق الفائز"
+    }
+  },
+  {
+    "Key": "WinningTeam",
+    "LocalizedValue": {
+      "en-US": "Winning team",
+      "ar-JO": "الفريق الفائز"
+    }
+  },
+  {
+    "Key": "WinningPlayer",
+    "LocalizedValue": {
+      "en-US": "Winning player",
+      "ar-JO": "اللاعب الفائز"
+    }
+  },
+  {
+    "Key": "WinningPlayerFromCityMall",
+    "LocalizedValue": {
+      "en-US": "Winning player from City Mall",
+      "ar-JO": "اللاعب الفائز من فريق سيتي مول"
+    }
+  },
+  {
+    "Key": "WinningPlayerFromOtherTeam",
+    "LocalizedValue": {
+      "en-US": "Winning player from visitors team",
+      "ar-JO": "اللاعب الفائز من فريق الزوار"
+    }
+  },
+  {
+    "Key": "WinningPlayerPoints",
+    "LocalizedValue": {
+      "en-US": "Player points",
+      "ar-JO": "نقاط اللاعب"
+    }
+  },
+  {
+    "Key": "ViewLastCompeitionScores",
+    "LocalizedValue": {
+      "en-US": "View Last competitions score",
+      "ar-JO": "عرض نتائج المسابقات الأخيرة"
     }
   }
 ]

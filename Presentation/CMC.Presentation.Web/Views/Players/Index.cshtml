@@ -1,6 +1,15 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Http;
+@using CMC.Kernel.Core.Constants
+@using CMC.Presentation.Application.DTOs.Identity
+@using Newtonsoft.Json
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
     ViewData["Title"] = Localizer["PlayersIndexTitle"].Value;
     bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
+    UserDTO userInfoDTO = HttpContextAccessor.HttpContext.Session.GetString("UserInfoDTO") != null ?
+       JsonConvert.DeserializeObject<UserDTO>(HttpContextAccessor.HttpContext.Session.GetString("UserInfoDTO")) : null;
+
 }
 
 <div class="flex flex-column justify-content-center align-items-center">
@@ -9,9 +18,12 @@
             <h6 class="mb-0">@Localizer["PlayersIndexTitle"]</h6>
         </div>
         <div class="col-5">
-            <div class="formBtn d-flex justify-content-end">
-                <a href="@Url.Action("CreatePlayer","Players")" style="white-space:nowrap;" class="btn btn-outline-primary mx-0">@Localizer["AddPlayer"]</a>
-            </div>
+            @if (userInfoDTO.PermissionCodes.Contains(PermissionCodes.WebPlayerCreate))
+            {
+                <div class="formBtn d-flex justify-content-end">
+                    <a href="@Url.Action("CreatePlayer","Players")" style="white-space:nowrap;" class="btn btn-outline-primary mx-0">@Localizer["AddPlayer"]</a>
+                </div>
+            }
         </div>
     </div>
     <div class="card">
@@ -69,4 +81,6 @@
     Players.OnLoad();
     GeneralClass.ActivationSubMenuItem('#lnkPlayers', '#lnkPlayers');
     GeneralClass.ActivationSubMenuItem('#lnkPlayers2', '#lnkPlayers2');
+    var CanDelete = '@userInfoDTO.PermissionCodes.Contains(PermissionCodes.WebPlayerDelete)' == 'True';
+    var CanCreate = '@userInfoDTO.PermissionCodes.Contains(PermissionCodes.WebPlayerCreate)' == 'True';
 </script>
