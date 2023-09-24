@@ -27,7 +27,10 @@
                                         @categoryName
                                     </div>
                                     <div class="d-flex justify-content-center my-5">
-                                        <img src="@category.Img" alt="@categoryName" style="width:70%" />
+                                        @{
+                                            string ApplicationName = configuration.GetValue<string>("ApplicationName");
+                                        }
+                                        <img src="@ApplicationName@category.Img" alt="@categoryName" style="width:70%" />
                                     </div>
                                     <div class=" d-flex justify-content-center mt-2 mb-4">
                                         <button class="button select-category" data-Id="@category.Id">

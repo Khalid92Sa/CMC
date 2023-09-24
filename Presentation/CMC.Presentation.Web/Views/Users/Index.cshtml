@@ -43,7 +43,7 @@
                     <label class="d-block">@Localizer["Groups"]</label>
                     <select class="form-control" id="ddlGroups">
                         <option value="">@Localizer["All"]</option>
-                        @foreach(var group in ViewBag.Groups)
+                        @foreach (var group in ViewBag.Groups)
                         {
                             string groupName = IsAr ? group.NameAr : group.NameEn;
                             <option value="@group.Id">@groupName</option>
@@ -63,6 +63,7 @@
                             <th scope="col">@Localizer["MobileNumber"]</th>
                             <th scope="col">@Localizer["EmailAddress"]</th>
                             <th scope="col">@Localizer["Group"]</th>
+                            <th scope="col">@Localizer["UserStatus"]</th>
                             <th scope="col"></th>
                         </tr>
                     </thead>
@@ -76,6 +77,25 @@
                 <div id="pager" class="site-pagination">
                     <ul id="pagination" class="pagination justify-content-end mb-0"></ul>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="modalConfirmActivation" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content p-4">
+            <div class="modal-body text-center">
+                <input type="hidden" id="UserId" />
+                <input type="hidden" id="IsActive" />
+                <h5 id="ConfirmActivationMessage">
+                    @Localizer["Message_ActivationCancel"]
+                </h5>
+            </div>
+            <div class="modal-footer justify-content-center p-0 border-0">
+                <button onclick="Users.ActivateUser()" class="btn btn-primary">@Localizer["Common_Yes"]</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">@Localizer["Common_No"]</button>
             </div>
         </div>
     </div>

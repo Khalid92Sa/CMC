@@ -18,6 +18,10 @@ namespace CMC.Presentation.Application.Validators.Players
                 .Matches(RegularExpressionsSettings.OnlyNumbers).WithMessage(localizer["InvalidPhoneNumber"]);
             RuleFor(a => a.EmailAddress).Matches(RegularExpressionsSettings.EmailAddress).WithMessage(localizer["InvalidEmailAddress"]);
             RuleFor(a => a.IsEmployee).NotNull().WithMessage(localizer["FieldRequired"]);
+            When(a => a.IsBlocked, () =>
+            {
+                RuleFor(a => a.Comment).NotNull().WithMessage(localizer["FieldRequired"]);
+            });
         }
     }
 }

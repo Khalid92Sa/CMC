@@ -162,7 +162,7 @@ namespace CMC.Presentation.Web.Controllers
                 if (competitionStart.Succeeded)
                 {
 
-                    PartialViewResult otpPartialView = PartialView("PartialViews/_FullScoreTeams", competitionStart.Data);
+                    PartialViewResult otpPartialView = PartialView("PartialViews/_AllPlayers", competitionStart.Data);//_AllPlayers
                     string viewContent = ConvertViewToString(this.ControllerContext, otpPartialView, _viewEngine);
                     ViewData["Partial"] = viewContent;
 

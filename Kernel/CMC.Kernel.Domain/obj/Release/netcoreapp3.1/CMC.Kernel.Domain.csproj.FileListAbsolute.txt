@@ -8,3 +8,13 @@ D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Domain\obj\Release\netcoreapp3.1\Saib
 D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Domain\obj\Release\netcoreapp3.1\Saib.OAO.Kernel.Domain.csproj.CoreCompileInputs.cache
 D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Domain\obj\Release\netcoreapp3.1\Saib.OAO.Kernel.Domain.dll
 D:\Project\Saib.OAO\Kernel\Saib.OAO.Kernel.Domain\obj\Release\netcoreapp3.1\Saib.OAO.Kernel.Domain.pdb
+D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Domain\bin\Release\netcoreapp3.1\CMC.Kernel.Domain.deps.json
+D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Domain\bin\Release\netcoreapp3.1\CMC.Kernel.Domain.dll
+D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Domain\bin\Release\netcoreapp3.1\CMC.Kernel.Domain.pdb
+D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Domain\obj\Release\netcoreapp3.1\CMC.Kernel.Domain.csproj.AssemblyReference.cache
+D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Domain\obj\Release\netcoreapp3.1\CMC.Kernel.Domain.GeneratedMSBuildEditorConfig.editorconfig
+D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Domain\obj\Release\netcoreapp3.1\CMC.Kernel.Domain.AssemblyInfoInputs.cache
+D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Domain\obj\Release\netcoreapp3.1\CMC.Kernel.Domain.AssemblyInfo.cs
+D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Domain\obj\Release\netcoreapp3.1\CMC.Kernel.Domain.csproj.CoreCompileInputs.cache
+D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Domain\obj\Release\netcoreapp3.1\CMC.Kernel.Domain.dll
+D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Domain\obj\Release\netcoreapp3.1\CMC.Kernel.Domain.pdb

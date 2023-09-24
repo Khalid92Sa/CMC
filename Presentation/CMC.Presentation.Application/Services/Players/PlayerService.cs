@@ -98,7 +98,11 @@ namespace CMC.Presentation.Application.Services.Players
                 player.IsEmployee = playerDTO.IsEmployee;
 
                 if (playerDTO.Id.HasValue)
+                {
+                    player.IsBlocked = playerDTO.IsBlocked;
+                    player.Comment = playerDTO.Comment;
                     _playerRepository.Update(player);
+                }
                 else
                     await _playerRepository.InsertAsync(player);
 
@@ -152,7 +156,8 @@ namespace CMC.Presentation.Application.Services.Players
                     Name = x.Name,
                     PhoneNumber = x.PhoneNumber,
                     EmailAddress = x.EmailAddress,
-                    IsEmployee = x.IsEmployee
+                    IsEmployee = x.IsEmployee,
+                    IsBlocked = x.IsBlocked ?? false
                 });
 
                 return response;
@@ -190,7 +195,9 @@ namespace CMC.Presentation.Application.Services.Players
                             Id = player.Id,
                             EmailAddress = player.EmailAddress,
                             IsEmployee = player.IsEmployee,
-                            PhoneNumber = player.PhoneNumber
+                            PhoneNumber = player.PhoneNumber,
+                            IsBlocked = player.IsBlocked ?? false,
+                            Comment = player.Comment
                         }
                     };
                 }

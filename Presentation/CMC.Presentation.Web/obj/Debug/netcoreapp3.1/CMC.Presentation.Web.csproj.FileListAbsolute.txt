@@ -1900,3 +1900,4 @@ D:\Profile\Projects\CMC\Presentation\CMC.Presentation.Web\obj\Debug\netcoreapp3.
 D:\Profile\Projects\CMC\Presentation\CMC.Presentation.Web\obj\Debug\netcoreapp3.1\Razor\Views\Competitions\PartialViews\_TeamScoreDetails.cshtml.g.cs
 D:\Profile\Projects\CMC\Presentation\CMC.Presentation.Web\obj\Debug\netcoreapp3.1\Razor\Views\Competitions\PartialViews\_PlayerScoreModal.cshtml.g.cs
 D:\Profile\Projects\CMC\Presentation\CMC.Presentation.Web\obj\Debug\netcoreapp3.1\Razor\Views\Competitions\View.cshtml.g.cs
+D:\Profile\Projects\CMC\Presentation\CMC.Presentation.Web\obj\Debug\netcoreapp3.1\Razor\Views\Users\Profile.cshtml.g.cs

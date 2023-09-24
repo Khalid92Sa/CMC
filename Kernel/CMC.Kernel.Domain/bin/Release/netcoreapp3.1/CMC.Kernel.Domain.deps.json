@@ -6,15 +6,15 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v3.1": {
-      "Saib.OAO.Kernel.Domain/1.0.0": {
+      "CMC.Kernel.Domain/1.0.0": {
         "runtime": {
-          "Saib.OAO.Kernel.Domain.dll": {}
+          "CMC.Kernel.Domain.dll": {}
         }
       }
     }
   },
   "libraries": {
-    "Saib.OAO.Kernel.Domain/1.0.0": {
+    "CMC.Kernel.Domain/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

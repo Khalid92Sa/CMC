@@ -15,6 +15,7 @@ using Microsoft.Extensions.Localization;
 using CMC.Kernel.Infrastructure.Persistence.Services;
 using CMC.Presentation.Application.ActionFilters;
 using CMC.Kernel.Core.Constants;
+using CMC.Presentation.Application.DTOs.Competitions;
 
 namespace CMC.Presentation.Web.Controllers
 {
@@ -84,7 +85,7 @@ namespace CMC.Presentation.Web.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { resultCode = (int)HttpStatusCode.BadRequest });
+                return Json(new { resultCode = (int)HttpStatusCode.BadRequest, msg = ex.InnerException != null ? ex.InnerException.Message : ex.Message });
             }
         }
 
@@ -175,6 +176,52 @@ namespace CMC.Presentation.Web.Controllers
             }
         }
 
+
+        public IActionResult Profile()
+        {
+            var loggedInUser = _userService.GetLoggedInUser();
+            ProfileDTO profileDTO = new ProfileDTO()
+            {
+                Name = loggedInUser.Name,
+                EmailAddress = loggedInUser.EmailAddress,
+                PhoneNumber = loggedInUser.PhoneNumber,
+                UserId = loggedInUser.Id.Value,
+            };
+
+            return View(profileDTO);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> Profile(ProfileDTO profileDTO)
+        {
+            try
+            {
+                var result = await _userService.UpdateProfile(profileDTO);
+                string msg = _localizer["YourProfileHasBeenUpdated"].Value;
+                return Json(new { isSuccess = result.Succeeded, resultCode = result.StatusCode, brokenRoles = result.BrokenRules, msg = msg });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { isSuccess = false });
+            }
+        }
+
+
+        [HttpPost]
+        [RolePermission(PermissionCodes.WebUsersAdd)]
+        public async Task<IActionResult> ActivateUser(int userId, bool isActive)
+        {
+            try
+            {
+                var result = await _userService.ActivateUser(userId, isActive);
+                return Json(new { isSuccess = result.Succeeded, resultCode = result.StatusCode });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { isSuccess = false });
+            }
+        }
         #endregion
     }
 }

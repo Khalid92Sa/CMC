@@ -11,5 +11,6 @@ namespace CMC.Presentation.Application.DTOs.Identity
         public string PhoneNumber { get; set; }
         public string EmailAddress { get; set; }
         public string GroupName { get; set; }
+        public bool IsActive { get; set; }
     }
 }

@@ -65,7 +65,14 @@
                         </div>
                     </div>
                     <div class="mb-2">
-                        <h6 class="mb-3">@Localizer["CityMallTeam"]</h6>
+                        <h6 class="mb-3">@Localizer["Team1"]</h6>
+                        <div class="form-row">
+                            <div class="form-group col-md-3">
+                                <label class="requiredLabel">@Localizer["Team1Name"]</label>
+                                <input class="form-control" type="text" asp-for="Team1Name" />
+                                <span asp-validation-for="Team1Name" class="text-danger"></span>
+                            </div>
+                        </div>
                         <div class="form-row">
                             <div class="form-group col-md-3">
                                 <label class="requiredLabel">@Localizer["Player1"]</label>
@@ -98,7 +105,14 @@
                         </div>
                     </div>
                     <div class="mb-2">
-                        <h6 class="mb-3">@Localizer["OtherTeam"]</h6>
+                        <h6 class="mb-3">@Localizer["Team2"]</h6>
+                        <div class="form-row">
+                            <div class="form-group col-md-3">
+                                <label class="requiredLabel">@Localizer["Team2Name"]</label>
+                                <input class="form-control" type="text" asp-for="Team2Name" />
+                                <span asp-validation-for="Team2Name" class="text-danger"></span>
+                            </div>
+                        </div>
                         <div class="form-row">
                             <div class="form-group col-md-3">
                                 <label class="requiredLabel">@Localizer["Player1"]</label>

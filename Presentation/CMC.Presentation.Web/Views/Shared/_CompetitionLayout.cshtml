@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "";
     bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
-    string baseURL = $"{Context.Request.Scheme}://{Context.Request.Host}/";
+    string baseURL = configuration.GetValue<string>("BaseURL");
     bool IsTest = configuration.GetValue<bool>("IsTest");
     Layout = null;
 }
@@ -31,6 +31,18 @@
             pageSize: '@PaginationSettings.PageSize',
             BaseURL: '@baseURL'
         };
+
+
+        //$(document).ready(function () {
+        //    debugger;
+        //    const cors = require('cors');
+        //    const corsOptions = {
+        //        origin: generalSettings.BaseURL,
+        //        credentials: true,
+        //        optionSuccessStatus: 200
+        //    }
+        //    app.use(cors(corsOptions));
+        //});
     </script>
 
     @if (!IsTest)

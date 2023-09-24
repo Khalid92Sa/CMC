@@ -85,7 +85,10 @@
                                 <div class="col-md-3">
                                     <div class="category-box" style="cursor:pointer" onclick="window.location.href='@Url.Action("AddCategory", "Questions", new { id = category.Id })'">
                                         <div class="image-container">
-                                            <img src="@category.Img" alt="@categoryName">
+                                            @{
+                                                string ApplicationName = configuration.GetValue<string>("ApplicationName");
+                                            }
+                                            <img src="@ApplicationName@category.Img" alt="@categoryName">
                                            @* @if(category.ImageData!=null && category.ImageData.Length > 0)
                                             {
                                                 <img src="data:image/png;base64,@Convert.ToBase64String(category.ImageData)" src="@category.Img " alt="@categoryName">

@@ -6,6 +6,8 @@
     Success: 'success'
 };
 
+
+
 var GeneralClass = {
     pageSize: generalSettings.pageSize,
     showLoading: function () {

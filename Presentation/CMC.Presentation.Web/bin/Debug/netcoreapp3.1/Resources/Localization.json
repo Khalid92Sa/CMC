@@ -29,6 +29,13 @@
     }
   },
   {
+    "Key": "UserNameIsInActive",
+    "LocalizedValue": {
+      "en-US": "Username is In-Active",
+      "ar-JO": "اسم المستخدم غير فعال"
+    }
+  },
+  {
     "Key": "UsernameOrPasswordInvalid",
     "LocalizedValue": {
       "en-US": "Username or password is incorrect",
@@ -445,9 +452,27 @@
       "ar-JO": "المجموعة"
     }
   },
-
-
-
+  {
+    "Key": "UserStatus",
+    "LocalizedValue": {
+      "en-US": "User status",
+      "ar-JO": "حالة المستخدم"
+    }
+  },
+  {
+    "Key": "Active",
+    "LocalizedValue": {
+      "en-US": "Active",
+      "ar-JO": "فعال"
+    }
+  },
+  {
+    "Key": "InActive",
+    "LocalizedValue": {
+      "en-US": "In Active",
+      "ar-JO": "غير فعال"
+    }
+  },
 
   //Buttons
   {
@@ -566,11 +591,27 @@
       "ar-JO": "الاعدادات"
     }
   },
+  {
+    "Key": "Menu_Profile",
+    "LocalizedValue": {
+      "en-US": "Profile",
+      "ar-JO": "حسابي"
+    }
+  },
 
 
 
 
 
+
+  //Profile
+  {
+    "Key": "PersonalInformation",
+    "LocalizedValue": {
+      "en-US": "Personal information",
+      "ar-JO": "معلوماتي الشخصية"
+    }
+  },
 
 
   //Categories
@@ -679,6 +720,48 @@
       "ar-JO": "تم حذف الصورة الحالية"
     }
   },
+  {
+    "Key": "CurrentPassword",
+    "LocalizedValue": {
+      "en-US": "Current Password",
+      "ar-JO": "كلمة المرور الحالية"
+    }
+  },
+  {
+    "Key": "NewPassword",
+    "LocalizedValue": {
+      "en-US": "New password",
+      "ar-JO": "كلمة المرور الجديدة"
+    }
+  },
+  {
+    "Key": "ConfirmNewPassword",
+    "LocalizedValue": {
+      "en-US": "Confirm new password",
+      "ar-JO": "تأكيد كلمة المرور الجديدة"
+    }
+  },
+  {
+    "Key": "PasswordsDoNotMatch",
+    "LocalizedValue": {
+      "en-US": "New password doesn't match",
+      "ar-JO": "كلمة المرور الجديدة غير متطابقة"
+    }
+  },
+  {
+    "Key": "CurrentPasswordIncorrect",
+    "LocalizedValue": {
+      "en-US": "Current password is incorrect",
+      "ar-JO": "كلمة المرور الحالية غير صحيحة"
+    }
+  },
+  {
+    "Key": "YourProfileHasBeenUpdated",
+    "LocalizedValue": {
+      "en-US": "Your profile has been updated",
+      "ar-JO": "تم تحديث معلوماتك الشخصية"
+    }
+  },
 
 
 
@@ -731,6 +814,20 @@
     "LocalizedValue": {
       "en-US": "User deleted successfully!",
       "ar-JO": "تم حذف المستخدم"
+    }
+  },
+  {
+    "Key": "Message_ActivationCancel",
+    "LocalizedValue": {
+      "en-US": "Cancel activation!",
+      "ar-JO": "هل تريد بالفعل إلغاء التفعيل؟"
+    }
+  },
+  {
+    "Key": "Message_ActivationConfirm",
+    "LocalizedValue": {
+      "en-US": "Confirm activation?",
+      "ar-JO": "هل تريد تأكيد التفعيل؟"
     }
   },
 
@@ -971,6 +1068,34 @@
     }
   },
   {
+    "Key": "PlayerStatus",
+    "LocalizedValue": {
+      "en-US": "Player status",
+      "ar-JO": "حالة اللاعب"
+    }
+  },
+  {
+    "Key": "Blocked",
+    "LocalizedValue": {
+      "en-US": "Blocked",
+      "ar-JO": "محظور"
+    }
+  },
+  {
+    "Key": "NonBlocked",
+    "LocalizedValue": {
+      "en-US": "Non-Blocked",
+      "ar-JO": "غير محظور"
+    }
+  },
+  {
+    "Key": "Comment",
+    "LocalizedValue": {
+      "en-US": "Comment",
+      "ar-JO": "التعليق"
+    }
+  },
+  {
     "Key": "PlayerAddedSuccessfully",
     "LocalizedValue": {
       "en-US": "Player has been added successfully",
@@ -1083,6 +1208,41 @@
     "LocalizedValue": {
       "en-US": "City Mall Team",
       "ar-JO": "فريق سيتي مول"
+    }
+  },
+  {
+    "Key": "Team",
+    "LocalizeValue": {
+      "en-US": "Team",
+      "ar-JO": "فريق"
+    }
+  },
+  {
+    "Key": "Team1",
+    "LocalizedValue": {
+      "en-US": "First team",
+      "ar-JO": "الفريق الأول"
+    }
+  },
+  {
+    "Key": "Team2",
+    "LocalizedValue": {
+      "en-US": "Second team",
+      "ar-JO": "الفريق الثاني"
+    }
+  },
+  {
+    "Key": "Team1Name",
+    "LocalizedValue": {
+      "en-US": "First team name",
+      "ar-JO": "اسم الفريق الأول"
+    }
+  },
+  {
+    "Key": "Team2Name",
+    "LocalizedValue": {
+      "en-US": "Second team name",
+      "ar-JO": "اسم الفريق الثاني"
     }
   },
   {

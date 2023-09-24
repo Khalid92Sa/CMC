@@ -4,7 +4,7 @@
 @{
     ViewData["Title"] = "";
     bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
-    string baseURL = $"{Context.Request.Scheme}://{Context.Request.Host}/";
+    string baseURL = configuration.GetValue<string>("BaseURL");
     Layout = "~/Views/Shared/_CompetitionLayout.cshtml";
 }
 
