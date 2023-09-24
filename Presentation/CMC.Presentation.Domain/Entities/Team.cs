@@ -7,6 +7,7 @@ namespace CMC.Presentation.Domain.Entities
 {
     public class Team : FullAuditableEntity<int>
     {
+        public string TeamName { get; set; }
         public virtual int? Player1Id { get; set; }
         public virtual Player Player1 { get; set; }
 

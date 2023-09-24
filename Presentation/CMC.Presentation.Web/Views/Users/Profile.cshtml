@@ -1,0 +1,77 @@
+﻿@model CMC.Presentation.Application.DTOs.Identity.ProfileDTO
+
+@using Microsoft.AspNetCore.Http;
+@using CMC.Kernel.Core.Constants
+@using CMC.Presentation.Application.DTOs.Identity
+@using Newtonsoft.Json
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    ViewData["Title"] = Localizer["Menu_Profile"].Value;
+    bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
+    UserDTO userInfoDTO = HttpContextAccessor.HttpContext.Session.GetString("UserInfoDTO") != null ?
+       JsonConvert.DeserializeObject<UserDTO>(HttpContextAccessor.HttpContext.Session.GetString("UserInfoDTO")) : null;
+}
+
+<form method="post" id="form-profile" enctype="multipart/form-data" asp-controller="Users" asp-action="Profile">
+    <div class="flex flex-column justify-content-center align-items-center">
+        <input type="hidden" asp-for="UserId" />
+        <div class="row justify-content-between">
+            <div class="col-12 d-flex flex-row justify-content-between">
+                <h6 class="justify-content-start align-middle align-self-center mb-3">@Localizer["PersonalInformation"]</h6>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="register py-3 p-md-4 h-100" style="overflow-y: auto">
+                    <div class="mb-2">
+                        <div class="form-group">
+                            <div class="form-row">
+                                <div class="form-group col-md-3">
+                                    <label class="requiredLabel">@Localizer["Name"]</label>
+                                    <input class="form-control" type="text" asp-for="Name" autocomplete="off" />
+                                    <span asp-validation-for="Name" class="text-danger"></span>
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label class="requiredLabel">@Localizer["MobileNumber"]</label>
+                                    <input class="form-control" type="text" asp-for="PhoneNumber" autocomplete="off" onkeypress="return GeneralClass.validationNumbersOnly(this,event)" />
+                                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label class="requiredLabel">@Localizer["EmailAddress"]</label>
+                                    <input class="form-control" type="text" asp-for="EmailAddress" autocomplete="off" />
+                                    <span asp-validation-for="EmailAddress" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <div class="form-group">
+                            <div class="form-row">
+                                <div class="form-group col-md-3">
+                                    <label class="requiredLabel">@Localizer["CurrentPassword"]</label>
+                                    <input class="form-control" type="password" asp-for="CurrentPassword" autocomplete="off" />
+                                    <span asp-validation-for="CurrentPassword" class="text-danger"></span>
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label class="requiredLabel">@Localizer["NewPassword"]</label>
+                                    <input class="form-control" type="password" asp-for="NewPassword" autocomplete="off" />
+                                    <span asp-validation-for="NewPassword" class="text-danger"></span>
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label class="requiredLabel">@Localizer["ConfirmNewPassword"]</label>
+                                    <input class="form-control" type="password" asp-for="ConfirmNewPassword" autocomplete="off" />
+                                    <span asp-validation-for="ConfirmNewPassword" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 text-center">
+                        <button type="button" class="btn btn-primary" onclick="Users.UpdateProfile()">@Localizer["Save"]</button>
+                        <button type="button" class="btn btn-secondary" onclick="window.location.href='@Url.Action("Index", "Home")';">@Localizer["Cancel"]</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

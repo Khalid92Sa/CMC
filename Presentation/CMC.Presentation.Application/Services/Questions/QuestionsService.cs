@@ -142,6 +142,8 @@ namespace CMC.Presentation.Application.Services.Questions
                     }
                     catch (Exception ex)
                     {
+                        categoryDTO.Img = null;
+                        await _logger.LogError(ex, "AddOrUpdateCategory", categoryDTO, null, false);
                         filePath = await _settingsService.GetValue<string>(SystemSettings.DefaultCategoryImgPath);
                     }
                 }
@@ -613,8 +615,9 @@ namespace CMC.Presentation.Application.Services.Questions
                                 Id = answer.Id,
                                 TextAr = answer.TextAr,
                                 TextEn = answer.TextEn,
-                                IsAnswer = answer.IsAnswer
+                                IsAnswer = answer.IsAnswer,
                             });
+                            questionVM.AnswertType = answer.IsImg.HasValue && answer.IsImg.Value ? ((int)AnswersTypes.Image) : ((int)AnswersTypes.Text);
                         });
                     }
                     return questionVM;

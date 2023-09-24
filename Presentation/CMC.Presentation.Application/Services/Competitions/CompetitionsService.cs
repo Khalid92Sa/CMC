@@ -122,7 +122,9 @@ namespace CMC.Presentation.Application.Services.Competitions
                     competition.Team2 = new Team();
 
                 //Team1 - CityMall
+                competition.Team1.TeamName = competitionsDTO.Team1Name;
                 //Player1
+
                 if (competitionsDTO.Team1.Player1.HasValue)
                     competition.Team1.Player1Id = competitionsDTO.Team1.Player1.Value;
                 else
@@ -149,6 +151,7 @@ namespace CMC.Presentation.Application.Services.Competitions
 
 
                 //Team2
+                competition.Team2.TeamName = competitionsDTO.Team2Name;
                 //Player1
                 if (competitionsDTO.Team2.Player1.HasValue)
                     competition.Team2.Player1Id = competitionsDTO.Team2.Player1.Value;
@@ -367,6 +370,7 @@ namespace CMC.Presentation.Application.Services.Competitions
                             Name = competition.Name,
                             StartDate = competition.StartDate,
                             QuestionCount = competition.QuestionsCount,
+                            Team1Name = competition.Team1.TeamName,
                             Team1 = new TeamDTO()
                             {
                                 Id = competition.Team1.Id,
@@ -375,6 +379,7 @@ namespace CMC.Presentation.Application.Services.Competitions
                                 Player3 = competition.Team1.Player3Id,
                                 Player4 = competition.Team1.Player4Id,
                             },
+                            Team2Name = competition.Team2.TeamName,
                             Team2 = new TeamDTO()
                             {
                                 Id = competition.Team2.Id,
@@ -442,6 +447,8 @@ namespace CMC.Presentation.Application.Services.Competitions
 
 
                 //Fill Team 1 - CityMall
+                response.Team1Name = competition.Team1.TeamName;
+
                 //Player 1
                 CompetitionsPlayerDTO cityMall_Player1 = new CompetitionsPlayerDTO();
                 cityMall_Player1.Id = competition.Team1.Player1.Id;
@@ -533,6 +540,8 @@ namespace CMC.Presentation.Application.Services.Competitions
 
 
                 //Fill Team 2 - Vistors
+                response.Team2Name = competition.Team2.TeamName;
+
                 //Player 1
                 CompetitionsPlayerDTO Visitors_Player1 = new CompetitionsPlayerDTO();
                 Visitors_Player1.Id = competition.Team2.Player1.Id;

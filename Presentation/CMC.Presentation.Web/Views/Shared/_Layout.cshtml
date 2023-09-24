@@ -14,7 +14,7 @@
     bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
     var returnUrl = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}{Context.Request.QueryString}";
     string direction = IsAr ? "dir=rtl" : "";
-    string baseURL = $"{Context.Request.Scheme}://{Context.Request.Host}/";
+    string baseURL = configuration.GetValue<string>("BaseURL");
     ViewBag.Title = Localizer["LayoutTitle"].Value;
     UserDTO userInfoDTO = HttpContextAccessor.HttpContext.Session.GetString("UserInfoDTO") != null ?
         JsonConvert.DeserializeObject<UserDTO>(HttpContextAccessor.HttpContext.Session.GetString("UserInfoDTO")) : null;
@@ -62,6 +62,18 @@
             pageSize: '@PaginationSettings.PageSize',
             BaseURL: '@baseURL'
         };
+
+        // $(document).ready(function () {
+        //    debugger;
+        //    const cors = require('cors');
+        //    const corsOptions = {
+        //        origin: generalSettings.BaseURL,
+        //        credentials: true,
+        //        optionSuccessStatus: 200
+        //    }
+        //    app.use(cors(corsOptions));
+        //});
+
     </script>
     <link type="text/css" rel="stylesheet" href="~/assets/shared/sweetalert2/sweetalert2.min.css" />
 
@@ -182,11 +194,11 @@
                                             </li>
                                         }
                                         @*@if (userInfoDTO.PermissionCodes.Contains(PermissionCodes.SystemSettings))
-                                        {
-                                            <li>
-                                                <a class="nav-link text-primary pl-5" id="lnkSettings" href="@Url.Action("Index", "Settings")">@Localizer["Menu_Settings"]</a>
-                                            </li>
-                                        }*@
+                                    {
+                                    <li>
+                                    <a class="nav-link text-primary pl-5" id="lnkSettings" href="@Url.Action("Index", "Settings")">@Localizer["Menu_Settings"]</a>
+                                    </li>
+                                    }*@
                                     </ul>
                                 </li>
                             }
@@ -224,9 +236,9 @@
                                     <a href="@(Url.Action("Index" , "Players"))" id="lnkPlayers" class="nav-link"><i class="fas fa-users"></i>@Localizer["Players"]</a>
                                 </li>
                             }
-                          @*  <li class="mt-2 border-top nav-item d-flex">
-                                <a href="@(Url.Action("Logout" , "Users"))" id="lnkLogout" class="nav-link"><i class="fas fa-home"></i>@Localizer["Logout"]</a>
-                            </li>*@
+                            <li class="">
+                                <a href="@(Url.Action("Profile" , "Users"))" id="lnkProfile" class="nav-link"><i class="fas fa-home"></i>@Localizer["Menu_Profile"]</a>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -255,11 +267,11 @@
                                     </li>
                                 }
                                 @*@if (userInfoDTO.PermissionCodes.Contains(PermissionCodes.SystemSettings))
-                                {
-                                    <li>
-                                        <a class="nav-link text-primary pl-5" id="lnkSettings2" href="@Url.Action("Index", "Settings")">@Localizer["Menu_Settings"]</a>
-                                    </li>
-                                }*@
+                            {
+                            <li>
+                            <a class="nav-link text-primary pl-5" id="lnkSettings2" href="@Url.Action("Index", "Settings")">@Localizer["Menu_Settings"]</a>
+                            </li>
+                            }*@
                             </ul>
                         </li>
                     }
@@ -272,11 +284,11 @@
 
                     @if (userInfoDTO.PermissionCodes.Contains(PermissionCodes.WebQuestionsView) || userInfoDTO.PermissionCodes.Contains(PermissionCodes.WebQuestionsCreate))
                     {
-                         <li>
-                        <a class="nav-link dropdown-toggle collapsed" id="lnkQuestions2" href="#Questions" data-toggle="collapse" aria-expanded="false">
-                            <i class="fas fa-question-circle"></i> @Localizer["QuestionsBank"]
-                        </a>
-                        <ul class="list-unstyled collapse" id="Questions">
+                        <li>
+                            <a class="nav-link dropdown-toggle collapsed" id="lnkQuestions2" href="#Questions" data-toggle="collapse" aria-expanded="false">
+                                <i class="fas fa-question-circle"></i> @Localizer["QuestionsBank"]
+                            </a>
+                            <ul class="list-unstyled collapse" id="Questions">
                                 @if (userInfoDTO.PermissionCodes.Contains(PermissionCodes.WebQuestionsView))
                                 {
                                     <li>
@@ -289,8 +301,8 @@
                                         <a class="nav-link text-primary pl-5" id="lnkQuestionAdd2" href="@Url.Action("AddQuestion", "Questions")">@Localizer["AddQuestions"]</a>
                                     </li>
                                 }
-                        </ul>
-                    </li>
+                            </ul>
+                        </li>
                     }
                     @if (userInfoDTO.PermissionCodes.Contains(PermissionCodes.WebPlayerView))
                     {
@@ -299,9 +311,9 @@
                         </li>
                     }
 
-                    @*<li class="mt-2 border-top nav-item d-flex">
-                        <a href="@(Url.Action("Logout" , "Users"))" id="lnkLogout2" class="nav-link"><i class="fas fa-home"></i>@Localizer["Logout"]</a>
-                    </li>*@
+                    <li class="">
+                        <a href="@(Url.Action("Profile" , "Users"))" id="lnkProfile2" class="nav-link"><i class="fas fa-home"></i>@Localizer["Menu_Profile"]</a>
+                    </li>
                 </ul>
                 <!--/ side menu-->
             </div>
@@ -334,6 +346,7 @@
             UsersList: '@Url.Action("Index","Users")',
             AddUser: '@Url.Action("AddUser","Users")',
             DeleteUser: '@Url.Action("DeleteUser","Users")',
+            ActivateUser:'@Url.Action("ActivateUser","Users")',
 
             //Categories
             Categories: '@Url.Action("Index","Questions")',
@@ -350,9 +363,9 @@
             DeletePlayer: '@Url.Action("DeletePlayer","Players")',
 
             //Competitions
-            CompetitionList:'@Url.Action("Index","Competitions")',
+            CompetitionList: '@Url.Action("Index","Competitions")',
             CreateNewCompetition: '@Url.Action("CreateCompetition","Competitions")',
-            DeleteCompetition:'@Url.Action("DeleteCompetition","Competitions")',
+            DeleteCompetition: '@Url.Action("DeleteCompetition","Competitions")',
             StartCompetition: '@Url.Action("StartCompetition","Competitions")',
             ViewCompetition: '@Url.Action("ViewCompetition","Competitions")',
             GetModalPlayer: '@Url.Action("GetModalPlayer","Competitions")',
@@ -388,6 +401,11 @@
 
             //Users
             Alert_DeleteUser: '@Localizer["Alert_DeleteUser"]',
+            Active:'@Localizer["Active"]',
+            InActive: '@Localizer["InActive"]',
+            ActivationCancel: '@Localizer["Message_ActivationCancel"]',
+            ActivationConfirm: '@Localizer["Message_ActivationConfirm"]',
+
 
 
             //Category
@@ -406,17 +424,18 @@
             QuestionTimer: '@Localizer["QuestionTimer"]',
             QuestionPoints: '@Localizer["QuestionPoint"]',
             PleaseAddTwoOptions: '@Localizer["PleaseAddTwoOptionsAtLeast"]',
-            PleaseAddTwoImagesAtLeast:'@Localizer["PleaseAddTwoImagesAtLeast"]',
+            PleaseAddTwoImagesAtLeast: '@Localizer["PleaseAddTwoImagesAtLeast"]',
             OptionRequired: '@Localizer["OptionRequired"]',
-            Message_PleaseCheckDuplicatedAnsweresImage:'@Localizer["Message_PleaseCheckDuplicatedAnsweresImage"]',
+            Message_PleaseCheckDuplicatedAnsweresImage: '@Localizer["Message_PleaseCheckDuplicatedAnsweresImage"]',
 
             //Players
             Alert_DeletePlayer: '@Localizer["Alert_DeletePlayer"]',
-
+            Blocked:'@Localizer["Blocked"]',
+            NonBlocked:'@Localizer["NonBlocked"]',
 
             //Competitons
             Alert_DeleteCompetition: '@Localizer["Alert_DeleteCompetition"]',
-            StartCompetition:'@Localizer["StartCompetition"]',
+            StartCompetition: '@Localizer["StartCompetition"]',
             ViewCompetitionScores: '@Localizer["ViewCompetitionScores"]',
         };
     </script>

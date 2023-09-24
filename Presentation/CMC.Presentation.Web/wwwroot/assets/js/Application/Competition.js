@@ -45,6 +45,7 @@ var CompetitionList = {
         var competitonStartDate = $('#txtStartDate').val();
         var hostId = $('#ddlHosts').val();
 
+        debugger;
         Grid.currentPageIndex = pageIndex;
         APIHelper.httpGet(generalSettings.BaseURL + 'Competitions/GetAllCompetitions?pageNumber=' + pageIndex +
             '&pageSize=' + pageSize +

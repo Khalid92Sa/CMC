@@ -65,5 +65,21 @@ namespace CMC.Presentation.Application.Services.Identity.Interfaces
         /// </summary>
         /// <returns></returns>
         Task<List<LookupModel>> GetHosts();
+
+        /// <summary>
+        ///Update profile 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        Task<Response> UpdateProfile(ProfileDTO profileDTO);
+
+
+        /// <summary>
+        /// Activate user
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="IsActive"></param>
+        /// <returns></returns>
+        Task<Response> ActivateUser(int userId, bool IsActive);
     }
 }

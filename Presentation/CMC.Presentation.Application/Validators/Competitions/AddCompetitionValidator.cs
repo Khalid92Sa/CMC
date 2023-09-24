@@ -18,6 +18,8 @@ namespace CMC.Presentation.Application.Validators.Competitions
             RuleFor(a => a.HostID).NotNull().WithMessage(localizer["FieldRequired"]);
             RuleFor(a => a.StartDate).NotNull().WithMessage(localizer["FieldRequired"]);
             RuleFor(a => a.QuestionCount).NotNull().WithMessage(localizer["FieldRequired"]);
+            RuleFor(a => a.Team1Name).NotNull().WithMessage(localizer["FieldRequired"]);
+            RuleFor(a => a.Team2Name).NotNull().WithMessage(localizer["FieldRequired"]);
 
             RuleFor(a => a.Team1.Player1)
             .NotNull()

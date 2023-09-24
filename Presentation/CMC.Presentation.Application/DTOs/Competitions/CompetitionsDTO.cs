@@ -10,6 +10,8 @@ namespace CMC.Presentation.Application.DTOs.Competitions
     {
         public int? Id { get; set; }
         public string Name { get; set; }
+        public string Team1Name { get; set; }
+        public string Team2Name { get; set; }
         public TeamDTO Team1 { get; set; } = new TeamDTO();
         public TeamDTO Team2 { get; set; } = new TeamDTO();
         public DateTime? StartDate { get; set; }

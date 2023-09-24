@@ -215,6 +215,15 @@ namespace CMC.Presentation.Application.Services.Identity.Implementations
                     bool isPasswordValid = BCrypt.Net.BCrypt.Verify(loginDTO.Password, existUser.Password);
                     if (isPasswordValid)
                     {
+                        if (!existUser.IsActive)
+                            return new Response<UserDTO>()
+                            {
+                                Succeeded = false,
+                                StatusCode = (int)HttpStatusCode.BusinessRuleViolation,
+                                BrokenRules = new List<ValidationRule>() { new ValidationRule() { PropertyName = "Password", Message = _localizer["UserNameIsInActive"].Value } }
+                            };
+
+
                         var userDTO = new UserDTO()
                         {
                             Id = existUser.Id,
@@ -249,7 +258,7 @@ namespace CMC.Presentation.Application.Services.Identity.Implementations
                 return new Response<UserDTO>()
                 {
                     Succeeded = false,
-                    StatusCode = (int)HttpStatusCode.NotFound,
+                    StatusCode = (int)HttpStatusCode.BusinessRuleViolation,
                     BrokenRules = new List<ValidationRule>() { new ValidationRule() { PropertyName = "Password", Message = _localizer["UsernameOrPasswordInvalid"].Value } }
                 };
             }
@@ -295,7 +304,8 @@ namespace CMC.Presentation.Application.Services.Identity.Implementations
                     Name = Security.Decrypt(x.Name),
                     EmailAddress = Security.Decrypt(x.EmailAddress),
                     PhoneNumber = Security.Decrypt(x.PhoneNumber),
-                    GroupName = x.UserGroups.Select(ug => IsAr ? ug.Group.NameAr : ug.Group.NameEn).FirstOrDefault()
+                    GroupName = x.UserGroups.Select(ug => IsAr ? ug.Group.NameAr : ug.Group.NameEn).FirstOrDefault(),
+                    IsActive = x.IsActive
                 });
 
                 return response;
@@ -457,6 +467,84 @@ namespace CMC.Presentation.Application.Services.Identity.Implementations
             catch (Exception ex)
             {
                 await _logger.LogError(ex, "GetHosts", null, null, false);
+                throw ex;
+            }
+        }
+
+        public async Task<Response> UpdateProfile(ProfileDTO profileDTO)
+        {
+            try
+            {
+                int loggedInUser = int.Parse(_httpContextAccessor.HttpContext.Session.GetString("UserId"));
+                if (profileDTO.UserId != loggedInUser)
+                    return new Response()
+                    {
+                        StatusCode = (int)HttpStatusCode.NotAuthorized
+                    };
+
+
+                // validate login model for required fields.
+                var validModel = await Validate(profileDTO);
+                if (!validModel.Succeeded)
+                    return new Response<ProfileDTO>()
+                    {
+                        BrokenRules = validModel.BrokenRules,
+                        StatusCode = (int)HttpStatusCode.BusinessRuleViolation
+                    };
+
+
+                var existUser = await _userRepository.GetAll(u => u.Id == loggedInUser).SingleOrDefaultAsync();
+                //Validate password
+
+                existUser.Name = Security.Encrypt(profileDTO.Name);
+                existUser.EmailAddress = Security.Encrypt(profileDTO.EmailAddress);
+                existUser.PhoneNumber = Security.Encrypt(profileDTO.PhoneNumber);
+
+                if (!string.IsNullOrEmpty(profileDTO.CurrentPassword) && !string.IsNullOrEmpty(profileDTO.NewPassword))
+                {
+                    bool isPasswordValid = BCrypt.Net.BCrypt.Verify(profileDTO.CurrentPassword, existUser.Password);
+                    if (!isPasswordValid)
+                        return new Response()
+                        {
+                            StatusCode = (int)HttpStatusCode.BusinessRuleViolation,
+                            BrokenRules = new List<ValidationRule>() { new ValidationRule() { PropertyName = "CurrentPassword", Message = _localizer["CurrentPasswordIncorrect"].Value } }
+                        };
+
+                    existUser.Password = Security.Hash(profileDTO.NewPassword);
+                }
+
+
+                _userRepository.Update(existUser);
+                await _userRepository.UnitOfWork.SaveChangesAsync();
+
+
+                return new Response()
+                {
+                    Succeeded = true
+                };
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<Response> ActivateUser(int userId, bool IsActive)
+        {
+            try
+            {
+                var user = await _userRepository.FindAsync(userId);
+                if (user == null)
+                    return new Response() { StatusCode = (int)HttpStatusCode.NotFound };
+
+                user.IsActive = IsActive;
+                _userRepository.Update(user);
+                await _userRepository.UnitOfWork.SaveChangesAsync();
+
+                return new Response() { Succeeded = true, StatusCode = (int)HttpStatusCode.Ok };
+            }
+            catch (Exception ex)
+            {
                 throw ex;
             }
         }

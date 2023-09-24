@@ -15,6 +15,8 @@ namespace CMC.Presentation.Application.DTOs.Competitions
         public string WinningTeamName { get; set; }
         public string WinningPlayerName { get; set; }
         public int TotalWinningPlayerScore { get; set; }
+        public string Team1Name { get; set; }
+        public string Team2Name { get; set; }
         public List<CompetitionsPlayerDTO> TeamCityMall { get; set; } = new List<CompetitionsPlayerDTO>();
         public List<CompetitionsPlayerDTO> OtherTeam { get; set; } = new List<CompetitionsPlayerDTO>();
     }

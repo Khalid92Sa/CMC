@@ -52,6 +52,19 @@ var Players = {
                 }
             },
             {
+                "data": '',
+                "autoWidth": true,
+                "render": function (Id, type, row) {
+                    var lblElem = document.createElement('label');
+                    var isBlockedLabel = row.isBlocked ? globalResources.Blocked : globalResources.NonBlocked;
+                    var lblText = document.createTextNode(isBlockedLabel);
+                    lblElem.appendChild(lblText);
+                    var div = document.createElement('div');
+                    div.append(lblElem);
+                    return $(div).html();
+                }
+            },
+            {
                 "data": "Id",
                 "name": "Id",
                 "autoWidth": true,
