@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CMC.Kernel.Core.Configurations;
 using CMC.Kernel.Core.Constants;
 using CMC.Kernel.Core.Enums;
 using CMC.Kernel.Core.Helpers;
@@ -8,21 +9,26 @@ using CMC.Kernel.Core.Services;
 using CMC.Kernel.Core.Wrappers;
 using CMC.Kernel.Domain.Entities.Identity;
 using CMC.Kernel.Infrastructure.Caching.Model;
+using CMC.Kernel.Infrastructure.Persistence.Repositories;
 using CMC.Kernel.Infrastructure.Persistence.Services;
 using CMC.Presentation.Application.DTOs.Identity;
 using CMC.Presentation.Application.Services.Identity.Interfaces;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
+using Microsoft.IdentityModel.Protocols;
 using Newtonsoft.Json;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+
 
 namespace CMC.Presentation.Application.Services.Identity.Implementations
 {
@@ -34,7 +40,9 @@ namespace CMC.Presentation.Application.Services.Identity.Implementations
         readonly IRepository<User> _userRepository;
         readonly IRepository<UserGroup> _userGroupRepository;
         readonly IGroupPermissionService _groupPermissionService;
-        readonly IStringLocalizer<UserService> _localizer; 
+        readonly IStringLocalizer<UserService> _localizer;
+        private Configuration _config { set; get; }
+
         public static IHttpContextAccessor _httpContextAccessor { get { return new HttpContextAccessor(); } }
         #endregion
 
@@ -45,6 +53,7 @@ namespace CMC.Presentation.Application.Services.Identity.Implementations
             IApplicationLogger logger,
             IUnitOfWork unitOfWork,
             IValidatorFactory validatorFactory,
+            Configuration config,
             IStringLocalizer<UserService> localizer, IMapper mapper) : base(validatorFactory, unitOfWork)
         {
             _unitOfWork = unitOfWork;
@@ -54,6 +63,7 @@ namespace CMC.Presentation.Application.Services.Identity.Implementations
             _logger = logger;
             _localizer = localizer;
             _mapper = mapper;
+            _config = config;
         }
         #endregion
 
@@ -153,6 +163,7 @@ namespace CMC.Presentation.Application.Services.Identity.Implementations
                     var newUser = _mapper.Map<User>(userDTO);
                     newUser.CreatedBy = int.Parse(_httpContextAccessor.HttpContext.Session.GetString("UserId"));
                     newUser.CreatedOn = DateTime.Now;
+                    newUser.IsActive = true;
                     newUser.Password = Security.Hash(SystemSettings.DefaultPassword);
                     newUser.UserGroups = new List<UserGroup>() 
                     { 
@@ -280,30 +291,57 @@ namespace CMC.Presentation.Application.Services.Identity.Implementations
             {
                 bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
                 PagedResult<UserListDTO> response = new PagedResult<UserListDTO>();
-                var users = _userRepository.GetAll(a => a.IsDeleted != true)
-                    .Include(a=>a.UserGroups)
-                    .ThenInclude(a=>a.Group)
-                    .AsQueryable();
 
 
-                var result = users
-                        .WhereIf(!string.IsNullOrEmpty(searchUserDTO.Name), a => a.Name.Contains(searchUserDTO.Name))
-                        .WhereIf(!string.IsNullOrEmpty(searchUserDTO.PhoneNumber), a => a.PhoneNumber.Contains(searchUserDTO.PhoneNumber))
-                        .WhereIf(searchUserDTO.GroupId.HasValue, a => a.UserGroups.Any(ug => ug.Group.Id == searchUserDTO.GroupId.Value))
-                        .OrderByDescending(a => a.CreatedOn)
-                        .ToQueryResultAsync(searchUserDTO.PageNumber, searchUserDTO.PageSize);
+                List<User> users = new List<User>();
+                using (SqlConnection connection = new SqlConnection(_config.ConnectionStrings.Default))
+                {
+                    connection.Open();
+                    using (var command = new SqlCommand("SearchUsers", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("@SearchName", searchUserDTO.Name);
+                        command.Parameters.AddWithValue("@SearchPhone", searchUserDTO.PhoneNumber);
+                        command.Parameters.AddWithValue("@GroupId", searchUserDTO.GroupId);
+                        using (var reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                User user = new User();
+                                user.Id = (int)reader["Id"];
+                                user.Name = (string)reader["Name"];
+                                user.PhoneNumber = (string)reader["PhoneNumber"];
+                                user.EmailAddress = (string)reader["EmailAddress"];
+                                user.IsActive = Convert.ToBoolean(reader["IsActive"]);
+                                user.UserGroups = new List<UserGroup>() { new UserGroup()
+                                {
+                                     Group = new Group()
+                                     {
+                                         NameEn = (string)reader["GroupNameEn"],
+                                         NameAr = (string)reader["GroupNameAr"],
+                                     }
+                                }};
+                                users.Add(user);
+                            }
+                        }
+                        connection.Close();
+                    }
+                }
 
-                response.PageSize = result.Result.PageSize;
-                response.CurrentPage = result.Result.CurrentPage;
-                response.TotalCount = result.Result.TotalCount;
-                response.BrokenRules = result.Result.BrokenRules;
+                var result = await Task.Run(() => users.Skip((searchUserDTO.PageNumber - 1) * searchUserDTO.PageSize)
+                    .Take(searchUserDTO.PageSize)
+                    .ToList());
 
-                response.Data = result.Result.Data.Select(x => new UserListDTO
+                response.PageSize = searchUserDTO.PageSize;
+                response.CurrentPage = searchUserDTO.PageNumber;
+                response.TotalCount = result.Count;
+
+                response.Data = result.Select(x => new UserListDTO
                 {
                     Id = x.Id,
-                    Name = Security.Decrypt(x.Name),
-                    EmailAddress = Security.Decrypt(x.EmailAddress),
-                    PhoneNumber = Security.Decrypt(x.PhoneNumber),
+                    Name = x.Name,
+                    EmailAddress = x.EmailAddress,
+                    PhoneNumber = x.PhoneNumber,
                     GroupName = x.UserGroups.Select(ug => IsAr ? ug.Group.NameAr : ug.Group.NameEn).FirstOrDefault(),
                     IsActive = x.IsActive
                 });

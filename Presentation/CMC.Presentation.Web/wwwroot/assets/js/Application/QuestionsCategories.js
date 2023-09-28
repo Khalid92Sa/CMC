@@ -13,7 +13,22 @@
                     return false;
                 }
 
-                $('#lblImageName').text(categoryAttachment.files[0].name);
+
+                //Render the image
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#dv-img-category').find('img').removeAttr('style');
+                    $('#dv-img-category').find('img').attr('src', e.target.result); // Update the img src
+                    $('#dv-btn-delete-image-category').removeAttr('style');
+                }
+                reader.readAsDataURL($(this).get(0).files[0]);
+
+
+                var fileName = categoryAttachment.files[0].name;
+                if (fileName.length > 30) {
+                    fileName = fileName.substring(0, 30);
+                }
+                $('#lblImageName').text(fileName);
                 $('#lblImgStatus').removeClass('fa-upload');
                 $('#lblImgStatus').addClass('fa-check-circle');
             }
@@ -208,29 +223,121 @@
             })
         }
     },
-    DeleteExistingImg: function () {
+    DeleteExistingImg: function (type, idImg, e) {
+        var idOfImg = $('#hdn-curr-img-id').val();
+        if (idOfImg == '' && type != 3) {
+            //Means user delete the original image
+            //means in catgeory or question, user delete the image for first time, and upload second image then delete again.
+            if (type == 1) {
+                //Category
+                $('#file-category-img').val('');
+
+                $('#lblImageName').text(globalResources.ChooseImg);
+                $('#lblImgStatus').removeClass('fa-check-circle');
+                $('#lblImgStatus').addClass('fa-upload');
+
+                $('#dv-btn-delete-image-category').attr('style', 'display:none');
+                $('#dv-img-category').find('img').attr('src', '');
+                $('#dv-img-category').find('img').attr('style', 'display:none');
+            }
+            else if (type == 2) {
+                //Question
+                $('#question-img').val('');
+
+                $('#lblQuestionImgName').text(globalResources.ChooseImg);
+                $('#lblQuestionImgStatus').removeClass('fa-check-circle');
+                $('#lblQuestionImgStatus').addClass('fa-upload');
+
+                $('#dv-btn-delete-image-question').attr('style', 'display:none');
+                $('#dv-img-question').find('img').attr('src', '');
+                $('#dv-img-question').find('img').attr('style', 'display:none');
+            }
+            return;
+        }
+        else if (type == 3) {
+            var currentAnswer = $(e).attr('data-id');
+            var idExistAnswer = $('#hdn-option-img-id-' + currentAnswer).val();
+
+            if (idExistAnswer == '') {
+                // This is new answer, just delete the image that user uploaded.
+                $(e).hide();
+                $('#answer-img-' + currentAnswer).val(''); // clear file input
+
+                $('#lblImageName-' + currentAnswer).text(globalResources.ChooseImg);
+                $('#lblImgStatus-' + currentAnswer).removeClass('fa-check-circle');
+                $('#lblImgStatus-' + currentAnswer).addClass('fa-upload');
+
+                $('#dv-btn-delete-image-ans-' + currentAnswer).attr('style', 'display:none');
+                $('#dv-imgOptionAns-' + currentAnswer).find('img').attr('src', '');
+                $('#dv-imgOptionAns-' + currentAnswer).find('img').attr('style', 'display:none');
+                return;
+            }
+            else {
+                idOfImg = idExistAnswer;
+            }
+        }
+
         $.ajax({
             type: 'POST',
             url: publicURls.DeleteCurrentCategoryImg,
             data: {
-                id: $('#Id').val()
+                id: idOfImg,
+                type: type
             },
             success: function (data) {
                 if (data.isSuccess) {
-                    $('#i-success-delete-img-category').show();
-                    $('#i-error-delete-img-category').hide();
-                    $('#btnDeleteExistingImg').hide();
+                    $(e).hide(); // hide the button of delete
+                    if (type != 3) {
+                        //Clear current id for question and category.
+                        $('#hdn-curr-img-id').val('');
+                    }
+                    else {
+                        $('#hdn-option-img-id-' + currentAnswer).val(''); // clear the original Id
+                    }
+
+                    var statusDiv = '';
+                    if (idImg == 'dv-img-category') {
+                        statusDiv = 'dv-delete-category-status';
+                        $('#file-category-img').val('');
+                        $('#lblImageName').text(globalResources.ChooseImg);
+                        $('#lblImgStatus').removeClass('fa-check-circle');
+                        $('#lblImgStatus').addClass('fa-upload');
+                        $('#dv-btn-delete-image-category').attr('style', 'display:none');
+                    }
+                    else if (idImg == 'dv-img-question') {
+                        statusDiv = 'dv-delete-question-status';
+                        $('#question-img').val('');
+                        $('#lblQuestionImgName').text(globalResources.ChooseImg);
+                        $('#lblQuestionImgStatus').removeClass('fa-check-circle');
+                        $('#lblQuestionImgStatus').addClass('fa-upload');
+                        $('#dv-btn-delete-image-question').attr('style', 'display:none');
+                    }
+                    else {
+                        //Answer
+                        statusDiv = 'dv-delete-answer-status-' + currentAnswer;
+                        $('#answer-img-' + currentAnswer).val(''); // clear file input
+                        $('#lblImageName-' + currentAnswer).text(globalResources.ChooseImg);
+                        $('#lblImgStatus-' + currentAnswer).removeClass('fa-check-circle');
+                        $('#lblImgStatus-' + currentAnswer).addClass('fa-upload');
+                        $('#dv-btn-delete-image-ans-' + currentAnswer).attr('style', 'display:none');
+                    }
+
+
+                    $('#' + statusDiv).find('.i-success-delete-img').show();
+                    $('#' + statusDiv).find('.i-error-delete-img').hide();
+                    $('#' + idImg).find('img').attr('src', '');
+                    $('#' + idImg).find('img').attr('style', 'display:none');
                 }
                 else {
-                    $('#i-error-delete-img-category').show();
-                    $('#i-success-delete-img-category').hide();
+                    $('#' + statusDiv).find('.i-error-delete-img').show();
+                    $('#' + statusDiv).find('.i-success-delete-img').hide();
                 }
-                $('#spn-delete-category-img-status').html(data.msg);
-                $('#dv-delete-category-status').show();
 
+                $('#' + statusDiv).find('.spn-delete-img-status').html(data.msg);
+                $('#' + statusDiv).show();
                 if (data.isSuccess) {
                     setTimeout(function () {
-                        $('#dv-delete-category-status').hide();
+                        $('#' + statusDiv).hide();
                     }, 2000);
                 }
             },
@@ -260,8 +367,6 @@
                 }
             },
             { data: "text", sortable: false, name: "Question text", autoWidth: true },
-            { data: "time", sortable: false, name: "Question time", autoWidth: true },
-            { data: "points", sortable: false, name: "Question points", autoWidth: true },
             {
                 "data": "Id",
                 "name": "Id",
@@ -302,7 +407,6 @@
 
 var Questions = {
     OnLoad: function () {
-
         $('#ddlAnswersType').on('change', function () {
             if ($(this).val() == 2) {
                 $('.dv-answers-text').addClass('d-none');
@@ -313,32 +417,98 @@ var Questions = {
                 $('.dv-answers-images').addClass('d-none');
             }
         });
-
         $('.custom-file-input').change(function (e) {
-            var currentAnswerNum = $(this).attr('data-answer');
-            $("#answer-Img-invalid-" + currentAnswerNum).text("");
-            if ($(this).get(0).files.length > 0) {
-                var currentFile = $(this).get(0).files;
-                var ext = currentFile[0].name;
-                var extt = ext.split('.').pop().toLowerCase();
-                if (extt != "png" && extt != "jpg" && extt != "jpeg") {
-                    $("#answer-Img-invalid-" + currentAnswerNum).text(globalResources.InvalidAttachmentImg);
-                    $("#answer-Img-invalid-" + currentAnswerNum).css("display", "block");
-                    Questions.ClearAnswerAttachment($(this), globalResources.ChooseImg, currentAnswerNum);
-                    return false;
-                }
+            if ($(this).attr('id') == 'question-img') {
+                //Question
+                $('#question-Img-invalid').text('');
+                if ($(this).get(0).files.length > 0) {
+                    var currentFile = $(this).get(0).files;
+                    var ext = currentFile[0].name;
+                    var extt = ext.split('.').pop().toLowerCase();
+                    if (extt != "png" && extt != "jpg" && extt != "jpeg") {
+                        $("#question-Img-invalid").text(globalResources.InvalidAttachmentImg);
+                        $("#question-Img-invalid").css("display", "block");
+                        Questions.ClearAnswerAttachment($(this), globalResources.ChooseImg, '', true);
+                        return false;
+                    }
 
-                $('#lblImageName-' + currentAnswerNum).text(currentFile[0].name);
-                $('#lblImgStatus-' + currentAnswerNum).removeClass('fa-upload');
-                $('#lblImgStatus-' + currentAnswerNum).addClass('fa-check-circle');
+                    //Render the image
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        //$('#' + btnToHide).hide(); // btnToHide = id of button to be hidden
+                        $('#dv-img-question').find('img').removeAttr('style');
+                        $('#dv-img-question').find('img').attr('src', e.target.result); // Update the img src
+                        $('#dv-btn-delete-image-question').removeAttr('style');
+                    }
+                    reader.readAsDataURL($(this).get(0).files[0]);
+
+                    var fileName = currentFile[0].name;
+                    if (fileName.length > 30) {
+                        fileName = fileName.substring(0, 30);
+                    }
+                    $('#lblQuestionImgName').text(fileName);
+                    $('#lblQuestionImgStatus').removeClass('fa-upload');
+                    $('#lblQuestionImgStatus').addClass('fa-check-circle');
+                }
+            }
+            else {
+                //Answer
+                var currentAnswerNum = $(this).attr('data-answer');
+                $("#answer-Img-invalid-" + currentAnswerNum).text("");
+                if ($(this).get(0).files.length > 0) {
+                    var currentFile = $(this).get(0).files;
+                    var ext = currentFile[0].name;
+                    var extt = ext.split('.').pop().toLowerCase();
+                    if (extt != "png" && extt != "jpg" && extt != "jpeg") {
+                        $("#answer-Img-invalid-" + currentAnswerNum).text(globalResources.InvalidAttachmentImg);
+                        $("#answer-Img-invalid-" + currentAnswerNum).css("display", "block");
+                        Questions.ClearAnswerAttachment($(this), globalResources.ChooseImg, currentAnswerNum,false); // false = answer ... true = question
+                        return false;
+                    }
+
+                    //Render the image
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        $('#dv-imgOptionAns-' + currentAnswerNum).find('img').removeAttr('style');
+                        $('#dv-imgOptionAns-' + currentAnswerNum).find('img').attr('src', e.target.result); // Update the img src
+                        $('#dv-btn-delete-image-ans-' + currentAnswerNum).removeAttr('style');
+                    }
+                    reader.readAsDataURL($(this).get(0).files[0]);
+
+                    var fileName = currentFile[0].name;
+                    if (fileName.length > 30) {
+                        fileName = fileName.substring(0, 30);
+                    }
+
+                    $('#lblImageName-' + currentAnswerNum).text(fileName);
+                    $('#lblImgStatus-' + currentAnswerNum).removeClass('fa-upload');
+                    $('#lblImgStatus-' + currentAnswerNum).addClass('fa-check-circle');
+                }
             }
         });
     },
-    ClearAnswerAttachment(fileInput, defaultMessage,num) {
+    SelectAnswerByImage: function (id) {
+        $('#chk-option-img-' + id).prop('checked', 'checked');
+    },
+    ClearAnswerAttachment(fileInput, defaultMessage,num,isQuestion) {
         $(fileInput).val('');
-        $('#lblImageName-'+num).text(defaultMessage);
-        $('#lblImgStatus-' + num).removeClass('fa-check-circle');
-        $('#lblImgStatus-' + num).addClass('fa-upload');
+        if (isQuestion) {
+            //Question
+            if (defaultMessage != '') {
+                $('#lblQuestionImgName').text(defaultMessage);
+            }
+            $('#lblQuestionImgStatus').removeClass('fa-check-circle');
+            $('#lblQuestionImgStatus').addClass('fa-upload');
+        }
+        
+        else {
+            //Answer
+            if (defaultMessage != '') {
+                $('#lblImageName-' + num).text(defaultMessage);
+            }
+            $('#lblImgStatus-' + num).removeClass('fa-check-circle');
+            $('#lblImgStatus-' + num).addClass('fa-upload');
+        }
     },
     AddNewQuestion: function () {
         $('.field-validation-valid').html('').hide();
@@ -347,8 +517,9 @@ var Questions = {
         data.append("CategoryId", $('#ddlCategories').val());
         data.append("TextEn", $("#TextEn").val().trim());
         data.append("TextAr", $("#TextAr").val().trim());
-        data.append("Time", $("#Time").val().trim());
-        data.append("Points", $("#Points").val().trim());
+
+        var questionImg = $('#question-img');
+        data.append("Img", $(questionImg).get(0).files[0]);
         data.append("AnswertType", $("#ddlAnswersType").val());
 
         //Answers
@@ -409,39 +580,39 @@ var Questions = {
                     if (IsArabic) {
                         //Option 1 Arabic
                         if (option1Ar.val().trim() == '') {
-                            $(option1Ar).parent().next().html(globalResources.OptionRequired).show();
+                            $(option1Ar).parent().find('.field-validation-valid').html(globalResources.OptionRequired).show();
                             isValid = false;
                         }
                         else {
-                            $(option1Ar).parent().next().html('').hide();
+                            $(option1Ar).parent().find('.field-validation-valid').html('').hide();
                         }
 
                         //Option 2 Arabic
                         if (option2Ar.val().trim() == '') {
-                            $(option2Ar).parent().next().html(globalResources.OptionRequired).show();
+                            $(option2Ar).parent().find('.field-validation-valid').html(globalResources.OptionRequired).show();
                             isValid = false;
                         }
                         else {
-                            $(option2Ar).parent().next().html('').hide();
+                            $(option2Ar).parent().find('.field-validation-valid').html('').hide();
                         }
                     }
                     else {
                         //Option 1 English
                         if (option1En.val().trim() == '') {
-                            $(option1En).parent().next().html(globalResources.OptionRequired).show();
+                            $(option1En).parent().find('.field-validation-valid').html(globalResources.OptionRequired).show();
                             isValid = false;
                         }
                         else {
-                            $(option1En).parent().next().html('').hide();
+                            $(option1En).parent().find('.field-validation-valid').html('').hide();
                         }
 
                         //Option 2 English
                         if (option2En.val().trim() == '') {
-                            $(option2En).parent().next().html(globalResources.OptionRequired).show();
+                            $(option2En).parent().find('.field-validation-valid').html(globalResources.OptionRequired).show();
                             isValid = false;
                         }
                         else {
-                            $(option2En).parent().next().html('').hide();
+                            $(option2En).parent().find('.field-validation-valid').html('').hide();
                         }
                     }
 
@@ -475,28 +646,37 @@ var Questions = {
 
 
                     //Add Option 3 to Data
-                    data.append('Answers[' + 2 + '].TextEn', option3En.val().trim());
-                    data.append('Answers[' + 2 + '].TextAr', option3Ar.val().trim());
-                    data.append('Answers[' + 2 + '].IsAnswer', checkOption3);
-                    data.append('Answers[' + 2 + '].Id', option3Id.val());
-
+                    if (option3En.val() != '' || option3Ar.val() != '') {
+                        data.append('Answers[' + 2 + '].TextEn', option3En.val().trim());
+                        data.append('Answers[' + 2 + '].TextAr', option3Ar.val().trim());
+                        data.append('Answers[' + 2 + '].IsAnswer', checkOption3);
+                        data.append('Answers[' + 2 + '].Id', option3Id.val());
+                    }
+                  
 
                     //Add Option 4 to Data
-                    data.append('Answers[' + 3 + '].TextEn', option4En.val().trim());
-                    data.append('Answers[' + 3 + '].TextAr', option4Ar.val().trim());
-                    data.append('Answers[' + 3 + '].IsAnswer', checkOption4);
-                    data.append('Answers[' + 3 + '].Id', option4Id.val());
+                    if (option4En.val() != '' || option4Ar.val() != '') {
+                        data.append('Answers[' + 3 + '].TextEn', option4En.val().trim());
+                        data.append('Answers[' + 3 + '].TextAr', option4Ar.val().trim());
+                        data.append('Answers[' + 3 + '].IsAnswer', checkOption4);
+                        data.append('Answers[' + 3 + '].Id', option4Id.val());
+                    }
+                   
                 }
                 else {
-                    // Images Answeres
-                    if ($('#answer-img-1').val() == '' || $('#answer-img-2').val() == '') {
-                        $('#lbl-generic-error').html(globalResources.PleaseAddTwoImagesAtLeast).show();
-                        return false;
-                    }
-                    else {
-                        $('#lbl-generic-error').html('').hide();
-                    }
 
+                    // Images Answeres
+                    //In Case create new question
+                    if ($('#Id').val() == '') {
+                        if ($('#answer-img-1').val() == '' || $('#answer-img-2').val() == '') {
+                            $('#lbl-generic-error').html(globalResources.PleaseAddTwoImagesAtLeast).show();
+                            return false;
+                        }
+                        else {
+                            $('#lbl-generic-error').html('').hide();
+                        }
+                    }
+                    
 
                     // Option 1
                     var option1ImgId = $('#hdn-option-img-id-1');
@@ -558,7 +738,7 @@ var Questions = {
 
 
                     //Add Option 3 to Data
-                    if ($(option3Img).val() != '') {
+                    if ($(option3Img).val() != '' || option3ImgId.val() != '') {
                         data.append('Answers[' + 2 + '].Img', $(option3Img).get(0).files[0]);
                         data.append('Answers[' + 2 + '].IsAnswer', checkOptionImg3);
                         data.append('Answers[' + 2 + '].Id', option3ImgId.val());
@@ -566,7 +746,7 @@ var Questions = {
                     
 
                     //Add Option 4 to Data
-                    if ($(option4Img).val() != '') {
+                    if ($(option4Img).val() != '' || option4ImgId.val() != '') {
                         data.append('Answers[' + 3 + '].Img', $(option4Img).get(0).files[0]);
                         data.append('Answers[' + 3 + '].IsAnswer', checkOptionImg4);
                         data.append('Answers[' + 3 + '].Id', option4ImgId.val());
@@ -699,5 +879,5 @@ var Questions = {
                 });
             }
         })
-    }
+    },
 }

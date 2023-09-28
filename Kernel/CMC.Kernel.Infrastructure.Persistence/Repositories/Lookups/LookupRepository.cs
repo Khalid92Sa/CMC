@@ -143,7 +143,6 @@ namespace CMC.Kernel.Infrastructure.Persistence.Repositories.Lookups
                     NameAr = a.NameAr,
                     NameEn = a.NameEn,
                     CategoryId = a.CategoryID,
-                    Img = a.Img
                 }).ToListAsync();
                 return result;
             }
@@ -170,7 +169,6 @@ namespace CMC.Kernel.Infrastructure.Persistence.Repositories.Lookups
                     NameEn = a.NameEn,
                     OtherCode = a.OtherCode,
                     CategoryId = a.CategoryID,
-                    Img = a.Img
                 }).SingleOrDefaultAsync();
                 return result;
             }

@@ -29,7 +29,19 @@ namespace CMC.Presentation.Domain.Entities
         public int? Team1Score { get; set; }
         public int? Team2Score { get; set; }
 
-        public int QuestionsCount { get; set; }
+        public int RoundCount { get; set; }
+        public int? Round1Points { get; set; }
+        public int? Round1Time { get; set; }
+        public int? Round2Points { get; set; }
+        public int? Round2Time { get; set; }
+        public int? Round3Points { get; set; }
+        public int? Round3Time { get; set; }
+        public int? Round4Points { get; set; }
+        public int? Round4Time { get; set; }
+
+        public string CategoriesIds { get; set; }
+        public virtual int? ParentId { get; set; }
+        public virtual Competition Parent { get; set; }
 
         public virtual ICollection<CompetitionQuestion> CompetitionQuestions { get; set; }
     }

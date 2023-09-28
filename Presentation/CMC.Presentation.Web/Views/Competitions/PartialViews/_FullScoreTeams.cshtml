@@ -20,7 +20,7 @@
                 CityMallPoints == 2 ? Localizer["TwoPoint"].Value : Localizer["Point"].Value;
             }
             <div class="animated fadeInDownBig col-md-4 full-team-score-name" style="padding-top:10%;cursor:pointer" data-score="city-mall">
-                <span class="h1 h1-responsive d-flex justify-content-center text-center" style="">@Localizer["CityMallTeam"]</span>
+                <span class="h1 h1-responsive d-flex justify-content-center text-center" style="">@Model.Team1Name</span>
                 <span class="h1 h1-responsive d-flex justify-content-center text-center pt-5">@CityMallPoints @points</span>
             </div>
             <div class="animated fadeInDownBig col-md-4 d-flex align-items-center justify-content-center">
@@ -32,7 +32,7 @@
                 OtherTeamPoints == 2 ? Localizer["TwoPoint"].Value : Localizer["Point"].Value;
             }
             <div class="animated fadeInDownBig col-md-4 full-team-score-name" style="padding-top:10%;cursor:pointer" data-score="visitors">
-                <span class="h2 h2-responsive d-flex justify-content-center text-center white-color" style="cursor:pointer">@Localizer["VisitorsTeam"]</span>
+                <span class="h2 h2-responsive d-flex justify-content-center text-center white-color" style="cursor:pointer">@Model.Team2Name</span>
                 <span class="h1 h1-responsive d-flex justify-content-center text-center white-color pt-5">@OtherTeamPoints @Otherpoints</span>
             </div>
         </div>

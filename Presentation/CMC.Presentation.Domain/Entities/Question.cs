@@ -9,9 +9,8 @@ namespace CMC.Presentation.Domain.Entities
     {
         public string TextEn { get; set; }
         public string TextAr { get; set; }
-        public int Points { get; set; }
-        public int Timer { get; set; }
-
+        public bool? HasImg { get; set; }
+        public int AnswersType { get; set; }
         public virtual int? CategoryID { get; set; }
         public virtual Lookup Category { get; set; }
 

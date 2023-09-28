@@ -94,15 +94,15 @@
   {
     "Key": "PleaseAddTwoOptionsAtLeast",
     "LocalizedValue": {
-      "en-US": "Please add at least first two options in English",
-      "ar-JO": "يرجى إضافة أول خيارين على الأقل بالعربية"
+      "en-US": "Please add at least first two options in English, and choose the correct answer",
+      "ar-JO": "يرجى إضافة أول خيارين على الأقل بالعربية واختيار الإجابة الصحيحة"
     }
   },
   {
     "Key": "PleaseAddTwoImagesAtLeast",
     "LocalizedValue": {
-      "en-US": "Please attach at least first two Images",
-      "ar-JO": "يرجى إرفاق أول صورتين على الأقل"
+      "en-US": "Please attach at least first two Images and choose the correct answer",
+      "ar-JO": "يرجى إرفاق أول صورتين على الأقل واختيار الاجابة الصحيحة"
     }
   },
   {
@@ -714,10 +714,24 @@
     }
   },
   {
+    "Key": "DeleteImage",
+    "LocalizedValue": {
+      "en-US": "Delete image!",
+      "ar-JO": "حذف الصورة"
+    }
+  },
+  {
     "Key": "DeleteExistingImage_SuccessMsg",
     "LocalizedValue": {
       "en-US": "Image has been deleted.",
       "ar-JO": "تم حذف الصورة الحالية"
+    }
+  },
+  {
+    "Key": "DeleteImage_SuccessMsg",
+    "LocalizedValue": {
+      "en-US": "Image has been deleted!",
+      "ar-JO": "تم حذف الصورة"
     }
   },
   {
@@ -1155,10 +1169,10 @@
     }
   },
   {
-    "Key": "QuestionCountMustBeGreaterThanOrEqualToPlayerCount",
+    "Key": "RoundCountMustBeGreaterThanOrEqualToPlayerCount",
     "LocalizedValue": {
-      "en-US": "Question count must be greater than or equal to player count",
-      "ar-JO": "يجب أن يكون عدد الأسئلة أكبر من أو يساوي عدد اللاعبين"
+      "en-US": "Round count must be greater than or equal to player count",
+      "ar-JO": "يجب أن يكون عدد الجولات أكبر من أو يساوي عدد اللاعبين"
     }
   },
   {
@@ -1190,10 +1204,73 @@
     }
   },
   {
+    "Key": "MoveToRound",
+    "LocalizedValue": {
+      "en-US": "Move to",
+      "ar-JO": "الانتقال إلى"
+    }
+  },
+  {
+    "Key": "RoundCount",
+    "LocalizedValue": {
+      "en-US": "Round count",
+      "ar-JO": "عدد الجولات"
+    }
+  },
+  {
+    "Key": "Round1",
+    "LocalizedValue": {
+      "en-US": "Round 1",
+      "ar-JO": "الجولة الأولى"
+    }
+  },
+  {
+    "Key": "Round2",
+    "LocalizedValue": {
+      "en-US": "Round 2",
+      "ar-JO": "الجولة الثانية"
+    }
+  },
+  {
+    "Key": "Round3",
+    "LocalizedValue": {
+      "en-US": "Round 3",
+      "ar-JO": "الجولة الثالثة"
+    }
+  },
+  {
+    "Key": "Round4",
+    "LocalizedValue": {
+      "en-US": "Round 4",
+      "ar-JO": "الجولة الرابعة"
+    }
+  },
+  {
+    "Key": "CalculatingRounds",
+    "LocalizedValue": {
+      "en-US": "Calculating rounds",
+      "ar-JO": "احتساب الجولات"
+    }
+  },
+  {
+    "Key": "IfCompetitionBasedOnAnotherCompetition",
+    "LocalizedValue": {
+      "en-US": "In continuation of the competition",
+      "ar-JO": "استكمالا للمسابقة"
+    }
+  },
+  {
     "Key": "CompetitionEndDate",
     "LocalizedValue": {
       "en-US": "Competition end date",
       "ar-JO": "تاريخ انتهاء المسابقة"
+    }
+  },
+  {
+    "Key": "TimeAndPointsForRoundIsRequired",
+    "LocalizedValue": {
+      "en-US": "Time and points is required",
+      "ar-JO": "الوقت والنقاط مطلوبة"
     }
   },
   {
@@ -1212,7 +1289,7 @@
   },
   {
     "Key": "Team",
-    "LocalizeValue": {
+    "LocalizedValue": {
       "en-US": "Team",
       "ar-JO": "فريق"
     }
@@ -1439,6 +1516,27 @@
     "LocalizedValue": {
       "en-US": "View Last competitions score",
       "ar-JO": "عرض نتائج المسابقات الأخيرة"
+    }
+  },
+  {
+    "Key": "ViewScores",
+    "LocalizedValue": {
+      "en-US": "View scores",
+      "ar-JO": "عرض النتائج"
+    }
+  },
+  {
+    "Key": "ContinueRound",
+    "LocalizedValue": {
+      "en-US": "Continue round",
+      "ar-JO": "متابعة الجولة"
+    }
+  },
+  {
+    "Key": "None",
+    "LocalizedValue": {
+      "en-US": "None",
+      "ar-JO": "لا يوجد"
     }
   }
 ]

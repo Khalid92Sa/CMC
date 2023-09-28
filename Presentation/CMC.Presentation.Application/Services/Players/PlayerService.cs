@@ -261,7 +261,7 @@ namespace CMC.Presentation.Application.Services.Players
         {
             try
             {
-                var players = await _playerRepository.GetAll(a => a.IsEmployee == isCityMall && a.IsDeleted != true).Select(player => new LookupModel()
+                var players = await _playerRepository.GetAll(a => /*a.IsEmployee == isCityMall &&*/ a.IsDeleted != true).Select(player => new LookupModel()
                 {
                     Id = player.Id,
                     Name = player.Name,

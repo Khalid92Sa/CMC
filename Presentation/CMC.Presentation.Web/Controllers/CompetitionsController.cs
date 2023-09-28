@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
+using Microsoft.Diagnostics.Tracing.Parsers.AspNet;
 using Microsoft.Extensions.Localization;
 using Newtonsoft.Json;
 using System;
@@ -104,12 +105,14 @@ namespace CMC.Presentation.Web.Controllers
                 competitionsDTO.CityMallTeam = cityMallTeam.Data;
                 competitionsDTO.OtherTeam = otherTeam.Data;
                 competitionsDTO.Hosts = await _userService.GetHosts();
+                competitionsDTO.Categories = await _questionsService.GetCategories();
+                var ParentCompetition = await _competitionsService.GetCompetitionsLookup();
+                if (ParentCompetition.Succeeded)
+                    competitionsDTO.ParentCompetition = ParentCompetition.Data;
+
                 var lastScores = await _competitionsService.GetLatestScores();
                 if (lastScores.Succeeded)
                     competitionsDTO.LatestScores = lastScores.Data;
-
-                if (competitionsDTO.QuestionCount < 1)
-                    competitionsDTO.QuestionCount = 1;
 
                 return View("Create", competitionsDTO);
             }
@@ -188,6 +191,8 @@ namespace CMC.Presentation.Web.Controllers
                 if (data.Succeeded)
                     viewScore = data.Data;
 
+                viewScore.Categories = await _questionsService.GetCategories();
+                
                 return View("View", viewScore);
 
             }
@@ -228,25 +233,11 @@ namespace CMC.Presentation.Web.Controllers
 
         [HttpGet]
         [RolePermission(PermissionCodes.WebCompetitionStart)]
-        public async Task<IActionResult> GetCategories(/*GetCategoryByPlayerDTO getCategoryByPlayer*/)
+        public async Task<IActionResult> GetCategories()
         {
             try
             {
                 var currentCompetition = JsonConvert.DeserializeObject<CompetitionStartDTO>(_httpContextAccessor.HttpContext.Session.GetString("CompetitionStart"));
-                //currentCompetition.TeamCityMall.ForEach(a => a.IsStarting = false);
-                //currentCompetition.OtherTeam.ForEach(a => a.IsStarting = false);
-
-                //if(getCategoryByPlayer.IsCityMallTeam)
-                //{
-                //    var cityMallPlayer = currentCompetition.TeamCityMall.Where(a => a.Id == getCategoryByPlayer.playerId).SingleOrDefault();
-                //    cityMallPlayer.IsStarting = true;
-                //}
-                //else
-                //{
-                //    var otherPlayer = currentCompetition.OtherTeam.Where(a => a.Id == getCategoryByPlayer.playerId).SingleOrDefault();
-                //    otherPlayer.IsStarting = true;
-                //}
-
 
                 if(currentCompetition.TeamCityMall.Count == 1 && !currentCompetition.TeamCityMall.Where(a => a.IsVSPlayer).Any())
                 {
@@ -286,8 +277,9 @@ namespace CMC.Presentation.Web.Controllers
                 var randomQuestion = await _questionsService.GetRandomQuestionPerCategory(categoryId, currentCompetition.Questions.Select(a => a.Id.Value).ToList());
                 if (randomQuestion.Succeeded)
                 {
-                    currentCompetition.Questions.Add(randomQuestion.Data);
                     currentCompetition.CurrentQuestion = randomQuestion.Data;
+                    currentCompetition.Questions.Add(randomQuestion.Data);
+                    currentCompetition.TotalCurrentCompetitionQuestions.Add(randomQuestion.Data);
                 }
                 else
                     return Json(new { isSuccess = false });
@@ -297,6 +289,7 @@ namespace CMC.Presentation.Web.Controllers
 
                 PartialViewResult otpPartialView = PartialView("PartialViews/_Question", currentCompetition);
                 string viewContent = ConvertViewToString(this.ControllerContext, otpPartialView, _viewEngine);
+
 
                 return Json(new { isSuccess = true, partial = viewContent });
             }
@@ -328,7 +321,6 @@ namespace CMC.Presentation.Web.Controllers
                 competitonQuestion.QuestionId = answerOnQuestionDTO.QuestionId;
                 var question = await _questionsService.GetQuestion(answerOnQuestionDTO.QuestionId.Value);
                 competitonQuestion.QuestionText = IsAr ? question.Data.TextAr : question.Data.TextEn;
-                competitonQuestion.Points = answerOnQuestionDTO.Points;
 
                 bool IsAnswer = false;
                 if (answerOnQuestionDTO.AnswerId.HasValue)
@@ -339,7 +331,10 @@ namespace CMC.Presentation.Web.Controllers
 
                     if (answer.IsAnswer)
                     {
-                        competitionsPlayerDTO.Points = (competitionsPlayerDTO.Points + question.Data.Points);
+                        var roundPoints = _competitionsService.GetRoundPoints(currentCompetition.Id, currentCompetition.CurrentRound);
+                        answerOnQuestionDTO.Points = roundPoints;
+                        competitionsPlayerDTO.Points = (competitionsPlayerDTO.Points + roundPoints);
+                        competitionsPlayerDTO.Time = (competitionsPlayerDTO.Time + answerOnQuestionDTO.Time ?? 0);
                         competitonQuestion.IsCorrectAnswer = answerOnQuestionDTO.IsCorrectAnswer = IsAnswer = true;
                     }
                 }
@@ -348,29 +343,52 @@ namespace CMC.Presentation.Web.Controllers
                 // Add details to database.
                 var resultAddOnDb = await _competitionsService.AnswerOnQuestions(currentCompetition.Id, answerOnQuestionDTO);
 
-                var competitonString = JsonConvert.SerializeObject(currentCompetition);
-                _httpContextAccessor.HttpContext.Session.SetString("CompetitionStart", competitonString);
+               
 
                 string viewContent = "";
                 bool IsFinished = false;
                 bool ResetPlayers = false;
+                bool ContinueRounds = false;
+                bool ScoresAreTheSame = false;
                 //Check if the score is the same
                 int CityMallPoints = currentCompetition.TeamCityMall.Sum(a => a.Points);
                 int OtherTeamPoints = currentCompetition.OtherTeam.Sum(a => a.Points);
 
 
                 //Check if the rounds finished
-                if (currentCompetition.Questions.Count >= currentCompetition.TotalQuestion)
+                var TotalQuestionPerRound = currentCompetition.TeamCityMall.Count;
+                var PendingQuestionsPerRound = (TotalQuestionPerRound * currentCompetition.CurrentRound) - currentCompetition.TotalCurrentCompetitionQuestions.Count;
+                if(PendingQuestionsPerRound <= 0)
                 {
-                    if (CityMallPoints == OtherTeamPoints)
+                    //Round 1 or 2 .. finished
+                    if(currentCompetition.TotalRound - currentCompetition.CurrentRound > 0)
+                    {
+                        //Still the full competition not finished
+                        IsFinished = false;
                         ResetPlayers = true;
+                        ContinueRounds = true;
+                    }
                     else
-                        IsFinished = true;
+                    {
+                        // Rounds finished 
+                        //Check if the points is the same.
+                        if (CityMallPoints == OtherTeamPoints)
+                        {
+                            IsFinished = false;
+                            ContinueRounds = false;
+
+                            ResetPlayers = true;
+                            ScoresAreTheSame = true;
+                        }
+                        else
+                        {
+                            // Full Competition Finished
+                            IsFinished = true;
+                            ResetPlayers = false;
+                            ContinueRounds = false;
+                        }
+                    }
                 }
-                else if (currentCompetition.TotalQuestion > currentCompetition.TeamCityMall.Count)
-                    ResetPlayers = true;
-
-
 
 
                 if (IsFinished)
@@ -381,7 +399,11 @@ namespace CMC.Presentation.Web.Controllers
 
                     if (CityMallPoints > OtherTeamPoints)
                     {
-                        var cityMallPlayer = currentCompetition.TeamCityMall.OrderByDescending(a => a.Points).FirstOrDefault();
+                        var cityMallPlayer = currentCompetition.TeamCityMall
+                            .OrderByDescending(a => a.Points)
+                            .ThenBy(a => a.Time)
+                            .FirstOrDefault();
+
                         competitionsDTO.WinningPlayer = new PlayerDTO()
                         {
                             Id = cityMallPlayer.Id,
@@ -390,7 +412,11 @@ namespace CMC.Presentation.Web.Controllers
                     }
                     else
                     {
-                        var OtherWinningPlaye = currentCompetition.OtherTeam.OrderByDescending(a => a.Points).FirstOrDefault();
+                        var OtherWinningPlaye = currentCompetition.OtherTeam
+                            .OrderByDescending(a => a.Points)
+                            .ThenBy(a => a.Time)
+                            .FirstOrDefault();
+
                         competitionsDTO.WinningPlayer = new PlayerDTO()
                         {
                             Id = OtherWinningPlaye.Id,
@@ -411,7 +437,23 @@ namespace CMC.Presentation.Web.Controllers
                 }
 
 
-                return Json(new { isSuccess = true, correct = IsAnswer, partial = viewContent, finished = IsFinished, reset = ResetPlayers });
+
+                //If Contimue rounds, then update the time.
+                string nextRoundText = "";
+                if (ContinueRounds)
+                {
+                    currentCompetition.CurrentRound = (currentCompetition.CurrentRound + 1);
+                    currentCompetition.RoundTime = _competitionsService.GetRoundTime(currentCompetition.Id, currentCompetition.CurrentRound);
+                    currentCompetition.RoundPoints = _competitionsService.GetRoundPoints(currentCompetition.Id, currentCompetition.CurrentRound);
+                    nextRoundText = $"{_localizer["MoveToRound"].Value} {_localizer[$"Round{currentCompetition.CurrentRound}"].Value}";
+                }
+                else if (ScoresAreTheSame)
+                    nextRoundText = _localizer["ContinueRound"].Value;
+
+                var competitonString = JsonConvert.SerializeObject(currentCompetition);
+                _httpContextAccessor.HttpContext.Session.SetString("CompetitionStart", competitonString);
+
+                return Json(new { isSuccess = true, correct = IsAnswer, partial = viewContent, finished = IsFinished, reset = ResetPlayers, continueRound = ContinueRounds,roundText = nextRoundText });
 
             }
             catch (Exception ex)

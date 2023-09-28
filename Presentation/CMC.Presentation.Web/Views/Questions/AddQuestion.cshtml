@@ -75,6 +75,8 @@
             <div class="register py-3 p-md-4 h-100" style="overflow-y: auto">
                 <input type="hidden" asp-for="Id" />
                 <div class="mb-2">
+
+                    <!--Drop down list for category-->
                     <div class="form-group">
                         <label class="requiredLabel">@Localizer["Category"]</label>
                         <div class="form-row">
@@ -86,45 +88,86 @@
                             </div>
                         </div>
                     </div>
+
+                    <!--Question text [ Arabic - English ] -->
                     <div class="form-group">
                         <label class="requiredLabel">@Localizer["QuestionText"]</label>
                         <div class="form-row">
                             @if (IsAr)
                             {
-                                <div class="form-group col-md-6">
+                                <div class="form-group col-md-4">
                                     <input class="form-control" type="text" asp-for="TextAr" placeholder="@Localizer["InArabic"]" />
                                     <span asp-validation-for="TextAr" class="text-danger"></span>
                                 </div>
-                                <div class="form-group col-md-6">
+                                <div class="form-group col-md-4">
                                     <input class="form-control" type="text" asp-for="TextEn" placeholder="@Localizer["InEnglish"]" />
                                     <span asp-validation-for="TextEn" class="text-danger"></span>
                                 </div>
                             }
                             else
                             {
-                                <div class="form-group col-md-6">
+                                <div class="form-group col-md-4">
                                     <input class="form-control" type="text" asp-for="TextEn" placeholder="@Localizer["InEnglish"]" />
                                     <span asp-validation-for="TextEn" class="text-danger"></span>
                                 </div>
-                                <div class="form-group col-md-6">
+                                <div class="form-group col-md-4">
                                     <input class="form-control" type="text" asp-for="TextAr" placeholder="@Localizer["InArabic"]" />
                                     <span asp-validation-for="TextAr" class="text-danger"></span>
                                 </div>
                             }
                         </div>
+
+                        <!--If Image for question is exist-->
+                        @{
+                            string imgQuestionPath = !string.IsNullOrEmpty(Model.ImgPath) ? $"data:image/jpeg;base64,{Model.ImgPath}" : "";
+                            string displayedQuestionImg = !string.IsNullOrEmpty(Model.ImgPath) ? "" : "display:none";
+                            string IdOfImg = !string.IsNullOrEmpty(Model.ImgPath) ? Model.Id.Value.ToString() : "";
+                        }
+                        <input type="hidden" id="hdn-curr-img-id" value="@IdOfImg" />
+                        <div class="form-row">
+                            <div class="col-md-3">
+                                <div class="category-box" style="cursor:pointer">
+                                    <div class="image-container p-3" id="dv-img-question">
+                                        <img src="@imgQuestionPath" class="w-50" alt="Image" style="@displayedQuestionImg">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--File upload for question image -->
+                        <div class="form-row">
+                            <div class="form-group col-md-4 d-flex flex-column d-flex">
+                                <div class="custom-file">
+                                    <input type="file" name="Img" class="custom-file-input" id="question-img" style="cursor:pointer" data-answer="2" data-hide="btnDeleteQuestionImg"
+                                           placeholder="@Localizer["ChooseImg"].Value" accept=".jpg, .jpeg, .png">
+                                    <label class="custom-file-label upload-btn" for="file">
+                                        <span id="lblQuestionImgName">@Localizer["ChooseImg"]</span>
+                                        <span class="danger"></span> <i id="lblQuestionImgStatus" class="fas fa-upload"></i>
+                                    </label>
+                                </div>
+                                <span id="question-Img-invalid" class="text-danger field-validation-error"></span>
+                            </div>
+
+                            <!-- Button to delete existing image for questions -->
+                            <div class="form-group col-md-4 px-3 m-0" id="dv-btn-delete-image-question" style="@displayedQuestionImg">
+                                <button type="button" id="btnDeleteQuestionImg" onclick="Categories.DeleteExistingImg(2,'dv-img-question',this)" class="btn btn-danger btn-md m-0"><i class="fas fa-trash"></i>@Localizer["DeleteExistingImage"]</button>
+                            </div>
+                            <div class="form-group col-md-12" id="dv-delete-question-status" style="display:none">
+                                <div>
+                                    <span class="h6 h6-responsive mr-2 ml-0 float-left">
+                                        <i style="display:none" class="fas fa-check-circle text-success i-success-delete-img"></i>
+                                        <i style="display:none" class="fas fa-exclamation-circle text-danger i-error-delete-img"></i>
+                                    </span>
+                                    <span class="spn-delete-img-status">
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+
+                    <!-- Question Time / Point / Type of answers -->
                     <div class="form-group">
                         <div class="form-row">
-                            <div class="form-group col-md-3">
-                                <label class="requiredLabel">@Localizer["QuestionTime"]</label>
-                                <input class="form-control" type="text" asp-for="Time" onkeypress="return GeneralClass.validationNumbersOnly(this,event)" />
-                                <span asp-validation-for="Time" class="text-danger"></span>
-                            </div>
-                            <div class="form-group col-md-3">
-                                <label class="requiredLabel">@Localizer["QuestionPoint"]</label>
-                                <input class="form-control" type="text" asp-for="Points" onkeypress="return GeneralClass.validationNumbersOnly(this,event)" />
-                                <span asp-validation-for="Points" class="text-danger"></span>
-                            </div>
                             <div class="form-group col-md-3">
                                 <label class="requiredLabel">@Localizer["AnswersType"]</label>
                                 <select id="ddlAnswersType" class="form-select w-100" asp-for="AnswertType" style="height:60%">
@@ -145,6 +188,7 @@
                 </div>
                 <div class="row mb-3">
 
+                    <!--Asnwers Text-->
                     <div class="col-sm-10 dv-options dv-answers-text">
                         <div class="option" data-count="1">
                             <div class="option-row">
@@ -226,90 +270,84 @@
                     </div>
 
 
+                    <!--Asnwers Image-->
                     <div class="col-sm-10 dv-options dv-answers-images d-none">
-                        <div class="option" data-count="1">
-                            <div class="option-row">
-                                <input type="hidden" id="hdn-option-img-id-1" />
-                                <label class="option-label">
-                                    <input class="form-check-input" type="radio" name="correctOptionImg" id="chk-option-img-1" onchange="Questions.SelectAnswer(this)">
-                                </label>
 
-                                <div class="form-group col-md-6 d-flex flex-column d-flex" style="margin:0 -15px;">
-                                    <div class="custom-file">
-                                        <input type="file" name="Img" class="custom-file-input" id="answer-img-1" style="cursor:pointer" data-answer="1"
-                                               placeholder="@Localizer["ChooseImg"].Value" accept=".jpg, .jpeg, .png">
-                                        <label class="custom-file-label upload-btn" for="file">
-                                            <span id="lblImageName-1">@Localizer["ChooseImg"]</span>
-                                            <span class="danger"></span> <i id="lblImgStatus-1" class="fas fa-upload"></i>
-                                        </label>
-                                    </div>
-                                    <span id="answer-Img-invalid-1" class="text-danger field-validation-error"></span>
-                                </div>
-                            </div>
-                            <span class="text-danger field-validation-valid" data-valmsg-replace="true" style="margin:0 20px"></span>
-                        </div>
-                        <div class="option" data-count="2">
-                            <div class="option-row">
-                                <input type="hidden" id="hdn-option-img-id-2" />
-                                <label class="option-label">
-                                    <input class="form-check-input" type="radio" name="correctOptionImg" id="chk-option-img-2" onchange="Questions.SelectAnswer(this)">
-                                </label>
+                        @{
+                            int counterAnswers = 4;
+                            int counterModelAnswers = Model.Answers.Count;
+                            bool IsImg = Model.Answers.Any(a => a.IsImg);
+                        }
+                        @for (var i = 0; i < counterAnswers; i++)
+                        {
+                            string mainId = (i + 1).ToString();
+                            string ImgAnswerPath = "";
+                            string displayedAnswerImg = "display:none";
+                            string AnswerImgId = "";
+                            string IsCorrectAnswer = "";
+                            string FileName = Localizer["ChooseImg"].Value;
+                            if (i < counterModelAnswers && IsImg)
+                            {
+                                ImgAnswerPath = Model.Answers[i].ImgPath != null ? $"data:image/jpeg;base64,{Model.Answers[i].ImgPath}" : "";
+                                displayedAnswerImg = !string.IsNullOrEmpty(ImgAnswerPath) ? "" : "display:none";
+                                AnswerImgId = !string.IsNullOrEmpty(ImgAnswerPath) ? Model.Answers[i].Id.Value.ToString() : "";
+                                IsCorrectAnswer = Model.Answers[i].IsAnswer ? "checked=checked" : "";
+                                FileName = !string.IsNullOrEmpty(Model.Answers[i].ImgName) ? Model.Answers[i].ImgName : Localizer["ChooseImg"].Value;
+                            }
 
-                                <div class="form-group col-md-6 d-flex flex-column d-flex" style="margin:0 -15px;">
-                                    <div class="custom-file">
-                                        <input type="file" name="Img" class="custom-file-input" id="answer-img-2" style="cursor:pointer" data-answer="2"
-                                               placeholder="@Localizer["ChooseImg"].Value" accept=".jpg, .jpeg, .png">
-                                        <label class="custom-file-label upload-btn" for="file">
-                                            <span id="lblImageName-2">@Localizer["ChooseImg"]</span>
-                                            <span class="danger"></span> <i id="lblImgStatus-2" class="fas fa-upload"></i>
-                                        </label>
-                                    </div>
-                                    <span id="answer-Img-invalid-2" class="text-danger field-validation-error"></span>
-                                </div>
-                            </div>
-                            <span class="text-danger field-validation-valid" data-valmsg-replace="true" style="margin:0 20px"></span>
-                        </div>
-                        <div class="option" data-count="3">
-                            <div class="option-row">
-                                <input type="hidden" id="hdn-option-img-id-3" />
-                                <label class="option-label">
-                                    <input class="form-check-input" type="radio" name="correctOptionImg" id="chk-option-img-3" onchange="Questions.SelectAnswer(this)">
-                                </label>
+                            <!--Main row for each option-->
+                            <div class="option" data-count="@mainId">
 
-                                <div class="form-group col-md-6 d-flex flex-column d-flex" style="margin:0 -15px;">
-                                    <div class="custom-file">
-                                        <input type="file" name="Img" class="custom-file-input" id="answer-img-3" data-answer="3" style="cursor:pointer" placeholder="@Localizer["ChooseImg"].Value" accept=".jpg, .jpeg, .png">
-                                        <label class="custom-file-label upload-btn" for="file">
-                                            <span id="lblImageName-3">@Localizer["ChooseImg"]</span>
-                                            <span class="danger"></span> <i id="lblImgStatus-3" class="fas fa-upload"></i>
-                                        </label>
+                                <!--answer- Imgage for option-->
+                                <div class="form-row">
+                                    <div class="col-md-3">
+                                        <div class="category-box" style="cursor:pointer" onclick="Questions.SelectAnswerByImage('@mainId')">
+                                            <div class="image-container p-3" id="dv-imgOptionAns-@mainId">
+                                                <img src="@ImgAnswerPath" class="w-50" alt="Image" style="@displayedAnswerImg">
+                                            </div>
+                                        </div>
                                     </div>
-                                    <span id="answer-Img-invalid-3" class="text-danger field-validation-error"></span>
                                 </div>
-                            </div>
-                            <span class="text-danger field-validation-valid" data-valmsg-replace="true" style="margin:0 20px"></span>
-                        </div>
-                        <div class="option" data-count="4">
-                            <div class="option-row">
-                                <input type="hidden" id="hdn-option-img-id-4" />
-                                <label class="option-label">
-                                    <input class="form-check-input" type="radio" name="correctOptionImg" id="chk-option-img-4" onchange="Questions.SelectAnswer(this)">
-                                </label>
 
-                                <div class="form-group col-md-6 d-flex flex-column d-flex" style="margin:0 -15px;">
-                                    <div class="custom-file">
-                                        <input type="file" name="Img" class="custom-file-input" id="answer-img-4" data-answer="4" style="cursor:pointer"
-                                               placeholder="@Localizer["ChooseImg"].Value" accept=".jpg, .jpeg, .png">
-                                        <label class="custom-file-label upload-btn" for="file">
-                                            <span id="lblImageName-4">@Localizer["ChooseImg"]</span>
-                                            <span class="danger"></span> <i id="lblImgStatus-4" class="fas fa-upload"></i>
-                                        </label>
+                                <div class="option-row">
+                                    <!--answer - Radio button to select correct answer-->
+                                    <input type="hidden" id="hdn-option-img-id-@mainId" value="@AnswerImgId" />
+                                    <label class="option-label">
+                                        <input class="form-check-input" type="radio" name="correctOptionImg" id="chk-option-img-@mainId" @IsCorrectAnswer onchange="Questions.SelectAnswer(this)" style="pointer-events:none">
+                                    </label>
+
+                                    <!-- answer - File upload-->
+                                    <div class="form-group col-md-4 d-flex flex-column d-flex" style="margin:0 -15px;">
+                                        <div class="custom-file">
+                                            <input type="file" name="Img" class="custom-file-input" id="answer-img-@mainId" style="cursor:pointer" data-answer="@mainId" data-hide="btnDeleteAnsImg-@mainId"
+                                                   placeholder="@Localizer["ChooseImg"].Value" accept=".jpg, .jpeg, .png">
+                                            <label class="custom-file-label upload-btn" for="file">
+                                                <span id="lblImageName-@mainId">@FileName</span>
+                                                <span class="danger"></span> <i id="lblImgStatus-@mainId" class="fas fa-upload"></i>
+                                            </label>
+                                        </div>
+                                        <span id="answer-Img-invalid-@mainId" class="text-danger field-validation-error"></span>
                                     </div>
-                                    <span id="answer-Img-invalid-4" class="text-danger field-validation-error"></span>
+
+
+                                    <!--answer If Img is exist, then show button to delete current image answer-->
+                                    <div class="form-group col-md-4 m-0" id="dv-btn-delete-image-ans-@mainId" style="@displayedAnswerImg">
+                                        <button type="button" data-id="@mainId" class="btn btn-danger btn-md m-0" id="btnDeleteAnsImg-@mainId" onclick="Categories.DeleteExistingImg(3,'dv-imgOptionAns-@mainId',this)"><i class="fas fa-trash"></i>@Localizer["DeleteImage"]</button>
+                                    </div>
+
+                                    <!--answer - Image deleted status-->
+                                    <div class="form-group col-md-12 px-3 m-0" id="dv-delete-answer-status-@mainId" style="display:none">
+                                        <span class="h6 h6-responsive mr-2 ml-0 float-left">
+                                            <i style="display:none" class="fas fa-check-circle text-success i-success-delete-img"></i>
+                                            <i style="display:none" class="fas fa-exclamation-circle text-danger i-error-delete-img"></i>
+                                        </span>
+                                        <span class="spn-delete-img-status">
+                                        </span>
+                                    </div>
                                 </div>
+                                <span class="text-danger field-validation-valid" data-valmsg-replace="true" style="margin:0 20px"></span>
                             </div>
-                            <span class="text-danger field-validation-valid" data-valmsg-replace="true" style="margin:0 20px;"></span>
-                        </div>
+                        }
                     </div>
                     <div class="col-sm-5">
                         <span class="text-danger field-validation-valid" data-valmsg-for="Answers" id="lbl-generic-error" data-valmsg-replace="true" style="margin:0 20px"></span>
@@ -349,21 +387,31 @@
         }
     </script>
     var counter = 1;
-    foreach (var answer in Model.Answers)
+
+    @if (Model.AnswertType == 2)
     {
         <script>
-            $('#txt-option-ar-' + '@counter').val(decodeHtmlEntities('@answer.TextAr'));
-            $('#txt-option-en-' + '@counter').val('@answer.TextEn');
-            $('#hdn-option-id-' + '@counter').val('@answer.Id');
-
-            if ('@answer.IsAnswer'.toString().toLowerCase() == 'true') {
-                $('#chk-option-' + '@counter').prop('checked', 'checked');
-                Questions.SelectAnswer($('#chk-option-' + '@counter'));
-            }
+            $('.dv-answers-text').addClass('d-none');
+            $('.dv-answers-images').removeClass('d-none');
         </script>
-        counter++;
     }
+    else
+    {
+        foreach (var answer in Model.Answers)
+        {
+            <script>
+                $('#txt-option-ar-' + '@counter').val(decodeHtmlEntities('@answer.TextAr'));
+                $('#txt-option-en-' + '@counter').val('@answer.TextEn');
+                $('#hdn-option-id-' + '@counter').val('@answer.Id');
 
+                if ('@answer.IsAnswer'.toString().toLowerCase() == 'true') {
+                    $('#chk-option-' + '@counter').prop('checked', 'checked');
+                    Questions.SelectAnswer($('#chk-option-' + '@counter'));
+                }
+            </script>
+            counter++;
+        }
+    }
 }
 
 

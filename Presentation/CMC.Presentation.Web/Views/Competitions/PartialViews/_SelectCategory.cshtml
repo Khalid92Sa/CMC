@@ -1,5 +1,7 @@
-﻿@model CMC.Presentation.Application.DTOs.Competitions.CompetitionStartDTO
-
+﻿@using CMC.Kernel.Core.Constants;
+@using CMC.Presentation.Application.Services.Settings;
+@model CMC.Presentation.Application.DTOs.Competitions.CompetitionStartDTO
+@inject ISettingsService SettingService
 @{
     ViewData["Title"] = "";
     bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
@@ -29,8 +31,9 @@
                                     <div class="d-flex justify-content-center my-5">
                                         @{
                                             string ApplicationName = configuration.GetValue<string>("ApplicationName");
+                                            string imgPath = !string.IsNullOrEmpty(category.Img) ? $"data:image/jpeg;base64,{category.Img}" : $"{ApplicationName}{SettingService.GetValue<string>(SystemSettings.DefaultCategoryImgPath).GetAwaiter().GetResult()}";
                                         }
-                                        <img src="@ApplicationName@category.Img" alt="@categoryName" style="width:70%" />
+                                        <img src="@imgPath" alt="@categoryName" style="width:70%" />
                                     </div>
                                     <div class=" d-flex justify-content-center mt-2 mb-4">
                                         <button class="button select-category" data-Id="@category.Id">

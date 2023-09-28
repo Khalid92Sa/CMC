@@ -53,13 +53,31 @@
                             </div>
                         </div>
                     </div>
+
+                    <!--If Image for category is exist-->
+                    @{
+                        string imgCategoryPath = !string.IsNullOrEmpty(Model.ImgPath) ? $"data:image/jpeg;base64,{Model.ImgPath}" : "";
+                        string displayedCategoryImg = !string.IsNullOrEmpty(Model.ImgPath) ? "" : "display:none";
+                        string IdOfImg = !string.IsNullOrEmpty(Model.ImgPath) ? Model.Id.Value.ToString() : "";
+                    }
+                    <input type="hidden" id="hdn-curr-img-id" value="@IdOfImg" />
                     <div class="form-row">
-                        <div class="form-group col-md-3 d-flex flex-column d-flex" style="margin:0 -15px;">
+                        <div class="col-md-3">
+                            <div class="category-box" style="cursor:pointer">
+                                <div class="image-container p-3" id="dv-img-category">
+                                    <img src="@imgCategoryPath" class="w-50" alt="Image" style="@displayedCategoryImg">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-4 d-flex flex-column d-flex" style="margin:0 -15px;">
                             <label>@Localizer["CategoryImg"]</label>
                             <span class="danger"></span>
                             <div class="input-group mb-3">
                                 <div class="custom-file">
-                                    <input type="file" asp-for="Img" name="Img" class="custom-file-input" id="file-category-img" style="cursor:pointer"
+                                    <input type="file" asp-for="Img" name="Img" class="custom-file-input" id="file-category-img" style="cursor:pointer" data-hide="btnDeleteCategoryImg"
                                            placeholder="@Localizer["ChooseImg"].Value" accept=".jpg, .jpeg, .png">
                                     <label class="custom-file-label upload-btn" for="file">
                                         <span id="lblImageName">@Localizer["ChooseImg"]</span>
@@ -69,22 +87,20 @@
                             </div>
                             <span id="Img-category-invalid" class="text-danger field-validation-error"></span>
                         </div>
-                        @if (!string.IsNullOrEmpty(Model.ImgPath) && !Model.ImgPath.Contains("default"))
-                        {
-                            <div class="form-group col-md-4 px-3 m-0 pt-4">
-                                <button type="button" id="btnDeleteExistingImg" onclick="Categories.DeleteExistingImg()" class="btn btn-danger btn-md m-0"><i class="fas fa-trash"></i>@Localizer["DeleteExistingImage"]</button>
+
+                        <div class="form-group col-md-3 px-3 m-0 pt-4" id="dv-btn-delete-image-category" style="@displayedCategoryImg">
+                            <button type="button" id="btnDeleteCategoryImg" onclick="Categories.DeleteExistingImg(1,'dv-img-category',this)" class="btn btn-danger btn-md m-0"><i class="fas fa-trash"></i>@Localizer["DeleteExistingImage"]</button>
+                        </div>
+                        <div class="form-group col-md-12 pt-2" id="dv-delete-category-status" style="display:none">
+                            <div>
+                                <span class="h6 h6-responsive mr-2 ml-0 float-left">
+                                    <i style="display:none" class="fas fa-check-circle text-success i-success-delete-img"></i>
+                                    <i style="display:none" class="fas fa-exclamation-circle text-danger i-error-delete-img"></i>
+                                </span>
+                                <span class="spn-delete-img-status">
+                                </span>
                             </div>
-                            <div class="form-group col-md-12" id="dv-delete-category-status" style="display:none">
-                                <div>
-                                    <span class="h6 h6-responsive mr-2 ml-0 float-left">
-                                        <i id="i-success-delete-img-category" style="display:none" class="fas fa-check-circle text-success"></i>
-                                        <i id="i-error-delete-img-category" style="display:none" class="fas fa-exclamation-circle text-danger"></i>
-                                    </span>
-                                    <span id="spn-delete-category-img-status">
-                                    </span>
-                                </div>
-                            </div>
-                        }
+                        </div>
                     </div>
                 </div>
                 <div class="col-12 text-center">
@@ -98,7 +114,7 @@
             </div>
         </div>
 
-        @if(Model.Id.HasValue && Model.Questions.Count > 0)
+        @if (Model.Id.HasValue && Model.Questions.Count > 0)
         {
             <div class="card mt-5">
                 <div class="card-body">
@@ -117,8 +133,6 @@
                                 <tr>
                                     <th scope="col" style="width:70px;">#</th>
                                     <th scope="col">@Localizer["QuestionText"]</th>
-                                    <th scope="col">@Localizer["QuestionTimer"]</th>
-                                    <th scope="col">@Localizer["QuestionPoint"]</th>
                                     <th scope="col"></th>
                                 </tr>
                             </thead>
