@@ -82,6 +82,7 @@ var Users = {
                 "data": "IsActive",
                 "autoWidth": true,
                 "render": function (IsActive, type, row) {
+                    
                     var span = document.createElement('span');
                     $(span).addClass('switch switch-sm');
                     var checkbox = document.createElement('input');
@@ -90,10 +91,17 @@ var Users = {
                     $(checkbox).addClass('switch');
                     $(checkbox).attr('data-value', row.id);
                     $(checkbox).attr('data-status', IsActive);
-                    $(checkbox).attr('onchange', 'Users.ActivationUsersConfirm(this)');
+                    
                     if (row.isActive) {
                         $(checkbox).attr('checked', 'checked');
                     }
+                    if (row.id == 1) {
+                        $(checkbox).attr('disabled', 'disabled');
+                    }
+                    else {
+                        $(checkbox).attr('onchange', 'Users.ActivationUsersConfirm(this)');
+                    }
+
                     var label = document.createElement('label');
                     $(label).addClass('mb-0');
                     $(label).attr('for', 'act-user-'+row.id);
@@ -118,7 +126,7 @@ var Users = {
                 "autoWidth": true,
                 "render": function (Id, type, row) {
                     var div = document.createElement('div');
-                    if (CanCreate) {
+                    if (CanCreate && row.id != 1) {
                         var btnUpdate = document.createElement('a');
                         $(btnUpdate).attr('id', 'btnUpdate_' + row.id);
                         $(btnUpdate).attr('title', globalResources.Edit);
@@ -131,7 +139,7 @@ var Users = {
                     }
                    
 
-                    if (CanDelete) {
+                    if (CanDelete && row.id != 1) {
                         var btndelete = document.createElement('a');
                         $(btndelete).attr('id', 'btndelete_' + row.id);
                         $(btndelete).attr('title', globalResources.Delete);

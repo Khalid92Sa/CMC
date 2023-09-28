@@ -5,6 +5,8 @@ using CMC.Kernel.Core.Infrastructure;
 using CMC.Kernel.Core.Persistence;
 using CMC.Kernel.Core.Services;
 using CMC.Kernel.Core.Wrappers;
+using CMC.Kernel.Domain.Entities;
+using CMC.Kernel.Infrastructure.Caching.Model;
 using CMC.Presentation.Application.DTOs.Competitions;
 using CMC.Presentation.Application.DTOs.Questions;
 using CMC.Presentation.Application.Helpers;
@@ -27,34 +29,32 @@ namespace CMC.Presentation.Application.Services.Competitions
 {
     public class CompetitionsService : BaseServiceHandler, ICompetitionsService
     {
-        readonly IMapper _mapper;
         readonly IApplicationLogger _logger;
         readonly IRepository<Competition> _competitionRepository;
         readonly IRepository<Team> _teamRepository;
         readonly IRepository<CompetitionQuestion> _compQuestRepository;
-        readonly IUserService _userService;
+        readonly IRepository<Attachment> _attachmentRepository;
         readonly IQuestionsService _questionsService;
         readonly IStringLocalizer<PlayerService> _localizer;
         public static IHttpContextAccessor _httpContextAccessor { get { return new HttpContextAccessor(); } }
 
-        public CompetitionsService(IMapper mapper,
+        public CompetitionsService(
             IApplicationLogger logger,
             IRepository<Competition> competitionRepository,
             IRepository<CompetitionQuestion> compQuestRepository,
             IRepository<Team> teamRepository,
-            IUserService userService,
+            IRepository<Attachment> attachmentRepository,
             IQuestionsService questionsService,
             IUnitOfWork unitOfWork,
             IStringLocalizer<PlayerService> localizer,
             IValidatorFactory validatorFactory) : base(validatorFactory, unitOfWork)
         {
-            _mapper = mapper;
             _logger = logger;
             _localizer = localizer;
             _competitionRepository = competitionRepository;
             _teamRepository = teamRepository;
+            _attachmentRepository = attachmentRepository;
             _compQuestRepository = compQuestRepository;
-            _userService = userService;
             _questionsService = questionsService;
             _unitOfWork = unitOfWork;
         }
@@ -89,7 +89,7 @@ namespace CMC.Presentation.Application.Services.Competitions
                 if (competitionsDTO.Id.HasValue)
                 {
                     // Update
-                    competition = await _competitionRepository.GetAll(a => a.Id == competitionsDTO.Id.Value && a.IsDeleted != true)
+                    competition = await _competitionRepository.GetAll(a => a.Id == competitionsDTO.Id.Value && a.IsDeleted != true && a.EndDate == null)
                         .Include(a => a.Team1)
                         .Include(a => a.Team2)
                         .SingleOrDefaultAsync();
@@ -109,11 +109,40 @@ namespace CMC.Presentation.Application.Services.Competitions
 
                 //Map fields
                 competition.Name = competitionsDTO.Name;
-                competition.QuestionsCount = competitionsDTO.QuestionCount;
-                if (competitionsDTO.StartDate.HasValue)
-                    competition.StartDate = competitionsDTO.StartDate;
-                if (competitionsDTO.HostID.HasValue)
-                    competition.HostID = competitionsDTO.HostID;
+                competition.StartDate = competitionsDTO.StartDate;
+                competition.HostID = competitionsDTO.HostID;
+                if (competitionsDTO.CategoriesIds.Count > 0)
+                    competition.CategoriesIds = string.Join(",", competitionsDTO.CategoriesIds);
+                else
+                    competition.CategoriesIds = null;
+
+                competition.RoundCount = competitionsDTO.RoundCount;
+                for (int i = 1; i <= 4; i++)
+                {
+                    int roundNumber = i;
+
+                    if (competitionsDTO.RoundCount >= roundNumber)
+                    {
+                        string propertyNameTime = $"Round{roundNumber}Time";
+                        string propertyNamePoints = $"Round{roundNumber}Points";
+
+                        int? roundTime = (int?)competitionsDTO.GetType().GetProperty(propertyNameTime).GetValue(competitionsDTO);
+                        int? roundPoints = (int?)competitionsDTO.GetType().GetProperty(propertyNamePoints).GetValue(competitionsDTO);
+
+                        competition.GetType().GetProperty(propertyNameTime).SetValue(competition, roundTime);
+                        competition.GetType().GetProperty(propertyNamePoints).SetValue(competition, roundPoints);
+                    }
+                    else
+                    {
+                        string propertyNameTime = $"Round{roundNumber}Time";
+                        string propertyNamePoints = $"Round{roundNumber}Points";
+
+                        competition.GetType().GetProperty(propertyNameTime).SetValue(competition, null);
+                        competition.GetType().GetProperty(propertyNamePoints).SetValue(competition, null);
+                    }
+                }
+
+                competition.ParentId = competitionsDTO.ParentId;
 
 
                 if (competition.Team1 == null)
@@ -221,10 +250,7 @@ namespace CMC.Presentation.Application.Services.Competitions
         {
             try
             {
-                var competition = await _competitionRepository.GetAll(a => a.Id == competitionsDTO.Id.Value && a.IsDeleted != true)
-                    .Include(a => a.Team1)
-                    .Include(a => a.Team2)
-                    .SingleOrDefaultAsync();
+                var competition = await _competitionRepository.FindAsync(competitionsDTO.Id);
 
                 competition.EndDate = DateTime.Now;
                 competition.WinningPlayerId = competitionsDTO.WinningPlayer.Id;
@@ -293,6 +319,35 @@ namespace CMC.Presentation.Application.Services.Competitions
                     Succeeded = false,
                     StatusCode = (int)HttpStatusCode.BadRequest
                 };
+            }
+        }
+
+        /// <summary>
+        /// Get Competitions lookup
+        /// </summary>
+        /// <returns></returns>
+        public async Task<Response<List<LookupModel>>> GetCompetitionsLookup()
+        {
+            try
+            {
+                var competitions = await _competitionRepository.GetAll(a => a.IsDeleted != true && a.EndDate.HasValue)
+                    .OrderByDescending(a => a.EndDate)
+                    .Select(a => new LookupModel()
+                    {
+                        Id = a.Id,
+                        NameEn = a.Name,
+                        NameAr = a.Name
+                    }).ToListAsync();
+
+                return new Response<List<LookupModel>>()
+                {
+                    Succeeded = true,
+                    Data = competitions
+                };
+            }
+            catch (Exception ex)
+            {
+                throw;
             }
         }
 
@@ -369,7 +424,19 @@ namespace CMC.Presentation.Application.Services.Competitions
                             Id = competition.Id,
                             Name = competition.Name,
                             StartDate = competition.StartDate,
-                            QuestionCount = competition.QuestionsCount,
+                            HostID = competition.HostID,
+                            CategoriesIds = !string.IsNullOrEmpty(competition.CategoriesIds) ? 
+                                            competition.CategoriesIds.Split(',').Select(int.Parse).ToList() : new List<int>() { 0 },
+                            RoundCount = competition.RoundCount,
+                            ParentId = competition.ParentId,
+                            Round1Points = competition.Round1Points,
+                            Round1Time = competition.Round1Time,
+                            Round2Points = competition.Round2Points,
+                            Round2Time = competition.Round2Time,
+                            Round3Points = competition.Round3Points,
+                            Round3Time = competition.Round3Time,
+                            Round4Points = competition.Round4Points,
+                            Round4Time = competition.Round4Time,
                             Team1Name = competition.Team1.TeamName,
                             Team1 = new TeamDTO()
                             {
@@ -388,7 +455,6 @@ namespace CMC.Presentation.Application.Services.Competitions
                                 Player3 = competition.Team2.Player3Id,
                                 Player4 = competition.Team2.Player4Id
                             },
-                            HostID = competition.HostID
                         }
                     };
                 }
@@ -406,242 +472,158 @@ namespace CMC.Presentation.Application.Services.Competitions
 
         public async Task<Response<ViewCompetitionScoresDTO>> ViewCompetitionScore(int Id)
         {
+            ViewCompetitionScoresDTO response = new ViewCompetitionScoresDTO();
             try
             {
-                ViewCompetitionScoresDTO response = new ViewCompetitionScoresDTO();
-                var competition = await _competitionRepository.GetAll(a => a.Id == Id && a.IsDeleted != true)
-                       .Include(a => a.CompetitionQuestions)
-                       .ThenInclude(a => a.Question)
-                       .Include(a => a.CompetitionQuestions)
-                       .ThenInclude(a=>a.Answer)
-                       .Include(a=>a.WinningPlayer)
-                       .Include(a=>a.WinningTeam)
-                       .Include(a => a.Team1)
-                           .ThenInclude(t => t.Player1)
-                       .Include(a => a.Team1)
-                           .ThenInclude(t => t.Player2)
-                       .Include(a => a.Team1)
-                           .ThenInclude(t => t.Player3)
-                       .Include(a => a.Team1)
-                           .ThenInclude(t => t.Player4)
-                       .Include(a => a.Team2)
-                           .ThenInclude(t => t.Player1)
-                       .Include(a => a.Team2)
-                           .ThenInclude(t => t.Player2)
-                       .Include(a => a.Team2)
-                           .ThenInclude(t => t.Player3)
-                       .Include(a => a.Team2)
-                           .ThenInclude(t => t.Player4)
-                           .FirstOrDefaultAsync();
+                var competition = await _competitionRepository.GetAll(a => a.Id == Id)
+                    .Include(a => a.Team1)
+                        .ThenInclude(t => t.Player1)
+                    .Include(a => a.Team1)
+                        .ThenInclude(t => t.Player2)
+                    .Include(a => a.Team1)
+                        .ThenInclude(t => t.Player3)
+                    .Include(a => a.Team1)
+                        .ThenInclude(t => t.Player4)
+                    .Include(a => a.Team2)
+                        .ThenInclude(t => t.Player1)
+                    .Include(a => a.Team2)
+                        .ThenInclude(t => t.Player2)
+                    .Include(a => a.Team2)
+                        .ThenInclude(t => t.Player3)
+                    .Include(a => a.Team2)
+                        .ThenInclude(t => t.Player4)
+                    .Include(a => a.Host)
+                    .Include(a => a.WinningPlayer)
+                    .Include(a => a.WinningTeam)
+                    .Include(a => a.CompetitionQuestions)
+                    .Include(a=>a.Parent)
+                   
+                    .SingleOrDefaultAsync();
 
-
-                bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
-
-                response.Id = competition.Id;
-                response.Name = competition.Name;
-                response.StartDate = competition.StartDate;
-                response.EndDate = competition.EndDate;
-                response.WinningTeamName = competition.WinningTeam.Id == competition.Team1Id ? _localizer["CityMallTeam"].Value : _localizer["VisitorsTeam"].Value;
-                response.WinningPlayerName = competition.WinningPlayer.Name;
-                response.TotalWinningPlayerScore = competition.CompetitionQuestions.Where(a => a.PlayerId == competition.WinningPlayerId.Value).Sum(a => a.Point).Value;
-
-
-                //Fill Team 1 - CityMall
-                response.Team1Name = competition.Team1.TeamName;
-
-                //Player 1
-                CompetitionsPlayerDTO cityMall_Player1 = new CompetitionsPlayerDTO();
-                cityMall_Player1.Id = competition.Team1.Player1.Id;
-                cityMall_Player1.Name = competition.Team1.Player1.Name;
-                cityMall_Player1.Points = competition.CompetitionQuestions.Where(a => a.PlayerId == competition.Team1.Player1.Id).Sum(a => a.Point).Value;
-                competition.CompetitionQuestions.Where(a => a.PlayerId == competition.Team1.Player1.Id).ToList().ForEach(question =>
+                if (competition != null)
                 {
-                    cityMall_Player1.competitonQuestions.Add(new CompetitonQuestions()
+                    response.Id = competition.Id;
+                    response.Name = competition.Name;
+                    response.HostName = !string.IsNullOrEmpty(competition.Host.Name) ? Security.Decrypt(competition.Host.Name) : null;
+                    response.StartDate = competition.StartDate;
+                    response.EndDate = competition.EndDate;
+                    response.WinningTeamName = competition.WinningTeam.Id == competition.Team1Id ? competition.Team1.TeamName : competition.Team2.TeamName;
+                    response.WinningPlayerName = competition.WinningPlayer.Name;
+                    response.TotalWinningPlayerScore = competition.CompetitionQuestions.Where(a => a.PlayerId == competition.WinningPlayerId.Value).Sum(a => a.Point).Value;
+                    response.CategoriesIds = !string.IsNullOrEmpty(competition.CategoriesIds) ?
+                                            competition.CategoriesIds.Split(',').Select(int.Parse).ToList() : new List<int>() { 0 };
+
+                    response.RoundCount = competition.RoundCount;
+                    response.ParentCompetitionName = competition.ParentId.HasValue ? competition.Parent.Name : _localizer["None"].Value;
+                    response.Round1Points = competition.Round1Points;
+                    response.Round1Time = competition.Round1Time;
+                    response.Round2Points = competition.Round2Points;
+                    response.Round2Time = competition.Round2Time;
+                    response.Round3Points = competition.Round3Points;
+                    response.Round3Time = competition.Round3Time;
+                    response.Round4Points = competition.Round4Points;
+                    response.Round4Time = competition.Round4Time;
+                    response.Team1Name = competition.Team1.TeamName;
+                    response.Team2Name = competition.Team2.TeamName;
+
+
+                    //    //Player 1
+                    CompetitionsPlayerDTO cityMall_Player1 = new CompetitionsPlayerDTO();
+                    cityMall_Player1.Id = competition.Team1.Player1.Id;
+                    cityMall_Player1.Name = competition.Team1.Player1.Name;
+                    response.TeamCityMall.Add(cityMall_Player1);
+
+
+                    if (competition.Team1.Player2 != null)
                     {
-                        Points = question.Point ?? 0,
-                        QuestionText = IsAr ? question.Question.TextAr : question.Question.TextEn,
-                        AnswerText = IsAr ? question.Answer.TextAr : question.Answer.TextEn,
-                        IsCorrectAnswer = question.IsCorrectAnswer ?? false,
-                    });
-                });
-                response.TeamCityMall.Add(cityMall_Player1);
+                        //Player2
+                        CompetitionsPlayerDTO cityMall_Player2 = new CompetitionsPlayerDTO();
+                        cityMall_Player2.Id = competition.Team1.Player2.Id;
+                        cityMall_Player2.Name = competition.Team1.Player2.Name;
+                        response.TeamCityMall.Add(cityMall_Player2);
+                    }
 
 
-
-
-                if (competition.Team1.Player2 != null)
-                {
-                    //Player2
-                    CompetitionsPlayerDTO cityMall_Player2 = new CompetitionsPlayerDTO();
-                    cityMall_Player2.Id = competition.Team1.Player2.Id;
-                    cityMall_Player2.Name = competition.Team1.Player2.Name;
-                    cityMall_Player2.Points = competition.CompetitionQuestions.Where(a => a.PlayerId == competition.Team1.Player2.Id).Sum(a => a.Point).Value;
-                    competition.CompetitionQuestions.Where(a => a.PlayerId == competition.Team1.Player2.Id).ToList().ForEach(question =>
+                    if (competition.Team1.Player3 != null)
                     {
-                        cityMall_Player2.competitonQuestions.Add(new CompetitonQuestions()
-                        {
-                            Points = question.Point ?? 0,
-                            QuestionText = IsAr ? question.Question.TextAr : question.Question.TextEn,
-                            AnswerText = IsAr ? question.Answer.TextAr : question.Answer.TextEn,
-                            IsCorrectAnswer = question.IsCorrectAnswer ?? false,
-                        });
-                    });
-                    response.TeamCityMall.Add(cityMall_Player2);
+                        //Player3
+                        CompetitionsPlayerDTO cityMall_Player3 = new CompetitionsPlayerDTO();
+                        cityMall_Player3.Id = competition.Team1.Player3.Id;
+                        cityMall_Player3.Name = competition.Team1.Player3.Name;
+                        response.TeamCityMall.Add(cityMall_Player3);
+                    }
+
+
+                    if (competition.Team1.Player4 != null)
+                    {
+                        //Player4
+                        CompetitionsPlayerDTO cityMall_Player4 = new CompetitionsPlayerDTO();
+                        cityMall_Player4.Id = competition.Team1.Player4.Id;
+                        cityMall_Player4.Name = competition.Team1.Player4.Name;
+                        response.TeamCityMall.Add(cityMall_Player4);
+                    }
+
+
+
+
+
+
+                    //    //Fill Team 2 - Vistors
+                    //    //Player 1
+                    CompetitionsPlayerDTO Visitors_Player1 = new CompetitionsPlayerDTO();
+                    Visitors_Player1.Id = competition.Team2.Player1.Id;
+                    Visitors_Player1.Name = competition.Team2.Player1.Name;
+                    response.OtherTeam.Add(Visitors_Player1);
+
+
+
+
+                    if (competition.Team2.Player2 != null)
+                    {
+                        //Player2
+                        CompetitionsPlayerDTO Visitors_Player2 = new CompetitionsPlayerDTO();
+                        Visitors_Player2.Id = competition.Team2.Player2.Id;
+                        Visitors_Player2.Name = competition.Team2.Player2.Name;
+                        response.OtherTeam.Add(Visitors_Player2);
+                    }
+
+
+
+                    if (competition.Team2.Player3 != null)
+                    {
+                        //Player3
+                        CompetitionsPlayerDTO Visitors_Player3 = new CompetitionsPlayerDTO();
+                        Visitors_Player3.Id = competition.Team2.Player3.Id;
+                        Visitors_Player3.Name = competition.Team2.Player3.Name;
+                        response.OtherTeam.Add(Visitors_Player3);
+                    }
+
+
+
+                    if (competition.Team2.Player4 != null)
+                    {
+                        //Player4
+                        CompetitionsPlayerDTO Visitors_Player4 = new CompetitionsPlayerDTO();
+                        Visitors_Player4.Id = competition.Team2.Player4.Id;
+                        Visitors_Player4.Name = competition.Team2.Player4.Name;
+                        response.OtherTeam.Add(Visitors_Player4);
+                    }
+
+                    return new Response<ViewCompetitionScoresDTO>()
+                    {
+                        Succeeded = true,
+                        Data = response
+                    };
                 }
-
-
-
-                if (competition.Team1.Player3 != null)
-                {
-                    //Player3
-                    CompetitionsPlayerDTO cityMall_Player3 = new CompetitionsPlayerDTO();
-                    cityMall_Player3.Id = competition.Team1.Player3.Id;
-                    cityMall_Player3.Name = competition.Team1.Player3.Name;
-                    cityMall_Player3.Points = competition.CompetitionQuestions.Where(a => a.PlayerId == competition.Team1.Player3.Id).Sum(a => a.Point).Value;
-                    competition.CompetitionQuestions.Where(a => a.PlayerId == competition.Team1.Player3.Id).ToList().ForEach(question =>
+                else
+                    return new Response<ViewCompetitionScoresDTO>()
                     {
-                        cityMall_Player3.competitonQuestions.Add(new CompetitonQuestions()
-                        {
-                            Points = question.Point ?? 0,
-                            QuestionText = IsAr ? question.Question.TextAr : question.Question.TextEn,
-                            AnswerText = IsAr ? question.Answer.TextAr : question.Answer.TextEn,
-                            IsCorrectAnswer = question.IsCorrectAnswer ?? false,
-                        });
-                    });
-                    response.TeamCityMall.Add(cityMall_Player3);
-                }
-
-
-
-                if (competition.Team1.Player4 != null)
-                {
-                    //Player4
-                    CompetitionsPlayerDTO cityMall_Player4 = new CompetitionsPlayerDTO();
-                    cityMall_Player4.Id = competition.Team1.Player4.Id;
-                    cityMall_Player4.Name = competition.Team1.Player4.Name;
-                    cityMall_Player4.Points = competition.CompetitionQuestions.Where(a => a.PlayerId == competition.Team1.Player4.Id).Sum(a => a.Point).Value;
-                    competition.CompetitionQuestions.Where(a => a.PlayerId == competition.Team1.Player4.Id).ToList().ForEach(question =>
-                    {
-                        cityMall_Player4.competitonQuestions.Add(new CompetitonQuestions()
-                        {
-                            Points = question.Point ?? 0,
-                            QuestionText = IsAr ? question.Question.TextAr : question.Question.TextEn,
-                            AnswerText = IsAr ? question.Answer.TextAr : question.Answer.TextEn,
-                            IsCorrectAnswer = question.IsCorrectAnswer ?? false,
-                        });
-                    });
-                    response.TeamCityMall.Add(cityMall_Player4);
-                }
-
-
-
-
-
-
-
-                //Fill Team 2 - Vistors
-                response.Team2Name = competition.Team2.TeamName;
-
-                //Player 1
-                CompetitionsPlayerDTO Visitors_Player1 = new CompetitionsPlayerDTO();
-                Visitors_Player1.Id = competition.Team2.Player1.Id;
-                Visitors_Player1.Name = competition.Team2.Player1.Name;
-                Visitors_Player1.Points = competition.CompetitionQuestions.Where(a => a.PlayerId == competition.Team2.Player1.Id).Sum(a => a.Point).Value;
-                competition.CompetitionQuestions.Where(a => a.PlayerId == competition.Team2.Player1.Id).ToList().ForEach(question =>
-                {
-                    Visitors_Player1.competitonQuestions.Add(new CompetitonQuestions()
-                    {
-                        Points = question.Point ?? 0,
-                        QuestionText = IsAr ? question.Question.TextAr : question.Question.TextEn,
-                        AnswerText = IsAr ? question.Answer.TextAr : question.Answer.TextEn,
-                        IsCorrectAnswer = question.IsCorrectAnswer ?? false,
-                    });
-                });
-                response.OtherTeam.Add(Visitors_Player1);
-
-
-
-
-                if (competition.Team2.Player2 != null)
-                {
-                    //Player2
-                    CompetitionsPlayerDTO Visitors_Player2 = new CompetitionsPlayerDTO();
-                    Visitors_Player2.Id = competition.Team2.Player2.Id;
-                    Visitors_Player2.Name = competition.Team2.Player2.Name;
-                    Visitors_Player2.Points = competition.CompetitionQuestions.Where(a => a.PlayerId == competition.Team2.Player2.Id).Sum(a => a.Point).Value;
-                    competition.CompetitionQuestions.Where(a => a.PlayerId == competition.Team2.Player2.Id).ToList().ForEach(question =>
-                    {
-                        Visitors_Player2.competitonQuestions.Add(new CompetitonQuestions()
-                        {
-                            Points = question.Point ?? 0,
-                            QuestionText = IsAr ? question.Question.TextAr : question.Question.TextEn,
-                            AnswerText = IsAr ? question.Answer.TextAr : question.Answer.TextEn,
-                            IsCorrectAnswer = question.IsCorrectAnswer ?? false,
-                        });
-                    });
-                    response.OtherTeam.Add(Visitors_Player2);
-                }
-
-
-
-                if (competition.Team2.Player3 != null)
-                {
-                    //Player3
-                    CompetitionsPlayerDTO Visitors_Player3 = new CompetitionsPlayerDTO();
-                    Visitors_Player3.Id = competition.Team2.Player3.Id;
-                    Visitors_Player3.Name = competition.Team2.Player3.Name;
-                    Visitors_Player3.Points = competition.CompetitionQuestions.Where(a => a.PlayerId == competition.Team2.Player3.Id).Sum(a => a.Point).Value;
-                    competition.CompetitionQuestions.Where(a => a.PlayerId == competition.Team2.Player3.Id).ToList().ForEach(question =>
-                    {
-                        Visitors_Player3.competitonQuestions.Add(new CompetitonQuestions()
-                        {
-                            Points = question.Point ?? 0,
-                            QuestionText = IsAr ? question.Question.TextAr : question.Question.TextEn,
-                            AnswerText = IsAr ? question.Answer.TextAr : question.Answer.TextEn,
-                            IsCorrectAnswer = question.IsCorrectAnswer ?? false,
-                        });
-                    });
-                    response.OtherTeam.Add(Visitors_Player3);
-                }
-
-
-
-                if (competition.Team2.Player4 != null)
-                {
-                    //Player4
-                    CompetitionsPlayerDTO Visitors_Player4 = new CompetitionsPlayerDTO();
-                    Visitors_Player4.Id = competition.Team2.Player4.Id;
-                    Visitors_Player4.Name = competition.Team2.Player4.Name;
-                    Visitors_Player4.Points = competition.CompetitionQuestions.Where(a => a.PlayerId == competition.Team2.Player4.Id).Sum(a => a.Point).Value;
-                    competition.CompetitionQuestions.Where(a => a.PlayerId == competition.Team2.Player4.Id).ToList().ForEach(question =>
-                    {
-                        Visitors_Player4.competitonQuestions.Add(new CompetitonQuestions()
-                        {
-                            Points = question.Point ?? 0,
-                            QuestionText = IsAr ? question.Question.TextAr : question.Question.TextEn,
-                            AnswerText = IsAr ? question.Answer.TextAr : question.Answer.TextEn,
-                            IsCorrectAnswer = question.IsCorrectAnswer ?? false,
-                        });
-                    });
-                    response.OtherTeam.Add(Visitors_Player4);
-                }
-
-
-                var competitonString = JsonConvert.SerializeObject(response);
-                _httpContextAccessor.HttpContext.Session.SetString("CompetitionScoreDetails", competitonString);
-
-                return new Response<ViewCompetitionScoresDTO>()
-                {
-                    Data = response,
-                    Succeeded = true
-                };
+                        StatusCode = (int)HttpStatusCode.NotFound
+                    };
             }
             catch (Exception ex)
             {
-                return new Response<ViewCompetitionScoresDTO>()
-                {
-                    Message = ex.Message
-                };
+                throw ex;
             }
         }
 
@@ -652,7 +634,7 @@ namespace CMC.Presentation.Application.Services.Competitions
                 List<LatestCompeitionsScore> lastScores = new List<LatestCompeitionsScore>();
                 var competitions = await _competitionRepository.GetAll(a => a.IsDeleted != true && a.EndDate.HasValue && a.WinningPlayerId.HasValue)
                        .Include(a => a.CompetitionQuestions)
-                            .ThenInclude(a=>a.Player)
+                            .ThenInclude(a => a.Player)
                        .Include(a => a.WinningPlayer)
                        .Include(a => a.WinningTeam)
                        .Include(a => a.Team1)
@@ -675,7 +657,7 @@ namespace CMC.Presentation.Application.Services.Competitions
                            .Take(5)
                            .ToListAsync();
 
-                if(competitions!=null && competitions.Count > 0)
+                if (competitions != null && competitions.Count > 0)
                 {
                     foreach (var competition in competitions)
                     {
@@ -779,7 +761,7 @@ namespace CMC.Presentation.Application.Services.Competitions
                 var competition = await _competitionRepository.GetAll(a => a.Id == id && a.IsDeleted != true && !a.EndDate.HasValue)
                     .Include(a => a.CompetitionQuestions)
                        .ThenInclude(a => a.Question)
-                       .ThenInclude(a=>a.Answers)
+                       .ThenInclude(a => a.Answers)
                        .Include(a => a.CompetitionQuestions)
                        .ThenInclude(a => a.Answer)
                         .Include(a => a.Team1)
@@ -798,6 +780,7 @@ namespace CMC.Presentation.Application.Services.Competitions
                             .ThenInclude(t => t.Player3)
                         .Include(a => a.Team2)
                             .ThenInclude(t => t.Player4)
+                        .Include(a => a.Parent)
                             .FirstOrDefaultAsync();
 
                 bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
@@ -807,36 +790,26 @@ namespace CMC.Presentation.Application.Services.Competitions
                 {
                     CompetitionStartDTO competitionStartDTO = new CompetitionStartDTO();
                     competitionStartDTO.Id = id;
-                    competitionStartDTO.TotalQuestion = competition.QuestionsCount;
+                    competitionStartDTO.TotalRound = competition.RoundCount;
+                    competitionStartDTO.CurrentRound = 1;
+                    competitionStartDTO.RoundTime = competition.Round1Time ?? 0;
+                    competitionStartDTO.RoundPoints = competition.Round1Points ?? 0;
                     competitionStartDTO.TeamCityMall = new List<CompetitionsPlayerDTO>();
                     competitionStartDTO.OtherTeam = new List<CompetitionsPlayerDTO>();
+                    competitionStartDTO.Team1Name = competition.Team1.TeamName;
+                    competitionStartDTO.Team2Name = competition.Team2.TeamName;
+                    List<CompetitionQuestion> AllQuestionsWasAskedBefore = new List<CompetitionQuestion>();
+                    if (competition.Parent != null)
+                        AllQuestionsWasAskedBefore = await GetAllQuestionsForCompetitionAndParentsAsync(competition.Parent.Id);
 
                     bool IsCompetitionStartedBefore = competition.CompetitionQuestions != null && competition.CompetitionQuestions.Count > 0;
 
-                    //Add CompetitionQuestions
-                    foreach(var question in competition.CompetitionQuestions)
+                    //Add Previous Competition Questions
+                    foreach (var question in AllQuestionsWasAskedBefore)
                     {
                         QuestionVM questionVM = new QuestionVM();
                         questionVM.Id = question.Question.Id;
                         questionVM.CategoryId = question.Question.CategoryID;
-                        questionVM.TextEn = question.Question.TextEn;
-                        questionVM.TextAr = question.Question.TextAr;
-                        questionVM.Points = question.Question.Points;
-                        questionVM.Time = question.Question.Timer;
-
-                        List<AnswerOptions> answerOptions = new List<AnswerOptions>();
-                        foreach(var answer in question.Question.Answers.Where(a => a.IsDeleted != true).ToList())
-                        {
-                            AnswerOptions option = new AnswerOptions();
-                            option.Id = answer.Id;
-                            option.TextEn = answer.TextEn;
-                            option.TextAr = answer.TextAr;
-                            option.IsImg = answer.IsImg ?? false;
-                            option.ImgPath = answer.ImgPath;
-                            option.IsAnswer = answer.IsAnswer;
-                            answerOptions.Add(option);
-                        }
-                        questionVM.Answers = answerOptions;
                         competitionStartDTO.Questions.Add(questionVM);
                     }
 
@@ -849,19 +822,7 @@ namespace CMC.Presentation.Application.Services.Competitions
                         cityMallPlayer1.Name = competition.Team1.Player1.Name;
                         cityMallPlayer1.Points = 0;
                         if (IsCompetitionStartedBefore)
-                        {
-                            cityMallPlayer1.Points = competition.CompetitionQuestions.Where(a => a.PlayerId == cityMallPlayer1.Id).Sum(a => a.Point).Value;
-                            competition.CompetitionQuestions.Where(a => a.PlayerId == cityMallPlayer1.Id).ToList().ForEach(question =>
-                            {
-                                cityMallPlayer1.competitonQuestions.Add(new CompetitonQuestions()
-                                {
-                                    Points = question.Point ?? 0,
-                                    QuestionText = IsAr ? question.Question.TextAr : question.Question.TextEn,
-                                    AnswerText = IsAr ? question.Answer.TextAr : question.Answer.TextEn,
-                                    IsCorrectAnswer = question.IsCorrectAnswer ?? false,
-                                });
-                            });
-                        }
+                            cityMallPlayer1.Points = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == cityMallPlayer1.Id).Sum(a => a.Point).Value;
                         competitionStartDTO.TeamCityMall.Add(cityMallPlayer1);
                     }
 
@@ -872,19 +833,7 @@ namespace CMC.Presentation.Application.Services.Competitions
                         cityMallPlayer2.Name = competition.Team1.Player2.Name;
                         cityMallPlayer2.Points = 0;
                         if (IsCompetitionStartedBefore)
-                        {
-                            cityMallPlayer2.Points = competition.CompetitionQuestions.Where(a => a.PlayerId == cityMallPlayer2.Id).Sum(a => a.Point).Value;
-                            competition.CompetitionQuestions.Where(a => a.PlayerId == cityMallPlayer2.Id).ToList().ForEach(question =>
-                            {
-                                cityMallPlayer2.competitonQuestions.Add(new CompetitonQuestions()
-                                {
-                                    Points = question.Point ?? 0,
-                                    QuestionText = IsAr ? question.Question.TextAr : question.Question.TextEn,
-                                    AnswerText = IsAr ? question.Answer.TextAr : question.Answer.TextEn,
-                                    IsCorrectAnswer = question.IsCorrectAnswer ?? false,
-                                });
-                            });
-                        }
+                            cityMallPlayer2.Points = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == cityMallPlayer2.Id).Sum(a => a.Point).Value;
                         competitionStartDTO.TeamCityMall.Add(cityMallPlayer2);
                     }
 
@@ -895,19 +844,7 @@ namespace CMC.Presentation.Application.Services.Competitions
                         cityMallPlayer3.Name = competition.Team1.Player3.Name;
                         cityMallPlayer3.Points = 0;
                         if (IsCompetitionStartedBefore)
-                        {
-                            cityMallPlayer3.Points = competition.CompetitionQuestions.Where(a => a.PlayerId == cityMallPlayer3.Id).Sum(a => a.Point).Value;
-                            competition.CompetitionQuestions.Where(a => a.PlayerId == cityMallPlayer3.Id).ToList().ForEach(question =>
-                            {
-                                cityMallPlayer3.competitonQuestions.Add(new CompetitonQuestions()
-                                {
-                                    Points = question.Point ?? 0,
-                                    QuestionText = IsAr ? question.Question.TextAr : question.Question.TextEn,
-                                    AnswerText = IsAr ? question.Answer.TextAr : question.Answer.TextEn,
-                                    IsCorrectAnswer = question.IsCorrectAnswer ?? false,
-                                });
-                            });
-                        }
+                            cityMallPlayer3.Points = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == cityMallPlayer3.Id).Sum(a => a.Point).Value;
                         competitionStartDTO.TeamCityMall.Add(cityMallPlayer3);
                     }
 
@@ -918,19 +855,7 @@ namespace CMC.Presentation.Application.Services.Competitions
                         cityMallPlayer4.Name = competition.Team1.Player4.Name;
                         cityMallPlayer4.Points = 0;
                         if (IsCompetitionStartedBefore)
-                        {
-                            cityMallPlayer4.Points = competition.CompetitionQuestions.Where(a => a.PlayerId == cityMallPlayer4.Id).Sum(a => a.Point).Value;
-                            competition.CompetitionQuestions.Where(a => a.PlayerId == cityMallPlayer4.Id).ToList().ForEach(question =>
-                            {
-                                cityMallPlayer4.competitonQuestions.Add(new CompetitonQuestions()
-                                {
-                                    Points = question.Point ?? 0,
-                                    QuestionText = IsAr ? question.Question.TextAr : question.Question.TextEn,
-                                    AnswerText = IsAr ? question.Answer.TextAr : question.Answer.TextEn,
-                                    IsCorrectAnswer = question.IsCorrectAnswer ?? false,
-                                });
-                            });
-                        }
+                            cityMallPlayer4.Points = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == cityMallPlayer4.Id).Sum(a => a.Point).Value;
                         competitionStartDTO.TeamCityMall.Add(cityMallPlayer4);
                     }
 
@@ -943,19 +868,7 @@ namespace CMC.Presentation.Application.Services.Competitions
                         otherPlayer1.Name = competition.Team2.Player1.Name;
                         otherPlayer1.Points = 0;
                         if (IsCompetitionStartedBefore)
-                        {
-                            otherPlayer1.Points = competition.CompetitionQuestions.Where(a => a.PlayerId == otherPlayer1.Id).Sum(a => a.Point).Value;
-                            competition.CompetitionQuestions.Where(a => a.PlayerId == otherPlayer1.Id).ToList().ForEach(question =>
-                            {
-                                otherPlayer1.competitonQuestions.Add(new CompetitonQuestions()
-                                {
-                                    Points = question.Point ?? 0,
-                                    QuestionText = IsAr ? question.Question.TextAr : question.Question.TextEn,
-                                    AnswerText = IsAr ? question.Answer.TextAr : question.Answer.TextEn,
-                                    IsCorrectAnswer = question.IsCorrectAnswer ?? false,
-                                });
-                            });
-                        }
+                            otherPlayer1.Points = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == otherPlayer1.Id).Sum(a => a.Point).Value;
                         competitionStartDTO.OtherTeam.Add(otherPlayer1);
                     }
 
@@ -966,19 +879,7 @@ namespace CMC.Presentation.Application.Services.Competitions
                         otherPlayer2.Name = competition.Team2.Player2.Name;
                         otherPlayer2.Points = 0;
                         if (IsCompetitionStartedBefore)
-                        {
-                            otherPlayer2.Points = competition.CompetitionQuestions.Where(a => a.PlayerId == otherPlayer2.Id).Sum(a => a.Point).Value;
-                            competition.CompetitionQuestions.Where(a => a.PlayerId == otherPlayer2.Id).ToList().ForEach(question =>
-                            {
-                                otherPlayer2.competitonQuestions.Add(new CompetitonQuestions()
-                                {
-                                    Points = question.Point ?? 0,
-                                    QuestionText = IsAr ? question.Question.TextAr : question.Question.TextEn,
-                                    AnswerText = IsAr ? question.Answer.TextAr : question.Answer.TextEn,
-                                    IsCorrectAnswer = question.IsCorrectAnswer ?? false,
-                                });
-                            });
-                        }
+                            otherPlayer2.Points = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == otherPlayer2.Id).Sum(a => a.Point).Value;
                         competitionStartDTO.OtherTeam.Add(otherPlayer2);
 
                     }
@@ -990,19 +891,7 @@ namespace CMC.Presentation.Application.Services.Competitions
                         otherPlayer3.Name = competition.Team2.Player3.Name;
                         otherPlayer3.Points = 0;
                         if (IsCompetitionStartedBefore)
-                        {
-                            otherPlayer3.Points = competition.CompetitionQuestions.Where(a => a.PlayerId == otherPlayer3.Id).Sum(a => a.Point).Value;
-                            competition.CompetitionQuestions.Where(a => a.PlayerId == otherPlayer3.Id).ToList().ForEach(question =>
-                            {
-                                otherPlayer3.competitonQuestions.Add(new CompetitonQuestions()
-                                {
-                                    Points = question.Point ?? 0,
-                                    QuestionText = IsAr ? question.Question.TextAr : question.Question.TextEn,
-                                    AnswerText = IsAr ? question.Answer.TextAr : question.Answer.TextEn,
-                                    IsCorrectAnswer = question.IsCorrectAnswer ?? false,
-                                });
-                            });
-                        }
+                            otherPlayer3.Points = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == otherPlayer3.Id).Sum(a => a.Point).Value;
                         competitionStartDTO.OtherTeam.Add(otherPlayer3);
                     }
 
@@ -1013,25 +902,20 @@ namespace CMC.Presentation.Application.Services.Competitions
                         otherPlayer4.Name = competition.Team2.Player4.Name;
                         otherPlayer4.Points = 0;
                         if (IsCompetitionStartedBefore)
-                        {
-                            otherPlayer4.Points = competition.CompetitionQuestions.Where(a => a.PlayerId == otherPlayer4.Id).Sum(a => a.Point).Value;
-                            competition.CompetitionQuestions.Where(a => a.PlayerId == otherPlayer4.Id).ToList().ForEach(question =>
-                            {
-                                otherPlayer4.competitonQuestions.Add(new CompetitonQuestions()
-                                {
-                                    Points = question.Point ?? 0,
-                                    QuestionText = IsAr ? question.Question.TextAr : question.Question.TextEn,
-                                    AnswerText = IsAr ? question.Answer.TextAr : question.Answer.TextEn,
-                                    IsCorrectAnswer = question.IsCorrectAnswer ?? false,
-                                });
-                            });
-                        }
+                            otherPlayer4.Points = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == otherPlayer4.Id).Sum(a => a.Point).Value;
                         competitionStartDTO.OtherTeam.Add(otherPlayer4);
                     }
 
 
                     //Fill Categories
-                    competitionStartDTO.Categories = await _questionsService.GetCategories();
+                    var allCategories = await _questionsService.GetCategories();
+                    if (!string.IsNullOrWhiteSpace(competition.CategoriesIds))
+                    {
+                        var allowedCategories = competition.CategoriesIds.Split(',').Select(int.Parse).ToList();
+                        competitionStartDTO.Categories = allCategories.Where(a => allowedCategories.Contains(a.Id)).ToList();
+                    }
+                    else
+                        competitionStartDTO.Categories = allCategories;
 
                     var competitonString = JsonConvert.SerializeObject(competitionStartDTO);
                     _httpContextAccessor.HttpContext.Session.SetString("CompetitionStart", competitonString);
@@ -1071,7 +955,10 @@ namespace CMC.Presentation.Application.Services.Competitions
                 competitionQuestion.AnswerId = answerOnQuestionDTO.AnswerId;
                 competitionQuestion.IsCorrectAnswer = answerOnQuestionDTO.IsCorrectAnswer;
                 if (competitionQuestion.IsCorrectAnswer == true)
+                {
+                    competitionQuestion.Time = answerOnQuestionDTO.Time;
                     competitionQuestion.Point = answerOnQuestionDTO.Points;
+                }
 
                 competitionQuestion.CreatedBy = int.Parse(_httpContextAccessor.HttpContext.Session.GetString("UserId"));
                 competitionQuestion.CreatedOn = DateTime.Now;
@@ -1091,6 +978,98 @@ namespace CMC.Presentation.Application.Services.Competitions
                     Message = ex.Message
                 };
             }
+        }
+
+        /// <summary>
+        /// Get All questions for parent or old competitons
+        /// </summary>
+        /// <param name="competitionId"></param>
+        /// <returns></returns>
+        private async Task<List<CompetitionQuestion>> GetAllQuestionsForCompetitionAndParentsAsync(int competitionId)
+        {
+            List<CompetitionQuestion> allQuestions = new List<CompetitionQuestion>();
+
+            async Task GetQuestions(int id)
+            {
+                var competition = await _competitionRepository.GetAll(a => a.Id == id && a.IsDeleted != true && a.EndDate.HasValue)
+                    .Include(a => a.CompetitionQuestions)
+                       .ThenInclude(a => a.Question)
+                    .Include(a => a.Parent)
+                    .FirstOrDefaultAsync();
+
+                if (competition != null)
+                {
+                    if (competition.CompetitionQuestions != null)
+                    {
+                        allQuestions.AddRange(competition.CompetitionQuestions);
+                    }
+
+                    if (competition.Parent != null)
+                    {
+                        await GetQuestions(competition.Parent.Id);
+                    }
+                }
+            }
+
+            await GetQuestions(competitionId);
+
+            return allQuestions;
+        }
+
+        /// <summary>
+        /// Get Rounds time
+        /// </summary>
+        /// <param name="competionId"></param>
+        /// <param name="round"></param>
+        /// <returns></returns>
+        public int GetRoundTime(int competionId, int round)
+        {
+            var competition = _competitionRepository.Find(competionId);
+            int time = 0;
+            switch (round)
+            {
+                case 1:
+                    time = competition.Round1Time ?? 0;
+                    break;
+                case 2:
+                    time = competition.Round2Time ?? 0;
+                    break;
+                case 3:
+                    time = competition.Round3Time ?? 0;
+                    break;
+                case 4:
+                    time = competition.Round4Time ?? 0;
+                    break;
+            }
+            return time;
+        }
+
+        /// <summary>
+        /// Get round points
+        /// </summary>
+        /// <param name="competionId"></param>
+        /// <param name="round"></param>
+        /// <returns></returns>
+        public int GetRoundPoints(int competionId, int round)
+        {
+            var competition = _competitionRepository.Find(competionId);
+            int points = 0;
+            switch (round)
+            {
+                case 1:
+                    points = competition.Round1Points ?? 0;
+                    break;
+                case 2:
+                    points = competition.Round2Points ?? 0;
+                    break;
+                case 3:
+                    points = competition.Round3Points ?? 0;
+                    break;
+                case 4:
+                    points = competition.Round4Points ?? 0;
+                    break;
+            }
+            return points;
         }
     }
 }

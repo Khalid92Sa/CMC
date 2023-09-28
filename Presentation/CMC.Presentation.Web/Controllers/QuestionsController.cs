@@ -125,11 +125,12 @@ namespace CMC.Presentation.Web.Controllers
         /// <returns></returns>
         [HttpPost]
         [RolePermission(PermissionCodes.WebQuestionsCreate)]
-        public async Task<IActionResult> DeleteExistingImg(int id)
+        public async Task<IActionResult> DeleteExistingImg(int id,int type)
         {
             try
             {
-                var result = await _questionsService.DeleteExistingImg(id);
+                AttachmentTypes attachmentTypes = (AttachmentTypes)type;
+                var result = await _questionsService.DeleteExistingImg(id, attachmentTypes);
                 return Json(new { isSuccess = result.Succeeded, msg = result.Succeeded ? _localizer["DeleteExistingImage_SuccessMsg"].Value : _localizer["ErrorOccurred"].Value });
             }
             catch (Exception ex)

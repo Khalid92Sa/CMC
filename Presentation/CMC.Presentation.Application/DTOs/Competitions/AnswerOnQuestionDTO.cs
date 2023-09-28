@@ -12,7 +12,6 @@ namespace CMC.Presentation.Application.DTOs.Competitions
         public int? AnswerId { get; set; }
         public bool? IsCorrectAnswer { get; set; }
         public int? Points { get; set; }
-        public bool TimerFinished { get; set; }
-        public int Trails { get; set; }
+        public double? Time { get; set; }
     }
 }

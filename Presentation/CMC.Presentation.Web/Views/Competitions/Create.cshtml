@@ -56,11 +56,107 @@
                                     </select>
                                     <span asp-validation-for="HostID" class="text-danger"></span>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <div class="form-group">
+                            <div class="form-row">
                                 <div class="form-group col-md-3">
-                                    <label class="requiredLabel">@Localizer["Questions"]</label>
-                                    <input class="form-control" type="text" asp-for="QuestionCount" onkeypress="return GeneralClass.validationNumbersOnly(this,event)" autocomplete="off" />
-                                    <span asp-validation-for="QuestionCount" class="text-danger"></span>
+                                    <label class="requiredLabel">@Localizer["QuestionCategory"]</label>
+                                    <select class="form-control animated fadeIn js-example-basic-single" multiple asp-for="CategoriesIds" asp-items="@(new SelectList(Model.Categories, "Id", IsAr ? "NameAr" : "NameEn"))">
+                                        <option value="0">@Localizer["All"]</option>
+                                    </select>
+                                    <span asp-validation-for="CategoriesIds" class="text-danger"></span>
                                 </div>
+                                <div class="form-group col-md-3">
+                                    <label class="requiredLabel">@Localizer["RoundCount"]</label>
+                                    <select class="form-control animated fadeIn js-example-basic-single" asp-for="RoundCount">
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                    </select>
+                                    <span asp-validation-for="RoundCount" class="text-danger"></span>
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label class="">@Localizer["IfCompetitionBasedOnAnotherCompetition"]</label>
+                                    <select class="form-control animated fadeIn js-example-basic-single" asp-for="ParentId" asp-items="@(new SelectList(Model.ParentCompetition, "Id", IsAr ? "NameAr" : "NameEn"))">
+                                        <option value="">@Localizer["Select"]</option>
+                                    </select>
+                                    <span asp-validation-for="ParentId" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <h6 class="mb-3">@Localizer["CalculatingRounds"]</h6>
+                    </div>
+                    <div class="mb-2 round-1">
+                        <h6 class="mb-3">@Localizer["Round1"]</h6>
+                    </div>
+                    <div class="mb-2 round-1">
+                        <div class="form-row">
+                            <div class="form-group col-md-3">
+                                <label class="requiredLabel">@Localizer["QuestionTime"]</label>
+                                <input class="form-control" type="text" asp-for="Round1Time" onkeypress="return GeneralClass.validationNumbersOnly(this,event)" autocomplete="off" />
+                                <span asp-validation-for="Round1Time" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label class="requiredLabel">@Localizer["QuestionPoint"]</label>
+                                <input class="form-control" type="text" asp-for="Round1Points" onkeypress="return GeneralClass.validationNumbersOnly(this,event)" autocomplete="off" />
+                                <span asp-validation-for="Round1Points" class="text-danger"></span>
+                            </div>
+                        </div>
+                     </div>
+                    <div class="mb-2 round-2 d-none">
+                        <h6 class="mb-3">@Localizer["Round2"]</h6>
+                    </div>
+                    <div class="mb-2 round-2 d-none">
+                        <div class="form-row">
+                            <div class="form-group col-md-3">
+                                <label class="requiredLabel">@Localizer["QuestionTime"]</label>
+                                <input class="form-control" type="text" asp-for="Round2Time" onkeypress="return GeneralClass.validationNumbersOnly(this,event)" autocomplete="off" />
+                                <span asp-validation-for="Round2Time" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label class="requiredLabel">@Localizer["QuestionPoint"]</label>
+                                <input class="form-control" type="text" asp-for="Round2Points" onkeypress="return GeneralClass.validationNumbersOnly(this,event)" autocomplete="off" />
+                                <span asp-validation-for="Round2Points" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-2 round-3 d-none">
+                        <h6 class="mb-3">@Localizer["Round3"]</h6>
+                    </div>
+                    <div class="mb-2 round-3 d-none">
+                        <div class="form-row">
+                            <div class="form-group col-md-3">
+                                <label class="requiredLabel">@Localizer["QuestionTime"]</label>
+                                <input class="form-control" type="text" asp-for="Round3Time" onkeypress="return GeneralClass.validationNumbersOnly(this,event)" autocomplete="off" />
+                                <span asp-validation-for="Round3Time" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label class="requiredLabel">@Localizer["QuestionPoint"]</label>
+                                <input class="form-control" type="text" asp-for="Round3Points" onkeypress="return GeneralClass.validationNumbersOnly(this,event)" autocomplete="off" />
+                                <span asp-validation-for="Round3Points" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-2 round-4 d-none">
+                        <h6 class="mb-3">@Localizer["Round4"]</h6>
+                    </div>
+                    <div class="mb-2 round-4 d-none">
+                        <div class="form-row">
+                            <div class="form-group col-md-3">
+                                <label class="requiredLabel">@Localizer["QuestionTime"]</label>
+                                <input class="form-control" type="text" asp-for="Round4Time" onkeypress="return GeneralClass.validationNumbersOnly(this,event)" autocomplete="off" />
+                                <span asp-validation-for="Round4Time" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label class="requiredLabel">@Localizer["QuestionPoint"]</label>
+                                <input class="form-control" type="text" asp-for="Round4Points" onkeypress="return GeneralClass.validationNumbersOnly(this,event)" autocomplete="off" />
+                                <span asp-validation-for="Round4Points" class="text-danger"></span>
                             </div>
                         </div>
                     </div>
@@ -76,28 +172,28 @@
                         <div class="form-row">
                             <div class="form-group col-md-3">
                                 <label class="requiredLabel">@Localizer["Player1"]</label>
-                                <select class="form-control animated fadeIn js-example-basic-single city-mall-team" asp-for="Team1.Player1" asp-items="@(new SelectList(Model.CityMallTeam, "Id", IsAr ? "NameAr" : "NameEn"))">
+                                <select class="form-control animated fadeIn js-example-basic-single teams city-mall-team" asp-for="Team1.Player1" asp-items="@(new SelectList(Model.CityMallTeam, "Id", IsAr ? "NameAr" : "NameEn"))">
                                     <option value="">@Localizer["Select"]</option>
                                 </select>
                                 <span asp-validation-for="Team1.Player1" class="text-danger"></span>
                             </div>
                             <div class="form-group col-md-3">
                                 <label class="">@Localizer["Player2"]</label>
-                                <select class="form-control animated fadeIn js-example-basic-single city-mall-team" asp-for="Team1.Player2" asp-items="@(new SelectList(Model.CityMallTeam, "Id", IsAr ? "NameAr" : "NameEn"))">
+                                <select class="form-control animated fadeIn js-example-basic-single teams city-mall-team" asp-for="Team1.Player2" asp-items="@(new SelectList(Model.CityMallTeam, "Id", IsAr ? "NameAr" : "NameEn"))">
                                     <option value="">@Localizer["Select"]</option>
                                 </select>
                                 <span asp-validation-for="Team1.Player2" class="text-danger"></span>
                             </div>
                             <div class="form-group col-md-3">
                                 <label class="">@Localizer["Player3"]</label>
-                                <select class="form-control animated fadeIn js-example-basic-single city-mall-team" asp-for="Team1.Player3" asp-items="@(new SelectList(Model.CityMallTeam, "Id", IsAr ? "NameAr" : "NameEn"))">
+                                <select class="form-control animated fadeIn js-example-basic-single teams city-mall-team" asp-for="Team1.Player3" asp-items="@(new SelectList(Model.CityMallTeam, "Id", IsAr ? "NameAr" : "NameEn"))">
                                     <option value="">@Localizer["Select"]</option>
                                 </select>
                                 <span asp-validation-for="Team1.Player3" class="text-danger"></span>
                             </div>
                             <div class="form-group col-md-3">
                                 <label class="">@Localizer["Player4"]</label>
-                                <select class="form-control animated fadeIn js-example-basic-single city-mall-team" asp-for="Team1.Player4" asp-items="@(new SelectList(Model.CityMallTeam, "Id", IsAr ? "NameAr" : "NameEn"))">
+                                <select class="form-control animated fadeIn js-example-basic-single teams city-mall-team" asp-for="Team1.Player4" asp-items="@(new SelectList(Model.CityMallTeam, "Id", IsAr ? "NameAr" : "NameEn"))">
                                     <option value="">@Localizer["Select"]</option>
                                 </select>
                                 <span asp-validation-for="Team1.Player4" class="text-danger"></span>
@@ -116,28 +212,28 @@
                         <div class="form-row">
                             <div class="form-group col-md-3">
                                 <label class="requiredLabel">@Localizer["Player1"]</label>
-                                <select class="form-control animated fadeIn js-example-basic-single other-team" asp-for="Team2.Player1" asp-items="@(new SelectList(Model.OtherTeam, "Id", IsAr ? "NameAr" : "NameEn"))">
+                                <select class="form-control animated fadeIn js-example-basic-single teams other-team" asp-for="Team2.Player1" asp-items="@(new SelectList(Model.OtherTeam, "Id", IsAr ? "NameAr" : "NameEn"))">
                                     <option value="">@Localizer["Select"]</option>
                                 </select>
                                 <span asp-validation-for="Team2.Player1" class="text-danger"></span>
                             </div>
                             <div class="form-group col-md-3">
                                 <label class="">@Localizer["Player2"]</label>
-                                <select class="form-control animated fadeIn js-example-basic-single other-team" asp-for="Team2.Player2" asp-items="@(new SelectList(Model.OtherTeam, "Id", IsAr ? "NameAr" : "NameEn"))">
+                                <select class="form-control animated fadeIn js-example-basic-single teams other-team" asp-for="Team2.Player2" asp-items="@(new SelectList(Model.OtherTeam, "Id", IsAr ? "NameAr" : "NameEn"))">
                                     <option value="">@Localizer["Select"]</option>
                                 </select>
                                 <span asp-validation-for="Team2.Player2" class="text-danger"></span>
                             </div>
                             <div class="form-group col-md-3">
                                 <label class="">@Localizer["Player3"]</label>
-                                <select class="form-control animated fadeIn js-example-basic-single other-team" asp-for="Team2.Player3" asp-items="@(new SelectList(Model.OtherTeam, "Id", IsAr ? "NameAr" : "NameEn"))">
+                                <select class="form-control animated fadeIn js-example-basic-single teams other-team" asp-for="Team2.Player3" asp-items="@(new SelectList(Model.OtherTeam, "Id", IsAr ? "NameAr" : "NameEn"))">
                                     <option value="">@Localizer["Select"]</option>
                                 </select>
                                 <span asp-validation-for="Team2.Player3" class="text-danger"></span>
                             </div>
                             <div class="form-group col-md-3">
                                 <label class="">@Localizer["Player4"]</label>
-                                <select class="form-control animated fadeIn js-example-basic-single other-team" asp-for="Team2.Player4" asp-items="@(new SelectList(Model.OtherTeam, "Id", IsAr ? "NameAr" : "NameEn"))">
+                                <select class="form-control animated fadeIn js-example-basic-single teams other-team" asp-for="Team2.Player4" asp-items="@(new SelectList(Model.OtherTeam, "Id", IsAr ? "NameAr" : "NameEn"))">
                                     <option value="">@Localizer["Select"]</option>
                                 </select>
                                 <span asp-validation-for="Team2.Player4" class="text-danger"></span>
@@ -147,7 +243,7 @@
                     <div class="col-12 text-center">
                         <button type="button" class="btn btn-primary" onclick="CompetitionForm.CreateOrUpdate()">@Localizer["Save"]</button>
                         <button type="button" class="btn btn-secondary" onclick="window.location.href='@Url.Action("Index", "Competitions")';">@Localizer["Cancel"]</button>
-                        @if(Model.LatestScores!=null && Model.LatestScores.Count > 0)
+                        @if (Model.LatestScores != null && Model.LatestScores.Count > 0)
                         {
                             <button type="button" class="btn btn-info" id="btnScoreModal" onclick="OpenModalScore()">@Localizer["ViewLastCompeitionScores"]</button>
                         }
@@ -163,7 +259,7 @@
 </form>
 
 
-@if(Model.LatestScores!=null && Model.LatestScores.Count > 0)
+@if (Model.LatestScores != null && Model.LatestScores.Count > 0)
 {
     int counter = 1;
     <div class="modal fade" id="LatestScoresModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
@@ -183,7 +279,7 @@
                                 <th scope="col">@Localizer["WinningPlayerFromCityMall"]</th>
                                 <th scope="col">@Localizer["WinningPlayerFromOtherTeam"]</th>
                             </tr>
-                            @foreach(var player in Model.LatestScores)
+                            @foreach (var player in Model.LatestScores)
                             {
                                 <tr>
                                     <td>
@@ -228,7 +324,7 @@
     function OpenModalScore() {
         $('#LatestScoresModal').modal('show');
     }
-    function closeModal(){
+    function closeModal() {
         $('#LatestScoresModal').modal('hide');
     }
 </script>

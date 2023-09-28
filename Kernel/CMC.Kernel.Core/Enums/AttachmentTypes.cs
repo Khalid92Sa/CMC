@@ -6,6 +6,8 @@ namespace CMC.Kernel.Core.Enums
 {
     public enum AttachmentTypes
     {
-        QuestionsCategories = 1,
+        Categories = 1,
+        Questions = 2,
+        Answers = 3
     }
 }

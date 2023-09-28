@@ -15,7 +15,7 @@
     <div class="col-md-12 mt-5" id="dv-CityMallScores">
         <div class="row">
             <div class="animated fadeInDownBig col-md-12">
-                <span class="h2 h2-responsive d-flex justify-content-center text-center title-team-name" data-name="city-mall" style="cursor:pointer">@Localizer["CityMallTeam"]</span>
+                <span class="h2 h2-responsive d-flex justify-content-center text-center title-team-name" data-name="city-mall" style="cursor:pointer">@Model.Team1Name</span>
                 <div class="row mt-5 animated fadeInUpBig justify-content-center">
                     @{
                         var TopPlayer = Model.TeamCityMall.OrderByDescending(a => a.Points).FirstOrDefault();
@@ -71,7 +71,7 @@
     <div class="col-md-12 mt-5" id="dv-OtherTeamScores" style="display:none">
         <div class="row">
             <div class="animated fadeInDownBig col-md-12">
-                <span class="h2 h2-responsive d-flex justify-content-center text-center title-team-name" data-name="other-team" style="cursor:pointer">@Localizer["VisitorsTeam"]</span>
+                <span class="h2 h2-responsive d-flex justify-content-center text-center title-team-name" data-name="other-team" style="cursor:pointer">@Model.Team2Name</span>
                 <div class="row mt-5 animated fadeInUpBig justify-content-center">
                     @{
                         var otherTopPlayer = Model.OtherTeam.OrderByDescending(a => a.Points).FirstOrDefault();

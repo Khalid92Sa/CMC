@@ -12,7 +12,6 @@ namespace CMC.Kernel.Domain.Entities
         public string OtherCode { get; set; }
         public bool IsHighRisk { get; set; }
         public int Sort { get; set; }
-        public string Img { get; set;}
         public int CreatedBy { get; set; }
         public DateTime CreatedOn { get; set; }
         public int? ModifiedBy { get; set; }

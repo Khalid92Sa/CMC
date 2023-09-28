@@ -22,6 +22,7 @@ namespace CMC.Presentation.Domain.Entities
 
         public bool? IsTeam1 { get; set; }
         public int? Point { get; set; }
+        public double? Time { get; set; }
         public bool? IsCorrectAnswer { get; set; }
     }
 }

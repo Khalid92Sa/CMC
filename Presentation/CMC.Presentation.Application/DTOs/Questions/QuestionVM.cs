@@ -29,6 +29,7 @@ namespace CMC.Presentation.Application.DTOs.Questions
         public bool IsAnswer { get; set; }
         public bool IsImg { get; set; }
         public string ImgPath { get; set; }
+        public string ImgName { get; set; }
         public IFormFile Img { get; set; }
     }
 }

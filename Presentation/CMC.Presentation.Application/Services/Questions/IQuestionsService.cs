@@ -1,4 +1,5 @@
-﻿using CMC.Kernel.Core.Services;
+﻿using CMC.Kernel.Core.Enums;
+using CMC.Kernel.Core.Services;
 using CMC.Kernel.Core.Wrappers;
 using CMC.Kernel.Infrastructure.Caching.Model;
 using CMC.Presentation.Application.DTOs.Questions;
@@ -32,7 +33,7 @@ namespace CMC.Presentation.Application.Services.Questions
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<Response> DeleteExistingImg(int id);
+        Task<Response> DeleteExistingImg(int id,AttachmentTypes type);
 
         /// <summary>
         /// Get Category by Id

@@ -17,6 +17,8 @@ var playerTimer = {
 };
 
 
+var newTimerQuestion = 0;
+
 var CityMallPlayed = [];
 var OtherTeamPlayed = [];
 
@@ -45,7 +47,6 @@ var CompetitionList = {
         var competitonStartDate = $('#txtStartDate').val();
         var hostId = $('#ddlHosts').val();
 
-        debugger;
         Grid.currentPageIndex = pageIndex;
         APIHelper.httpGet(generalSettings.BaseURL + 'Competitions/GetAllCompetitions?pageNumber=' + pageIndex +
             '&pageSize=' + pageSize +
@@ -182,14 +183,67 @@ var CompetitionForm = {
 
         $('.js-example-basic-single').select2();
 
-        $('.city-mall-team').on('select2:open', function (e) {
-            CompetitionForm.HandleCityMallTeamDDL(e);
+
+        $('.teams').on('select2:open', function (e) {
+            CompetitionForm.HandleDropDownListsTeams(e);
         });
 
-        $('.other-team').on('select2:open', function (e) {
-            CompetitionForm.HandleOtherTeamDDL(e);
+        //$('.city-mall-team').on('select2:open', function (e) {
+        //    CompetitionForm.HandleCityMallTeamDDL(e);
+        //});
 
+        //$('.other-team').on('select2:open', function (e) {
+        //    CompetitionForm.HandleOtherTeamDDL(e);
+        //});
+
+        $('#RoundCount').on('change', function () {
+            var roundNum = parseInt($(this).val());
+
+            // Clear values in textboxes for rounds greater than roundNum
+            for (var i = roundNum + 1; i <= 4; i++) {
+                $('.round-' + i + ' input[type="text"]').val('');
+            }
+
+            // Show/hide round divs
+            $('.round-2, .round-3, .round-4').addClass('d-none');
+            for (var i = 0; i < roundNum; i++) {
+                $('.round-' + (i + 1)).removeClass('d-none');
+            }
         });
+
+
+        var currentRoundCount = $('#RoundCount').val();
+        for (var i = 0; i < currentRoundCount; i++) {
+            $('.round-' + (i + 1)).removeClass('d-none');
+        }
+    },
+    HandleDropDownListsTeams: function (e) {
+        let player1 = $('#Team1_Player1');
+        let player2 = $('#Team1_Player2');
+        let player3 = $('#Team1_Player3');
+        let player4 = $('#Team1_Player4');
+        let Otherplayer1 = $('#Team2_Player1');
+        let Otherplayer2 = $('#Team2_Player2');
+        let Otherplayer3 = $('#Team2_Player3');
+        let Otherplayer4 = $('#Team2_Player4');
+        if (e !== undefined) {
+            let currentId = e.currentTarget.id;
+            let $results = $('#select2-' + currentId + '-results');
+            setTimeout(function () {
+                $results.find("li[id$='-" + player1.val() + "']").css('display', 'none');
+                $results.find("li[id$='-" + player2.val() + "']").css('display', 'none');
+                $results.find("li[id$='-" + player3.val() + "']").css('display', 'none');
+                $results.find("li[id$='-" + player4.val() + "']").css('display', 'none');
+
+                $results.find("li[id$='-" + Otherplayer1.val() + "']").css('display', 'none');
+                $results.find("li[id$='-" + Otherplayer2.val() + "']").css('display', 'none');
+                $results.find("li[id$='-" + Otherplayer3.val() + "']").css('display', 'none');
+                $results.find("li[id$='-" + Otherplayer4.val() + "']").css('display', 'none');
+            }, 1);
+        }
+
+
+
     },
     HandleCityMallTeamDDL: function (e) {
         let player1 = $('#Team1_Player1');
@@ -232,9 +286,11 @@ var CompetitionForm = {
             dataType: 'json',
             success: function (data) {
                 if (data.resultCode == 422) {
+                    
                     for (var i = 0; i < data.brokenRoles.length; i++) {
                         var propertyName = data.brokenRoles[i]["propertyName"];
                         var message = data.brokenRoles[i]["message"];
+                        $('.field-validation-valid').show();
                         var errorElement = $("span[data-valmsg-for='" + propertyName + "']");
                         errorElement.html(message);
                         // Check if the error element is visible at the top of the page
@@ -243,7 +299,7 @@ var CompetitionForm = {
                             $("html, body").animate({ scrollTop: errorElement.offset().top }, 500);
                         }
                     }
-                    $('.field-validation-valid').show();
+                   
                 }
                 else if (data.resultCode == 200) {
                     Swal.fire({
@@ -461,23 +517,10 @@ var StartCompetition = {
         }
     },
     GoToCategories: function () {
-        //if (playersInCompetition.CityMallPlayer == '' && playersInCompetition.OtherPlayer == '') {
-        //    return;
-        //}
-        //var playerId = playersInCompetition.CityMallPlayer != '' ? parseInt(playersInCompetition.CityMallPlayer) : parseInt(playersInCompetition.OtherPlayer);
-        //var isCityMallPlayer = playersInCompetition.CityMallPlayer != '' ? true : false;
-        //var data = new FormData();
-        //data.append('playerId', playerId);
-        //data.append('IsCityMallTeam', isCityMallPlayer);
-
-
         $.ajax({
             type: 'GET',
             url: publicURls.GetCategories,
             dataType: 'json',
-            //data: data,
-            //contentType: false,
-            //processData: false,
             success: function (data) {
                 if (data.isSuccess) {
                     if (data.partial != '') {
@@ -509,40 +552,27 @@ var StartCompetition = {
                     if (data.partial != '') {
 
                         $('#dv-partial').html(data.partial);
-
+                        newTimerQuestion = 0;
                         $('#btn-answer').on('click', function (e) {
                             StartCompetition.AnswerOnQuestion();
                         });
 
                         StartCompetition.ResetObjects();
-                        $('#hdnAnswerIdImg').val('');
 
                         $('#dv-cityMall-player, #dv-Other-player').on('click', function () {
                             var id = $(this).attr('id');
                             StartCompetition.StartTimeForPlayer(id);
+
+                            $('#dv-answers-options').find('.col-6').each(function () {
+                                var element = this;
+                                $(element).removeAttr('style');
+                            });
                         });
 
                         setTimeout(function () {
                             $('#dv-question-text').removeClass('d-none');
                             $('#card-main').removeAttr('style');
-
-                            var delay = 1500;
-                            var counter = 1;
-                            var totalElements = $('#dv-answers-options').find('.col-6').length;
-                            var completedElements = 0;
-
-                            $('#dv-answers-options').find('.col-6').each(function () {
-                                var element = this;
-                                setTimeout(function () {
-                                    $(element).removeAttr('style');
-                                    completedElements++;
-                                    //if (completedElements === totalElements) {
-                                    //    $('#dv-confirm').removeAttr('style');
-                                    //}
-                                }, counter * delay);
-                                counter++;
-                            });
-                        }, 2000);
+                        }, 1000);
                     }
                 }
                 else {
@@ -682,6 +712,7 @@ var StartCompetition = {
         $('#p-timer').text(minutes.toString().padStart(2, '0') + ':' + seconds.toString().padStart(2, '0'));
 
         if (remainingTime > 0) {
+            newTimerQuestion++;
             requestAnimationFrame(StartCompetition.PTimer);
         }
     },
@@ -691,16 +722,10 @@ var StartCompetition = {
             $('#dv-citymall-player-timer').find('.dv-full-timer').remove();
             $('#p-timer').text('');
             $('#dv-p-timer').addClass('d-none');
+            newTimerQuestion = 0;
         }, 500);
     },
     SelectAnAnswer: function (e) {
-
-        if ($(e).attr('data-isimg') == 'true') {
-            $('.img-answer-options').removeClass('bg-answer-border');
-            $(e).addClass('bg-answer-border');
-            $('#hdnAnswerIdImg').val($(e).attr('data-id'));
-        }
-
         if (playerTimer.PlayerId != '') {
             $('#dv-confirm').removeAttr('style');
         }
@@ -717,17 +742,14 @@ var StartCompetition = {
         var questionPoints = $('#hdnQuestionPoint').val();
         var answerId = null;
         var isCorrect = null;
-        var isImgAnswer = $('.img-answer-options').length > 0;
-        if (isImgAnswer) {
-            answerId = $('#hdnAnswerIdImg').val();
-            isCorrect = $('.img-answer-options.bg-answer-border').attr('data-iscorrect');
+        var answerRadio = $('input[name="investmentExp"]:checked');
+        if (answerRadio.length > 0) {
+            answerId = answerRadio.data('id');
+            isCorrect = answerRadio.data('iscorrect');
         }
-        else {
-            var answerRadio = $('input[name="investmentExp"]:checked');
-            if (answerRadio.length > 0) {
-                answerId = answerRadio.data('id');
-                isCorrect = answerRadio.data('iscorrect');
-            }
+
+        if (playerId == 0) {
+            return;
         }
 
         var data = new FormData();
@@ -737,7 +759,9 @@ var StartCompetition = {
         data.append("AnswerId", answerId);
         data.append("IsCorrectAnswer", isCorrect);
         data.append("Points", questionPoints);
+        data.append("Time", (newTimerQuestion / 60));
 
+        playerTimer.IsPlayerAnswered = true;
 
         $.ajax({
             type: 'POST',
@@ -747,14 +771,13 @@ var StartCompetition = {
             processData: false,
             success: function (data) {
                 if (data.isSuccess) {
-                    playerTimer.IsPlayerAnswered = true;
                     if (playerTimer.IsCityMallPlayer) {
                         playerTimer.IsPlayerCityMallAnswered = true;
                     }
                     else {
                         playerTimer.IsOtherPlayerAnswered = true;
                     }
-
+                    newTimerQuestion = 0;
                     if (data.correct) {
                         //Run sound effect with modal success
                         correctAnswerSound.play();
@@ -766,7 +789,32 @@ var StartCompetition = {
                                 StartCompetition.ResetPlayed();
                             }
 
-                            $('#dv-partial').html(data.partial);
+                            if (!data.finished && !data.continueRound) {
+                                //Continue to next question normal
+                                $('#dv-partial').html(data.partial);
+                            }
+                            else {
+                                //Competiton finish
+                                if (data.finished) {
+                                    $('#dv-homePage').find('#spn-lbl-goTo').html(globalResources.ViewScores);
+                                }
+                                else if (data.continueRound) {
+                                    $('#dv-homePage').find('#spn-lbl-goTo').html(data.roundText);
+                                    StartCompetition.StopTimer();
+                                }
+
+                                $('#dv-homePage').removeAttr('style');
+
+                                $('#dv-homePage').on('click', function () {
+                                    if (data.continueRound) {
+                                        StartCompetition.OnLoad();
+                                        if (data.reset) {
+                                            StartCompetition.ResetPlayed();
+                                        }
+                                    }
+                                    $('#dv-partial').html(data.partial);
+                                });
+                            }
                         }, 6000);
                     }
                     else {
@@ -924,13 +972,11 @@ var StartCompetition = {
             StartCompetition.GetFullScore();
         });
 
-
-        $('.player-modal-details').on('click', function (e) {
-            var playerId = $(this).attr('data-player-Id');
-            var isCityMall = $(this).attr('data-city-mall');
-
-            StartCompetition.GetModalDetails(playerId, isCityMall);
-        });
+        //$('.player-modal-details').on('click', function (e) {
+        //    var playerId = $(this).attr('data-player-Id');
+        //    var isCityMall = $(this).attr('data-city-mall');
+        //    StartCompetition.GetModalDetails(playerId, isCityMall);
+        //});
     },
     GetModalDetails: function (playerId, isCityMall) {
         $.ajax({

@@ -21,7 +21,21 @@ namespace CMC.Presentation.Application.DTOs.Competitions
         public TeamDTO WinningTeam { get; set; } = new TeamDTO();
         public int? Team1Score { get; set; }
         public int? Team2Score { get; set; }
-        public int QuestionCount { get; set; }
+        
+        public int RoundCount { get; set; }
+        public int? Round1Points { get; set; }
+        public int? Round1Time { get; set; }
+        public int? Round2Points { get; set; }
+        public int? Round2Time { get; set; }
+        public int? Round3Points { get; set; }
+        public int? Round3Time { get; set; }
+        public int? Round4Points { get; set; }
+        public int? Round4Time { get; set; }
+
+        public int? ParentId { get; set; }
+        public List<int> CategoriesIds { get; set; }
+        public List<LookupModel> Categories { get; set; } = new List<LookupModel>();
+        public List<LookupModel> ParentCompetition { get; set; } = new List<LookupModel>();
         public List<LookupModel> CityMallTeam { get; set; } = new List<LookupModel>();
         public List<LookupModel> OtherTeam { get; set; } = new List<LookupModel>();
         public List<LookupModel> Hosts { get; set; } = new List<LookupModel>();

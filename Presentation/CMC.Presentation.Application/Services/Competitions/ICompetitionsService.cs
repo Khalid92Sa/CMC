@@ -1,5 +1,6 @@
 ﻿using CMC.Kernel.Core.Services;
 using CMC.Kernel.Core.Wrappers;
+using CMC.Kernel.Infrastructure.Caching.Model;
 using CMC.Presentation.Application.DTOs.Competitions;
 using CMC.Presentation.Application.DTOs.Players;
 using System;
@@ -37,7 +38,12 @@ namespace CMC.Presentation.Application.Services.Competitions
         /// <param name="searchCompetitionDTO"></param>
         /// <returns></returns>
         Task<PagedResult<CompetitionListDTO>> GetCompetitions(SearchCompetitionDTO searchCompetitionDTO);
-        
+
+        /// <summary>
+        /// Get Competitions lookup
+        /// </summary>
+        /// <returns></returns>
+        Task<Response<List<LookupModel>>> GetCompetitionsLookup();
         /// <summary>
         /// Get Competition by Id
         /// </summary>
@@ -77,5 +83,21 @@ namespace CMC.Presentation.Application.Services.Competitions
         /// <param name="answerOnQuestionDTO"></param>
         /// <returns></returns>
         Task<Response> AnswerOnQuestions(int competitionId,AnswerOnQuestionDTO answerOnQuestionDTO);
+
+        /// <summary>
+        /// Get Rounds time
+        /// </summary>
+        /// <param name="competionId"></param>
+        /// <param name="round"></param>
+        /// <returns></returns>
+        int GetRoundTime(int competionId, int round);
+
+        /// <summary>
+        /// Get round points
+        /// </summary>
+        /// <param name="competionId"></param>
+        /// <param name="round"></param>
+        /// <returns></returns>
+        int GetRoundPoints(int competionId, int round);
     }
 }

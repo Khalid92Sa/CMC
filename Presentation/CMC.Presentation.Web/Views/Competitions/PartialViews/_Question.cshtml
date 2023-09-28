@@ -1,4 +1,5 @@
-﻿@model CMC.Presentation.Application.DTOs.Competitions.CompetitionStartDTO
+﻿@using CMC.Kernel.Core.Enums;
+@model CMC.Presentation.Application.DTOs.Competitions.CompetitionStartDTO
 
 @{
     ViewData["Title"] = "";
@@ -25,16 +26,11 @@
                     <div class="h4 h4-responsive text-center mt-3 white-color">
                         @{
                             var playerCityMall = Model.TeamCityMall.Where(a => a.IsVSPlayer).SingleOrDefault();
-                            string points = playerCityMall.Points == 0 || playerCityMall.Points > 2 && playerCityMall.Points < 11 ? Localizer["Points"].Value :
-                            playerCityMall.Points == 2 ? Localizer["TwoPoint"].Value : Localizer["Point"].Value;
                         }
                         @playerCityMall.Name
                         <input type="hidden" value="@playerCityMall.Id" class="hdn-cPlayer" />
                     </div>
                     <div class=" d-flex justify-content-center mt-3">
-                     @*   <div class="py-2 px-3 text-center rounded-pill background-accent-color h6 h6-responsive" style="width: fit-content; direction: rtl;">
-                            @playerCityMall.Points @points
-                        </div>*@
                     </div>
                 </div>
                 <div class="animated fadeInUpBig col-md-6" id="card-main" style="visibility:hidden">
@@ -46,29 +42,44 @@
                                 }
                                 @QuestionText
                                 <input type="hidden" id="hdnQuestionId" value="@Model.CurrentQuestion.Id" />
-                                <input type="hidden" id="hdnQuestionPoint" value="@Model.CurrentQuestion.Points" />
+                                <input type="hidden" id="hdnQuestionPoint" value="@Model.RoundPoints" />
                             </div>
                             <div class="row mt-4" id="dv-answers-options">
-                                @foreach (var answer in Model.CurrentQuestion.Answers)
+                                @if (!string.IsNullOrEmpty(Model.CurrentQuestion.ImgPath))
                                 {
-                                    if (answer.IsImg && !string.IsNullOrEmpty(answer.ImgPath))
+                                    string ImgSrc = $"data:image/jpeg;base64,{Model.CurrentQuestion.ImgPath}";
+                                    <div class="col-md-12 d-flex justify-content-center w-100 mb-3">
+                                        <img height="200" style="background-repeat: no-repeat; background-size: cover;" src="@ImgSrc" />
+                                    </div>
+                                }
+
+                                @if(Model.CurrentQuestion.AnswertType == (int)AnswersTypes.Image)
+                                {
+                                    // Images Options
+                                    foreach (var answer in Model.CurrentQuestion.Answers)
                                     {
-                                        <div class="col-6" style="visibility:hidden">
+                                        string ImgSrc = $"data:image/jpeg;base64,{answer.ImgPath}";
+                                        <div class="col-6 mb-3" style="visibility:hidden">
                                             <label class="w-100">
-                                                <div class="p-3 d-flex align-items-center justify-content-between img-answer-options" style="cursor:pointer" data-id="@answer.Id" data-iscorrect="@answer.IsAnswer" onclick="StartCompetition.SelectAnAnswer(this)" data-isimg="true">
+                                                <input type="radio" data-id="@answer.Id" name="investmentExp" class="card-input-element-payment" data-iscorrect="@answer.IsAnswer" onclick="StartCompetition.SelectAnAnswer(this)" />
+                                                <div class="px-5 panel panel-default card-input-image p-3 d-flex align-items-center justify-content-between">
                                                     <div class="d-flex justify-content-center w-100">
-                                                        <img src="@answer.ImgPath" style="width:50%">
+                                                        <img style="background-repeat: no-repeat; background-size: cover;height: 100px !important" src="@ImgSrc" />
                                                     </div>
                                                 </div>
                                             </label>
                                         </div>
                                     }
-                                    else
+                                }
+                                else
+                                {
+                                    // Text Options
+                                    foreach (var answer in Model.CurrentQuestion.Answers)
                                     {
                                         string answerText = IsAr ? answer.TextAr : answer.TextEn;
                                         <div class="col-6" style="visibility:hidden">
                                             <label class="w-100">
-                                                <input type="radio" data-id="@answer.Id" name="investmentExp" class="card-input-element-payment" data-iscorrect="@answer.IsAnswer" onclick="StartCompetition.SelectAnAnswer(this)" data-isimg="false" />
+                                                <input type="radio" data-id="@answer.Id" name="investmentExp" class="card-input-element-payment" data-iscorrect="@answer.IsAnswer" onclick="StartCompetition.SelectAnAnswer(this)" />
                                                 <div class="px-5 panel panel-default card-input-payment p-3 d-flex align-items-center justify-content-between">
                                                     <div class="d-flex justify-content-center w-100">
                                                         @answerText
@@ -78,7 +89,7 @@
                                         </div>
                                     }
                                 }
-                                <input type="hidden" value="" id="hdnAnswerIdImg" />
+                                
                                 <div class="col-md-12 mt-3" id="dv-confirm" style="visibility:hidden">
                                     <div class=" d-flex justify-content-center mt-2 mb-4">
                                         <button class="button" type="button" id="btn-answer">
@@ -89,14 +100,14 @@
                                 </div>
                                 <div class="col-md-12 mt-3 d-none" id="dv-p-timer">
                                     <div class=" d-flex justify-content-center mt-2 mb-4">
-                                        <input type="hidden" id="hdnQuestionTimer" value="@Model.CurrentQuestion.Time" />
+                                        <input type="hidden" id="hdnQuestionTimer" value="@Model.RoundTime" />
                                         <p style="font-size:xx-large;" id="p-timer"></p>
                                     </div>
                                 </div>
                                 <div class="col-md-12 mt-3" id="dv-homePage" style="visibility:hidden">
                                     <div class=" d-flex justify-content-center mt-2 mb-4">
                                         <a class="button" id="btn-goHomePage">
-                                            <span class="button-text">@Localizer["Back"]</span>
+                                            <span class="button-text" id="spn-lbl-goTo">@Localizer["Back"]</span>
                                             <div class="fill-container"></div>
                                         </a>
                                     </div>
@@ -112,16 +123,9 @@
                     <div class="h4 h4-responsive text-center mt-3 white-color">
                         @{
                             var otherPlayer = Model.OtherTeam.Where(a => a.IsVSPlayer).SingleOrDefault();
-                            string otherPoints = otherPlayer.Points == 0 || otherPlayer.Points > 2 && otherPlayer.Points < 11 ? Localizer["Points"].Value :
-                            otherPlayer.Points == 2 ? Localizer["TwoPoint"].Value : Localizer["Point"].Value;
                         }
                         @otherPlayer.Name
                         <input type="hidden" value="@otherPlayer.Id" class="hdn-oPlayer" />
-                    </div>
-                    <div class=" d-flex justify-content-center mt-3">
-                        @*<div class="py-2 px-3 text-center rounded-pill background-accent-color h6 h6-responsive" style="width: fit-content; direction: rtl;">
-                            @otherPlayer.Points @otherPoints
-                        </div>*@
                     </div>
                 </div>
             </div>

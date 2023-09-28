@@ -2779,9 +2779,17 @@ footer {
     stroke: rgba(234, 71, 71, 1);
     
 }
-@keyframes fadeOut {
-    to {
-        opacity: 0;
-        visibility: hidden;
+
+.card-input-image {
+    border: 1px solid #DBDEE0;
+    border-radius: 6px;
+}
+
+    .card-input-image:hover {
+        cursor: pointer;
     }
+
+.card-input-element-payment:checked + .card-input-image {
+    border: 2px solid #9C59FE;
+    background-color: rgba(156, 89, 254, 0.1);
 }

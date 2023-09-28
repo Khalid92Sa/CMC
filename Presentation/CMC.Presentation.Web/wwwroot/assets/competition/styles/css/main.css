@@ -1748,6 +1748,20 @@ a.text-primary:focus, a.text-primary:hover {
   display: none;
 }
 
+.card-input-image {
+  border: 1px solid #DBDEE0;
+  border-radius: 6px;
+}
+
+.card-input-image:hover {
+  cursor: pointer;
+}
+
+.card-input-element-payment:checked + .card-input-image {
+  border: 2px solid #9C59FE;
+  background-color: rgb(234, 71, 71);
+}
+
 .carousel {
   height: 100%;
 }
@@ -2715,11 +2729,4 @@ footer {
 }
 .tc li {
   padding-top: 20px;
-}
-
-@keyframes fadeOut {
-    to {
-        opacity: 0;
-        visibility: hidden;
-    }
 }
