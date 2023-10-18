@@ -2,8 +2,10 @@
 using CMC.Kernel.Core.Controllers;
 using CMC.Kernel.Core.Enums;
 using CMC.Kernel.Core.Infrastructure;
+using CMC.Kernel.Infrastructure.Caching.Model;
 using CMC.Presentation.Application.ActionFilters;
 using CMC.Presentation.Application.DTOs.Competitions;
+using CMC.Presentation.Application.DTOs.Identity;
 using CMC.Presentation.Application.DTOs.Players;
 using CMC.Presentation.Application.Services.Competitions;
 using CMC.Presentation.Application.Services.Identity.Interfaces;
@@ -19,6 +21,7 @@ using Microsoft.Diagnostics.Tracing.Parsers.AspNet;
 using Microsoft.Extensions.Localization;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -35,6 +38,8 @@ namespace CMC.Presentation.Web.Controllers
         readonly IQuestionsService _questionsService;
         readonly IUserService _userService;
         readonly ICompositeViewEngine _viewEngine;
+
+
         public static IHttpContextAccessor _httpContextAccessor { get { return new HttpContextAccessor(); } }
 
         public CompetitionsController(IPlayerService playerService,
@@ -62,7 +67,7 @@ namespace CMC.Presentation.Web.Controllers
         {
             try
             {
-                var loggedInUser = _userService.GetLoggedInUser();
+                var loggedInUser = await _userService.GetLoggedInUser();
                 ViewBag.Hosts = await _userService.GetHosts();
                 ViewData["CanDelete"] = loggedInUser.PermissionCodes.Contains(PermissionCodes.WebCompetitionDelete);
                 ViewData["CanCreate"] = loggedInUser.PermissionCodes.Contains(PermissionCodes.WebCompetitionCreate);
@@ -71,7 +76,8 @@ namespace CMC.Presentation.Web.Controllers
             }
             catch (Exception ex)
             {
-                throw ex;
+                await _logger.LogError(ex, "Index-CompetitionController", null, null, false);
+                return RedirectToAction("Index", "Error");
             }
         }
 
@@ -79,12 +85,20 @@ namespace CMC.Presentation.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllCompetitions([FromQuery] SearchCompetitionDTO searchCompetitionDTO)
         {
-            var loggedInUser = _userService.GetLoggedInUser();
-            if (loggedInUser.GroupCode == GroupsEnum.Host)
-                searchCompetitionDTO.HostId = loggedInUser.Id;
+            try
+            {
+                var loggedInUser = await _userService.GetLoggedInUser();
+                if (loggedInUser.GroupCode == GroupsEnum.Host)
+                    searchCompetitionDTO.HostId = loggedInUser.Id;
 
-            var result = await _competitionsService.GetCompetitions(searchCompetitionDTO);
-            return Json(result);
+                var result = await _competitionsService.GetCompetitions(searchCompetitionDTO);
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogError(ex, "Index-GetAllCompetitions", searchCompetitionDTO, null, false);
+                return Json(new { });
+            }
         }
 
         [RolePermission(PermissionCodes.WebCompetitionCreate)]
@@ -105,6 +119,20 @@ namespace CMC.Presentation.Web.Controllers
                 competitionsDTO.CityMallTeam = cityMallTeam.Data;
                 competitionsDTO.OtherTeam = otherTeam.Data;
                 competitionsDTO.Hosts = await _userService.GetHosts();
+                competitionsDTO.CompetitionQuestionTypes = new List<LookupModel>()
+                {
+                    new LookupModel()
+                    {
+                        Id = (int)CompetitionQuestionType.Rounds,
+                        Name = _localizer["CompeitionQuestionsRound"].Value
+                    },
+                    new LookupModel()
+                    {
+                        Id = (int)CompetitionQuestionType.QuestionsPerPlayer,
+                        Name = _localizer["CompeitionQuestionsPerPlayer"].Value
+                    }
+                };
+
                 competitionsDTO.Categories = await _questionsService.GetCategories();
                 var ParentCompetition = await _competitionsService.GetCompetitionsLookup();
                 if (ParentCompetition.Succeeded)
@@ -118,7 +146,8 @@ namespace CMC.Presentation.Web.Controllers
             }
             catch (Exception ex)
             {
-                throw ex;
+                await _logger.LogError(ex, "Index-CreateCompetition", id, null, false);
+                return RedirectToAction("Index", "Error");
             }
         }
 
@@ -135,6 +164,7 @@ namespace CMC.Presentation.Web.Controllers
             }
             catch (Exception ex)
             {
+                await _logger.LogError(ex, "Index-CreateCompetition", competitionsDTO, null, false);
                 return Json(new { isSuccess = false });
             }
         }
@@ -151,6 +181,7 @@ namespace CMC.Presentation.Web.Controllers
             }
             catch (Exception ex)
             {
+                await _logger.LogError(ex, "Index-DeleteCompetition", id, null, false);
                 return Json(new { isSuccess = false });
             }
         }
@@ -165,18 +196,19 @@ namespace CMC.Presentation.Web.Controllers
                 if (competitionStart.Succeeded)
                 {
 
-                    PartialViewResult otpPartialView = PartialView("PartialViews/_AllPlayers", competitionStart.Data);//_AllPlayers
+                    PartialViewResult otpPartialView = PartialView("PartialViews/_AllPlayers", competitionStart.Data);
                     string viewContent = ConvertViewToString(this.ControllerContext, otpPartialView, _viewEngine);
                     ViewData["Partial"] = viewContent;
 
                     return View(competitionStart.Data);
                 }
                 else
-                    throw new Exception("Error");
+                    return RedirectToAction("Index", "Error");
             }
             catch (Exception ex)
             {
-                throw ex;
+                await _logger.LogError(ex, "Index-StartCompetition", id, null, false);
+                return RedirectToAction("Index", "Error");
             }
         }
 
@@ -192,19 +224,33 @@ namespace CMC.Presentation.Web.Controllers
                     viewScore = data.Data;
 
                 viewScore.Categories = await _questionsService.GetCategories();
-                
+                viewScore.CompetitionQuestionTypes = new List<LookupModel>()
+                {
+                    new LookupModel()
+                    {
+                        Id = (int)CompetitionQuestionType.Rounds,
+                        Name = _localizer["CompeitionQuestionsRound"].Value
+                    },
+                    new LookupModel()
+                    {
+                        Id = (int)CompetitionQuestionType.QuestionsPerPlayer,
+                        Name = _localizer["CompeitionQuestionsPerPlayer"].Value
+                    }
+                };
+
                 return View("View", viewScore);
 
             }
             catch (Exception ex)
             {
-                throw ex;
+                await _logger.LogError(ex, "Index-ViewCompetition", id, null, false);
+                return RedirectToAction("Index", "Error");
             }
         }
 
         [HttpPost]
         [RolePermission(PermissionCodes.WebCompetitionStart)]
-        public IActionResult PlayerVsPlayer(PlayerVsPlayerDTO playerVsPlayerDTO)
+        public async Task<IActionResult> PlayerVsPlayer(PlayerVsPlayerDTO playerVsPlayerDTO)
         {
             try
             {
@@ -227,6 +273,7 @@ namespace CMC.Presentation.Web.Controllers
             }
             catch (Exception ex)
             {
+                await _logger.LogError(ex, "Index-PlayerVsPlayer", playerVsPlayerDTO, null, false);
                 return Json(new { isSuccess = false });
             }
         }
@@ -261,6 +308,7 @@ namespace CMC.Presentation.Web.Controllers
             }
             catch (Exception ex)
             {
+                await _logger.LogError(ex, "Index-GetCategories", null, null, false);
                 return Json(new { isSuccess = false });
             }
         }
@@ -295,6 +343,7 @@ namespace CMC.Presentation.Web.Controllers
             }
             catch (Exception ex)
             {
+                await _logger.LogError(ex, "Index-GetQuestion", categoryId, null, false);
                 return Json(new { isSuccess = false });
             }
         }
@@ -356,115 +405,178 @@ namespace CMC.Presentation.Web.Controllers
 
 
                 //Check if the rounds finished
-                var TotalQuestionPerRound = currentCompetition.TeamCityMall.Count;
-                var PendingQuestionsPerRound = (TotalQuestionPerRound * currentCompetition.CurrentRound) - currentCompetition.TotalCurrentCompetitionQuestions.Count;
-                if(PendingQuestionsPerRound <= 0)
-                {
-                    //Round 1 or 2 .. finished
-                    if(currentCompetition.TotalRound - currentCompetition.CurrentRound > 0)
-                    {
-                        //Still the full competition not finished
-                        IsFinished = false;
-                        ResetPlayers = true;
-                        ContinueRounds = true;
-                    }
-                    else
-                    {
-                        // Rounds finished 
-                        //Check if the points is the same.
-                        if (CityMallPoints == OtherTeamPoints)
-                        {
-                            IsFinished = false;
-                            ContinueRounds = false;
 
-                            ResetPlayers = true;
-                            ScoresAreTheSame = true;
+                if (currentCompetition.IsQuestionsTypeIsRound)
+                {
+                    var TotalQuestionPerRound = currentCompetition.TeamCityMall.Count;
+                    var PendingQuestionsPerRound = (TotalQuestionPerRound * currentCompetition.CurrentRound) - currentCompetition.TotalCurrentCompetitionQuestions.Count;
+                    if (PendingQuestionsPerRound <= 0)
+                    {
+                        if (IsAnswer || (answerOnQuestionDTO.IsCityMallPlayerAnswered && answerOnQuestionDTO.IsOtherPlayerAnswered))
+                        {
+                            //Round 1 or 2 .. finished
+                            if (currentCompetition.TotalRound - currentCompetition.CurrentRound > 0)
+                            {
+                                //Still the full competition not finished
+                                IsFinished = false;
+                                ResetPlayers = true;
+                                ContinueRounds = true;
+                            }
+                            else
+                            {
+                                // Rounds finished 
+                                //Check if the points is the same.
+                                if (CityMallPoints == OtherTeamPoints)
+                                {
+                                    IsFinished = false;
+                                    ContinueRounds = false;
+
+                                    ResetPlayers = true;
+                                    ScoresAreTheSame = true;
+                                }
+                                else
+                                {
+                                    // Full Competition Finished
+                                    IsFinished = true;
+                                    ResetPlayers = false;
+                                    ContinueRounds = false;
+                                }
+                            }
+                        }
+                    }
+
+
+                    if (IsFinished)
+                    {
+                        //Update Competition with Winning team and scores.
+                        CompetitionsDTO competitionsDTO = new CompetitionsDTO();
+                        competitionsDTO.Id = currentCompetition.Id;
+
+                        if (CityMallPoints > OtherTeamPoints)
+                        {
+                            var cityMallPlayer = currentCompetition.TeamCityMall
+                                .OrderByDescending(a => a.Points)
+                                .ThenBy(a => a.Time)
+                                .FirstOrDefault();
+
+                            competitionsDTO.WinningPlayer = new PlayerDTO()
+                            {
+                                Id = cityMallPlayer.Id,
+                                IsEmployee = true
+                            };
                         }
                         else
                         {
-                            // Full Competition Finished
-                            IsFinished = true;
-                            ResetPlayers = false;
-                            ContinueRounds = false;
+                            var OtherWinningPlaye = currentCompetition.OtherTeam
+                                .OrderByDescending(a => a.Points)
+                                .ThenBy(a => a.Time)
+                                .FirstOrDefault();
+
+                            competitionsDTO.WinningPlayer = new PlayerDTO()
+                            {
+                                Id = OtherWinningPlaye.Id,
+                            };
                         }
-                    }
-                }
 
+                        competitionsDTO.Team1Score = CityMallPoints;
+                        competitionsDTO.Team2Score = OtherTeamPoints;
+                        var resultFinishCompetition = await _competitionsService.FinishCompetition(competitionsDTO);
 
-                if (IsFinished)
-                {
-                    //Update Competition with Winning team and scores.
-                    CompetitionsDTO competitionsDTO = new CompetitionsDTO();
-                    competitionsDTO.Id = currentCompetition.Id;
-
-                    if (CityMallPoints > OtherTeamPoints)
-                    {
-                        var cityMallPlayer = currentCompetition.TeamCityMall
-                            .OrderByDescending(a => a.Points)
-                            .ThenBy(a => a.Time)
-                            .FirstOrDefault();
-
-                        competitionsDTO.WinningPlayer = new PlayerDTO()
-                        {
-                            Id = cityMallPlayer.Id,
-                            IsEmployee = true
-                        };
+                        PartialViewResult otpPartialView = PartialView("PartialViews/_FullScoreTeams", currentCompetition);
+                        viewContent = ConvertViewToString(this.ControllerContext, otpPartialView, _viewEngine);
                     }
                     else
                     {
-                        var OtherWinningPlaye = currentCompetition.OtherTeam
-                            .OrderByDescending(a => a.Points)
-                            .ThenBy(a => a.Time)
-                            .FirstOrDefault();
-
-                        competitionsDTO.WinningPlayer = new PlayerDTO()
-                        {
-                            Id = OtherWinningPlaye.Id,
-                        };
+                        PartialViewResult otpPartialView = PartialView("PartialViews/_AllPlayers", currentCompetition);
+                        viewContent = ConvertViewToString(this.ControllerContext, otpPartialView, _viewEngine);
                     }
 
-                    competitionsDTO.Team1Score = CityMallPoints;
-                    competitionsDTO.Team2Score = OtherTeamPoints;
-                    var resultFinishCompetition = await _competitionsService.FinishCompetition(competitionsDTO);
 
-                    PartialViewResult otpPartialView = PartialView("PartialViews/_FullScoreTeams", currentCompetition);
-                    viewContent = ConvertViewToString(this.ControllerContext, otpPartialView, _viewEngine);
+
+                    //If Contimue rounds, then update the time.
+                    string nextRoundText = "";
+                    if (ContinueRounds)
+                    {
+                        currentCompetition.CurrentRound = (currentCompetition.CurrentRound + 1);
+                        currentCompetition.RoundTime = _competitionsService.GetRoundTime(currentCompetition.Id, currentCompetition.CurrentRound);
+                        currentCompetition.RoundPoints = _competitionsService.GetRoundPoints(currentCompetition.Id, currentCompetition.CurrentRound);
+                        nextRoundText = $"{_localizer["MoveToRound"].Value} {_localizer[$"Round{currentCompetition.CurrentRound}"].Value}";
+                    }
+                    else if (ScoresAreTheSame)
+                        nextRoundText = _localizer["ContinueRound"].Value;
+
+                    var competitonString = JsonConvert.SerializeObject(currentCompetition);
+                    _httpContextAccessor.HttpContext.Session.SetString("CompetitionStart", competitonString);
+
+                    return Json(new { isSuccess = true, correct = IsAnswer, partial = viewContent, finished = IsFinished, reset = ResetPlayers, continueRound = ContinueRounds, roundText = nextRoundText, isFinalComp = currentCompetition.IsFinalCompetition });
                 }
                 else
                 {
-                    PartialViewResult otpPartialView = PartialView("PartialViews/_AllPlayers", currentCompetition);
-                    viewContent = ConvertViewToString(this.ControllerContext, otpPartialView, _viewEngine);
+                    // Questions for each player
+                    var totalQuestionToBeAnswered = (currentCompetition.QuestionPerPlayer * currentCompetition.TeamCityMall.Count);
+                    bool allCityMallPlayersGotQuestions = currentCompetition.TeamCityMall.All(player => player.competitonQuestions.Count >= totalQuestionToBeAnswered);
+                    bool allOtherPlayersGotQuestions = currentCompetition.OtherTeam.All(player => player.competitonQuestions.Count >= totalQuestionToBeAnswered);
+                    string getScoresView = "";
+                    bool gotToScore = false;
+
+
+                    if(!allCityMallPlayersGotQuestions || !allOtherPlayersGotQuestions)
+                    {
+                        //still number of question not completed for both players
+                        PartialViewResult otpPartialView = PartialView("PartialViews/_AllPlayers", currentCompetition);
+                        viewContent = ConvertViewToString(this.ControllerContext, otpPartialView, _viewEngine);
+                    }
+                    else if( (allCityMallPlayersGotQuestions && allOtherPlayersGotQuestions) && (CityMallPoints == OtherTeamPoints))
+                    {
+                        // Both players answers and both has same points
+                        ResetPlayers = true;
+                        PartialViewResult otpPartialView = PartialView("PartialViews/_AllPlayers", currentCompetition);
+                        viewContent = ConvertViewToString(this.ControllerContext, otpPartialView, _viewEngine);
+                    }
+                    else
+                    {
+
+                        // option to show Final score
+                        gotToScore = true;
+                        PartialViewResult otpPartialViewScore = PartialView("PartialViews/_FullScoreTeams", currentCompetition);
+                        getScoresView = ConvertViewToString(this.ControllerContext, otpPartialViewScore, _viewEngine);
+
+
+
+                        ResetPlayers = true;
+                        PartialViewResult otpPartialView = PartialView("PartialViews/_AllPlayers", currentCompetition);
+                        viewContent = ConvertViewToString(this.ControllerContext, otpPartialView, _viewEngine);
+                    }
+
+
+                    var competitonString = JsonConvert.SerializeObject(currentCompetition);
+                    _httpContextAccessor.HttpContext.Session.SetString("CompetitionStart", competitonString);
+
+                    return Json(new
+                    {
+                        isSuccess = true,
+                        correct = IsAnswer,
+                        reset = ResetPlayers,
+                        partial = viewContent,
+                        isScoreView = gotToScore,
+                        scorePartial = getScoresView,
+                        isFinalComp = currentCompetition.IsFinalCompetition,
+                        IsAllPlayerGotQuestions = (allCityMallPlayersGotQuestions && allOtherPlayersGotQuestions),
+                        isCityMallFullQuestion = allCityMallPlayersGotQuestions,
+                        isOtherPlayerFullQuestion = allOtherPlayersGotQuestions
+                    });
                 }
-
-
-
-                //If Contimue rounds, then update the time.
-                string nextRoundText = "";
-                if (ContinueRounds)
-                {
-                    currentCompetition.CurrentRound = (currentCompetition.CurrentRound + 1);
-                    currentCompetition.RoundTime = _competitionsService.GetRoundTime(currentCompetition.Id, currentCompetition.CurrentRound);
-                    currentCompetition.RoundPoints = _competitionsService.GetRoundPoints(currentCompetition.Id, currentCompetition.CurrentRound);
-                    nextRoundText = $"{_localizer["MoveToRound"].Value} {_localizer[$"Round{currentCompetition.CurrentRound}"].Value}";
-                }
-                else if (ScoresAreTheSame)
-                    nextRoundText = _localizer["ContinueRound"].Value;
-
-                var competitonString = JsonConvert.SerializeObject(currentCompetition);
-                _httpContextAccessor.HttpContext.Session.SetString("CompetitionStart", competitonString);
-
-                return Json(new { isSuccess = true, correct = IsAnswer, partial = viewContent, finished = IsFinished, reset = ResetPlayers, continueRound = ContinueRounds,roundText = nextRoundText });
-
             }
             catch (Exception ex)
             {
+                await _logger.LogError(ex, "Index-AnswerQuestion", answerOnQuestionDTO, null, false);
                 return Json(new { isSuccess = false });
             }
         }
 
         [HttpGet]
         [RolePermission(PermissionCodes.WebCompetitionStart)]
-        public IActionResult GetFullScore()
+        public async Task<IActionResult> GetFullScore()
         {
             try
             {
@@ -477,13 +589,14 @@ namespace CMC.Presentation.Web.Controllers
             }
             catch (Exception ex)
             {
+                await _logger.LogError(ex, "Index-GetFullScore", null, null, false);
                 return Json(new { isSuccess = false });
             }
         }
 
         [HttpGet]
         [RolePermission(PermissionCodes.WebCompetitionStart)]
-        public IActionResult GetScoreDetails()
+        public async Task<IActionResult> GetScoreDetails()
         {
             try
             {
@@ -494,13 +607,14 @@ namespace CMC.Presentation.Web.Controllers
             }
             catch (Exception ex)
             {
+                await _logger.LogError(ex, "Index-GetScoreDetails", null, null, false);
                 return Json(new { isSuccess = false });
             }
         }
 
         [HttpGet]
         [RolePermission(PermissionCodes.WebCompetitionCreate,PermissionCodes.WebCompetitionStart)]
-        public IActionResult GetModalPlayer(int playerId,bool isCityMall)
+        public async Task<IActionResult> GetModalPlayer(int playerId,bool isCityMall)
         {
             try
             {
@@ -532,8 +646,80 @@ namespace CMC.Presentation.Web.Controllers
 
                     PartialViewResult otpPartialView = PartialView("PartialViews/_PlayerScoreModal", competitionsPlayerDTO);
                     string viewContent = ConvertViewToString(this.ControllerContext, otpPartialView, _viewEngine);
-                    return Json(new { isSuccess = true, partial = viewContent, });
+                    return Json(new { isSuccess = true, partial = viewContent });
                 }
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogError(ex, "Index-GetModalPlayer", $"PlayerId:{playerId} - isCityMall:{isCityMall}", null, false);
+                return Json(new { isSuccess = false });
+            }
+        }
+
+
+        [HttpGet]
+        [RolePermission(PermissionCodes.WebCompetitionCreate, PermissionCodes.WebCompetitionStart)]
+        public async Task<IActionResult> GetPlayerScoreDetails(int competitionId,int playerId)
+        {
+            try
+            {
+                var result = await _competitionsService.GetPlayerScoreDetails(competitionId, playerId);
+                if (!result.Succeeded)
+                    return RedirectToAction("Index", "Error");
+
+                return View("PlayerScoreDetails", result.Data);
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogError(ex, "Index-GetPlayerScoreDetails", $"competitionId:{competitionId} - PlayerId:{playerId}", null, false);
+                return RedirectToAction("Index", "Error");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> FinishFinalCompetition()
+        {
+            try
+            {
+                var currentCompetition = JsonConvert.DeserializeObject<CompetitionStartDTO>(_httpContextAccessor.HttpContext.Session.GetString("CompetitionStart"));
+
+                //Update Competition with Winning team and scores.
+                CompetitionsDTO competitionsDTO = new CompetitionsDTO();
+                competitionsDTO.Id = currentCompetition.Id;
+                int CityMallPoints = currentCompetition.TeamCityMall.Sum(a => a.Points);
+                int OtherTeamPoints = currentCompetition.OtherTeam.Sum(a => a.Points);
+
+                if (CityMallPoints > OtherTeamPoints)
+                {
+                    var cityMallPlayer = currentCompetition.TeamCityMall
+                        .OrderByDescending(a => a.Points)
+                        .ThenBy(a => a.Time)
+                        .FirstOrDefault();
+
+                    competitionsDTO.WinningPlayer = new PlayerDTO()
+                    {
+                        Id = cityMallPlayer.Id,
+                        IsEmployee = true
+                    };
+                }
+                else
+                {
+                    var OtherWinningPlaye = currentCompetition.OtherTeam
+                        .OrderByDescending(a => a.Points)
+                        .ThenBy(a => a.Time)
+                        .FirstOrDefault();
+
+                    competitionsDTO.WinningPlayer = new PlayerDTO()
+                    {
+                        Id = OtherWinningPlaye.Id,
+                    };
+                }
+
+                competitionsDTO.Team1Score = CityMallPoints;
+                competitionsDTO.Team2Score = OtherTeamPoints;
+                var resultFinishCompetition = await _competitionsService.FinishCompetition(competitionsDTO);
+
+                return Json(new { isSuccess = true });
             }
             catch (Exception ex)
             {

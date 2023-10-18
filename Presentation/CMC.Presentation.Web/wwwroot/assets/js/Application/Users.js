@@ -126,11 +126,14 @@ var Users = {
                 "autoWidth": true,
                 "render": function (Id, type, row) {
                     var div = document.createElement('div');
-                    if (CanCreate && row.id != 1) {
+                    if (CanCreate /*&& row.id != 1*/) {
                         var btnUpdate = document.createElement('a');
                         $(btnUpdate).attr('id', 'btnUpdate_' + row.id);
                         $(btnUpdate).attr('title', globalResources.Edit);
                         $(btnUpdate).attr('onclick', 'Users.EditUser(this)');
+                        if (row.id == 1) {
+                            $(btnUpdate).attr('style', 'visibility:hidden');
+                        }
                         $(btnUpdate).addClass('mx-1 action bg-accent');
                         var pen = document.createElement('i');
                         $(pen).addClass('fas fa-pen');
@@ -139,11 +142,14 @@ var Users = {
                     }
                    
 
-                    if (CanDelete && row.id != 1) {
+                    if (CanDelete /*&& row.id != 1*/) {
                         var btndelete = document.createElement('a');
                         $(btndelete).attr('id', 'btndelete_' + row.id);
                         $(btndelete).attr('title', globalResources.Delete);
                         $(btndelete).attr('onclick', 'Users.DeleteUser(this)');
+                        if (row.id == 1) {
+                            $(btndelete).attr('style', 'visibility:hidden');
+                        }
                         $(btndelete).addClass('mx-1 action bg-danger');
                         var pen = document.createElement('i');
                         $(pen).addClass('fas fa-trash');
@@ -217,7 +223,6 @@ var Users = {
             confirmButtonText: globalResources.Delete,
             cancelButtonText: globalResources.Cancel,
         }).then((result) => {
-            debugger;
             if (result.isConfirmed) {
                 $.ajax({
                     type: 'DELETE',

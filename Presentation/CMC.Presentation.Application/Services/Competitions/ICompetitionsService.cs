@@ -99,5 +99,13 @@ namespace CMC.Presentation.Application.Services.Competitions
         /// <param name="round"></param>
         /// <returns></returns>
         int GetRoundPoints(int competionId, int round);
+
+        /// <summary>
+        /// Get Score details for player
+        /// </summary>
+        /// <param name="competitionId"></param>
+        /// <param name="playerId"></param>
+        /// <returns></returns>
+        Task<Response<CompetitionsPlayerDTO>> GetPlayerScoreDetails(int competitionId,int playerId);
     }
 }

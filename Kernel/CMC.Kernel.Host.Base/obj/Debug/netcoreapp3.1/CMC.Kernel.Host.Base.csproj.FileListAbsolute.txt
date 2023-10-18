@@ -841,6 +841,7 @@ C:\Users\khalids\Desktop\CMC\Kernel\CMC.Kernel.Host.Base\obj\Debug\netcoreapp3.1
 C:\Users\khalids\Desktop\CMC\Kernel\CMC.Kernel.Host.Base\obj\Debug\netcoreapp3.1\CMC.Kernel.Host.Base.csproj.CopyComplete
 C:\Users\khalids\Desktop\CMC\Kernel\CMC.Kernel.Host.Base\obj\Debug\netcoreapp3.1\CMC.Kernel.Host.Base.dll
 C:\Users\khalids\Desktop\CMC\Kernel\CMC.Kernel.Host.Base\obj\Debug\netcoreapp3.1\CMC.Kernel.Host.Base.pdb
+D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Host.Base\bin\Debug\netcoreapp3.1\CMC.Kernel.Domain.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Host.Base\bin\Debug\netcoreapp3.1\sharedsettings.json
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Host.Base\bin\Debug\netcoreapp3.1\CMC.Kernel.Host.Base.deps.json
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Host.Base\bin\Debug\netcoreapp3.1\CMC.Kernel.Host.Base.dll
@@ -1099,7 +1100,6 @@ D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Host.Base\bin\Debug\netcoreapp3.1\refs
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Host.Base\bin\Debug\netcoreapp3.1\refs\System.Xml.XPath.XDocument.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Host.Base\bin\Debug\netcoreapp3.1\refs\WindowsBase.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Host.Base\bin\Debug\netcoreapp3.1\CMC.Kernel.Core.dll
-D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Host.Base\bin\Debug\netcoreapp3.1\CMC.Kernel.Domain.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Host.Base\bin\Debug\netcoreapp3.1\CMC.Kernel.Infrastructure.Caching.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Host.Base\bin\Debug\netcoreapp3.1\CMC.Kernel.Infrastructure.Logging.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Host.Base\bin\Debug\netcoreapp3.1\CMC.Kernel.Infrastructure.Persistence.dll

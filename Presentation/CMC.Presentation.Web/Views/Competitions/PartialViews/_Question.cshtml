@@ -26,11 +26,19 @@
                     <div class="h4 h4-responsive text-center mt-3 white-color">
                         @{
                             var playerCityMall = Model.TeamCityMall.Where(a => a.IsVSPlayer).SingleOrDefault();
+                            string points = playerCityMall.Points == 0 || playerCityMall.Points > 2 && playerCityMall.Points < 11 ? Localizer["Points"].Value :
+                            playerCityMall.Points == 2 ? Localizer["TwoPoint"].Value : Localizer["Point"].Value;
                         }
                         @playerCityMall.Name
                         <input type="hidden" value="@playerCityMall.Id" class="hdn-cPlayer" />
                     </div>
                     <div class=" d-flex justify-content-center mt-3">
+                        @if (Model.IsFinalCompetition)
+                        {
+                            <div class="py-2 px-3 text-center rounded-pill background-accent-color h6 h6-responsive" style="width: fit-content; direction: rtl;">
+                                @playerCityMall.Points @points
+                            </div>
+                        }
                     </div>
                 </div>
                 <div class="animated fadeInUpBig col-md-6" id="card-main" style="visibility:hidden">
@@ -43,6 +51,7 @@
                                 @QuestionText
                                 <input type="hidden" id="hdnQuestionId" value="@Model.CurrentQuestion.Id" />
                                 <input type="hidden" id="hdnQuestionPoint" value="@Model.RoundPoints" />
+                                <input type="hidden" id="hdnIsFinalCompetition" value="@Model.IsFinalCompetition" />
                             </div>
                             <div class="row mt-4" id="dv-answers-options">
                                 @if (!string.IsNullOrEmpty(Model.CurrentQuestion.ImgPath))
@@ -112,6 +121,14 @@
                                         </a>
                                     </div>
                                 </div>
+                                <div class="col-md-12 mt-3" id="dv-viewScore" style="visibility:hidden">
+                                    <div class=" d-flex justify-content-center mt-2 mb-4">
+                                        <a class="button" id="btn-goToScore">
+                                            <span class="button-text" id="spn-lbl-goToScore">@Localizer["Back"]</span>
+                                            <div class="fill-container"></div>
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -123,9 +140,19 @@
                     <div class="h4 h4-responsive text-center mt-3 white-color">
                         @{
                             var otherPlayer = Model.OtherTeam.Where(a => a.IsVSPlayer).SingleOrDefault();
+                            string otherPoints = otherPlayer.Points == 0 || otherPlayer.Points > 2 && otherPlayer.Points < 11 ? Localizer["Points"].Value :
+                            otherPlayer.Points == 2 ? Localizer["TwoPoint"].Value : Localizer["Point"].Value;
                         }
                         @otherPlayer.Name
                         <input type="hidden" value="@otherPlayer.Id" class="hdn-oPlayer" />
+                    </div>
+                    <div class=" d-flex justify-content-center mt-3">
+                        @if (Model.IsFinalCompetition)
+                        {
+                            <div class="py-2 px-3 text-center rounded-pill background-accent-color h6 h6-responsive" style="width: fit-content; direction: rtl;">
+                                @otherPlayer.Points @otherPoints
+                            </div>
+                        }
                     </div>
                 </div>
             </div>

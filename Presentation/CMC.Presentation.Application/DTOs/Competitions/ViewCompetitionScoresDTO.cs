@@ -15,6 +15,11 @@ namespace CMC.Presentation.Application.DTOs.Competitions
         public DateTime? EndDate { get; set; }
 
 
+        public int CompettionQuestionTypeId { get; set; }
+        public string CompettionQuestionType { get; set; }
+        public int? QuestionForEachPlayer { get; set; }
+        public bool IsFinalCompetition { get; set; }
+
         public int RoundCount { get; set; }
         public int? Round1Points { get; set; }
         public int? Round1Time { get; set; }
@@ -38,7 +43,7 @@ namespace CMC.Presentation.Application.DTOs.Competitions
 
         public List<int> CategoriesIds { get; set; }
         public List<LookupModel> Categories { get; set; }
-
+        public List<LookupModel> CompetitionQuestionTypes { get; set; } = new List<LookupModel>();
         public List<CompetitionsPlayerDTO> TeamCityMall { get; set; } = new List<CompetitionsPlayerDTO>();
         public List<CompetitionsPlayerDTO> OtherTeam { get; set; } = new List<CompetitionsPlayerDTO>();
 

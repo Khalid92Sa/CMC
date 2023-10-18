@@ -19,6 +19,9 @@ namespace CMC.Presentation.Application.DTOs.Competitions
         public QuestionVM CurrentQuestion { get; set; } = new QuestionVM();
         public int TotalQuestion { get; set; }
         public int TotalRound { get; set; }
+        public bool IsFinalCompetition { get; set; }
+        public bool IsQuestionsTypeIsRound { get; set; }
+        public int QuestionPerPlayer { get; set; }
         public int CurrentRound { get; set; }
         public int RoundTime { get; set; }
         public int RoundPoints { get; set; }
@@ -41,9 +44,12 @@ namespace CMC.Presentation.Application.DTOs.Competitions
         public int? AnswerId { get; set; }
         public string QuestionText { get; set; }
         public string QuestionImg { get; set; }
+        public bool IsQuestionImg { get; set; }
         public string AnswerText { get; set; }
         public string AnswerImg { get; set; }
+        public bool IsAnswerImg { get; set; }
         public bool? IsCorrectAnswer { get; set; }
         public int? Points { get; set; }
+        public double? Time { get; set; }
     }
 }

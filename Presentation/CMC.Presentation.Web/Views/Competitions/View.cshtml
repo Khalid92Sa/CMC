@@ -53,20 +53,29 @@
                                 </select>
                             </div>
                             <div class="form-group col-md-3">
+                                <label class="">@Localizer["IfCompetitionBasedOnAnotherCompetition"]</label>
+                                <input class="form-control" type="text" asp-for="ParentCompetitionName" autocomplete="off" disabled="disabled" readonly="readonly" />
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label class="">@Localizer["CompetitionQuestionsType"]</label>
+                                <input type="hidden" value="@Model.CompettionQuestionTypeId" id="hdnCompetitionQuestionType" />
+                                <input class="form-control" type="text" asp-for="CompettionQuestionType" autocomplete="off" disabled="disabled" readonly="readonly" />
+                            </div>
+                            <div class="form-group col-md-3 dvRoundCount">
                                 <label class="requiredLabel">@Localizer["RoundCount"]</label>
                                 <input class="form-control" type="text" asp-for="RoundCount" autocomplete="off" disabled="disabled" readonly="readonly" />
                             </div>
-                            <div class="form-group col-md-3">
-                                <label class="">@Localizer["IfCompetitionBasedOnAnotherCompetition"]</label>
-                                <input class="form-control" type="text" asp-for="ParentCompetitionName" autocomplete="off" disabled="disabled" readonly="readonly" />
+                            <div class="form-group col-md-3 d-none" id="dvQuestionCount">
+                                <label class="requiredLabel">@Localizer["QuestionCount"]</label>
+                                <input class="form-control" type="text" asp-for="QuestionForEachPlayer" disabled="disabled" readonly="readonly" />
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="mb-2">
+                <div class="mb-2 dvRoundCount">
                     <h6 class="mb-3">@Localizer["CalculatingRounds"]</h6>
                 </div>
-                <div class="mb-2 round-1">
+                <div class="mb-2 round-1 dvRoundCount">
                     <h6 class="mb-3">@Localizer["Round1"]</h6>
                 </div>
                 <div class="mb-2 round-1">
@@ -163,7 +172,7 @@
                         @foreach (var player in Model.TeamCityMall)
                         {
                             string playerOrder = Localizer[$"Player{counter}"].Value;
-                            <div class="form-group col-md-3" data-player-Id="@player.Id" style="cursor:pointer">
+                            <div class="form-group col-md-3" data-player-Id="@player.Id" data-compId="@Model.Id" style="cursor:pointer" onclick="CompetitionForm.ViewPlayerScore(this)">
                                 <label class="">@playerOrder</label>
                                 <input class="form-control" type="text" value="@player.Name" disabled="disabled" readonly="readonly" />
                             </div>
@@ -186,7 +195,7 @@
                         @foreach (var player in Model.OtherTeam)
                         {
                             string playerOrder = Localizer[$"Player{counterOther}"].Value;
-                            <div class="form-group col-md-3" data-player-Id="@player.Id" style="cursor:pointer">
+                            <div class="form-group col-md-3" data-player-Id="@player.Id" data-compId="@Model.Id" style="cursor:pointer" onclick="CompetitionForm.ViewPlayerScore(this)">
                                 <label class="">@playerOrder</label>
                                 <input class="form-control" type="text" value="@player.Name" disabled="disabled" readonly="readonly" />
                             </div>
@@ -202,10 +211,14 @@
     </div>
 </div>
 
+<div class="modal fade" id="modal-data-player-details" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+</div>
+
 <!-- end row -->
 <script src="~/assets/js/Application/Competition.js"></script>
 
 <script>
+    var IsViewCompetition = true;
     CompetitionForm.OnLoad();
     GeneralClass.ActivationSubMenuItem('#lnkCompetitions', '#lnkCompetitions');
     GeneralClass.ActivationSubMenuItem('#lnkCompetitions2', '#lnkCompetitions2');

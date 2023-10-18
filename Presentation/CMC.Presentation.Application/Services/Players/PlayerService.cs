@@ -164,7 +164,7 @@ namespace CMC.Presentation.Application.Services.Players
             }
             catch (Exception ex)
             {
-                await _logger.LogError(ex, "GetPlayers", null, null, false);
+                await _logger.LogError(ex, "GetPlayers", searchPlayers, null, false);
                 return new PagedResult<PlayerDTO>
                 {
                     Message = ex.Message,
@@ -209,6 +209,7 @@ namespace CMC.Presentation.Application.Services.Players
             }
             catch (Exception ex)
             {
+                await _logger.LogError(ex, "GetPlayer", id, null, false);
                 return new Response<PlayerDTO>
                 {
                     Message = ex.InnerException != null ? ex.InnerException.Message : ex.Message
@@ -245,6 +246,7 @@ namespace CMC.Presentation.Application.Services.Players
             }
             catch (Exception ex)
             {
+                await _logger.LogError(ex, "DeletePlayer", id, null, false);
                 return new Response()
                 {
                     Message = ex.InnerException != null ? ex.InnerException.Message : ex.Message
@@ -278,6 +280,7 @@ namespace CMC.Presentation.Application.Services.Players
             }
             catch (Exception ex)
             {
+                await _logger.LogError(ex, "GetPlayers", isCityMall, null, false);
                 return new Response<List<LookupModel>>()
                 {
                     Succeeded = false,

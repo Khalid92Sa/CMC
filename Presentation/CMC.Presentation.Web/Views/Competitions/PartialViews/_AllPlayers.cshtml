@@ -31,6 +31,14 @@
                             <div class="h4 h4-responsive text-center mt-3 player-name">
                                 @player.Name
                             </div>
+                            @if (Model.IsFinalCompetition)
+                            {
+                                <div class=" d-flex justify-content-center mt-2">
+                                    <div class="py-2 px-3 text-center rounded-pill background-accent-color h6 h6-responsive" style="width:fit-content; direction:rtl;">
+                                        @player.Points @points
+                                    </div>
+                                </div>
+                            }
                         </div>
                     }
                 </div>
@@ -56,6 +64,14 @@
                                 <div class="h4 h4-responsive text-center mt-3 white-color player-name">
                                     @player.Name
                                 </div>
+                                @if (Model.IsFinalCompetition)
+                                {
+                                    <div class=" d-flex justify-content-center mt-2">
+                                        <div class="py-2 px-3 text-center rounded-pill background-accent-color h6 h6-responsive" style="width: fit-content; direction: rtl;">
+                                            @player.Points @points
+                                        </div>
+                                    </div>
+                                }
                             </div>
                         }
                     </div>
@@ -65,5 +81,6 @@
     </div>
 </div>
 <script>
-    var isFinalCompetition = '@Model.TeamCityMall.Count' == '1';
+    var isFinalCompetition = '@Model.IsFinalCompetition.ToString().ToLower()' == 'true';
+    var isRoundCompetition = '@Model.IsQuestionsTypeIsRound.ToString().ToLower()' == 'true';
 </script>

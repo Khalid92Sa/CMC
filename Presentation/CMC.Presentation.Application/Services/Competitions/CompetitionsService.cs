@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using CMC.Kernel.Core.Enums;
+﻿using CMC.Kernel.Core.Enums;
 using CMC.Kernel.Core.Helpers;
 using CMC.Kernel.Core.Infrastructure;
 using CMC.Kernel.Core.Persistence;
@@ -9,13 +8,11 @@ using CMC.Kernel.Domain.Entities;
 using CMC.Kernel.Infrastructure.Caching.Model;
 using CMC.Presentation.Application.DTOs.Competitions;
 using CMC.Presentation.Application.DTOs.Questions;
-using CMC.Presentation.Application.Helpers;
-using CMC.Presentation.Application.Services.Identity.Interfaces;
-using CMC.Presentation.Application.Services.Players;
 using CMC.Presentation.Application.Services.Questions;
 using CMC.Presentation.Domain.Entities;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Newtonsoft.Json;
@@ -35,7 +32,8 @@ namespace CMC.Presentation.Application.Services.Competitions
         readonly IRepository<CompetitionQuestion> _compQuestRepository;
         readonly IRepository<Attachment> _attachmentRepository;
         readonly IQuestionsService _questionsService;
-        readonly IStringLocalizer<PlayerService> _localizer;
+        readonly IRepository<Player> _playerRepository;
+        readonly IStringLocalizer<CompetitionsService> _localizer;
         public static IHttpContextAccessor _httpContextAccessor { get { return new HttpContextAccessor(); } }
 
         public CompetitionsService(
@@ -43,16 +41,18 @@ namespace CMC.Presentation.Application.Services.Competitions
             IRepository<Competition> competitionRepository,
             IRepository<CompetitionQuestion> compQuestRepository,
             IRepository<Team> teamRepository,
+            IRepository<Player> playerRepository,
             IRepository<Attachment> attachmentRepository,
             IQuestionsService questionsService,
             IUnitOfWork unitOfWork,
-            IStringLocalizer<PlayerService> localizer,
+            IStringLocalizer<CompetitionsService> localizer,
             IValidatorFactory validatorFactory) : base(validatorFactory, unitOfWork)
         {
             _logger = logger;
             _localizer = localizer;
             _competitionRepository = competitionRepository;
             _teamRepository = teamRepository;
+            _playerRepository = playerRepository;
             _attachmentRepository = attachmentRepository;
             _compQuestRepository = compQuestRepository;
             _questionsService = questionsService;
@@ -111,12 +111,24 @@ namespace CMC.Presentation.Application.Services.Competitions
                 competition.Name = competitionsDTO.Name;
                 competition.StartDate = competitionsDTO.StartDate;
                 competition.HostID = competitionsDTO.HostID;
+                competition.IsFinalCompetition = competitionsDTO.IsFinalCompetition;
+
+                competition.CompetitionQuestionType = competitionsDTO.CompettionQuestionType;
                 if (competitionsDTO.CategoriesIds.Count > 0)
                     competition.CategoriesIds = string.Join(",", competitionsDTO.CategoriesIds);
                 else
                     competition.CategoriesIds = null;
 
                 competition.RoundCount = competitionsDTO.RoundCount;
+                if (competitionsDTO.CompettionQuestionType == (int)CompetitionQuestionType.QuestionsPerPlayer)
+                {
+                    competitionsDTO.RoundCount = 1;
+                    competition.QuestionForEachPlayer = competitionsDTO.QuestionForEachPlayer;
+                }
+                else
+                    competition.QuestionForEachPlayer = null;
+
+
                 for (int i = 1; i <= 4; i++)
                 {
                     int roundNumber = i;
@@ -272,6 +284,7 @@ namespace CMC.Presentation.Application.Services.Competitions
             }
             catch (Exception ex)
             {
+                await _logger.LogError(ex, "FinishCompetition", competitionsDTO, null, false);
                 return new Response()
                 {
                     Message = ex.Message
@@ -347,6 +360,7 @@ namespace CMC.Presentation.Application.Services.Competitions
             }
             catch (Exception ex)
             {
+                await _logger.LogError(ex, "GetCompetitionsLookup", null, null, false);
                 throw;
             }
         }
@@ -390,12 +404,13 @@ namespace CMC.Presentation.Application.Services.Competitions
             }
             catch (Exception ex)
             {
-                await _logger.LogError(ex, "GetCompetitions", null, null, false);
+                await _logger.LogError(ex, "GetCompetitions_Search", searchCompetitionDTO, null, false);
                 return new PagedResult<CompetitionListDTO>
                 {
                     Message = ex.Message,
                     Succeeded = false,
-                    StatusCode = (int)HttpStatusCode.BadRequest
+                    StatusCode = (int)HttpStatusCode.BadRequest,
+                    Data = new List<CompetitionListDTO>()
                 };
             }
         }
@@ -425,9 +440,12 @@ namespace CMC.Presentation.Application.Services.Competitions
                             Name = competition.Name,
                             StartDate = competition.StartDate,
                             HostID = competition.HostID,
-                            CategoriesIds = !string.IsNullOrEmpty(competition.CategoriesIds) ? 
+                            CategoriesIds = !string.IsNullOrEmpty(competition.CategoriesIds) ?
                                             competition.CategoriesIds.Split(',').Select(int.Parse).ToList() : new List<int>() { 0 },
                             RoundCount = competition.RoundCount,
+                            CompettionQuestionType = competition.CompetitionQuestionType,
+                            IsFinalCompetition = competition.IsFinalCompetition ?? false,
+                            QuestionForEachPlayer = competition.QuestionForEachPlayer,
                             ParentId = competition.ParentId,
                             Round1Points = competition.Round1Points,
                             Round1Time = competition.Round1Time,
@@ -466,6 +484,7 @@ namespace CMC.Presentation.Application.Services.Competitions
             }
             catch (Exception ex)
             {
+                await _logger.LogError(ex, "GetCompetition_Id", Id, null, false);
                 throw ex;
             }
         }
@@ -512,6 +531,10 @@ namespace CMC.Presentation.Application.Services.Competitions
                     response.TotalWinningPlayerScore = competition.CompetitionQuestions.Where(a => a.PlayerId == competition.WinningPlayerId.Value).Sum(a => a.Point).Value;
                     response.CategoriesIds = !string.IsNullOrEmpty(competition.CategoriesIds) ?
                                             competition.CategoriesIds.Split(',').Select(int.Parse).ToList() : new List<int>() { 0 };
+                    response.IsFinalCompetition = competition.IsFinalCompetition ?? false;
+                    response.CompettionQuestionTypeId = competition.CompetitionQuestionType ?? 0;
+                    response.CompettionQuestionType = competition.CompetitionQuestionType == (int)CompetitionQuestionType.Rounds ? _localizer["CompeitionQuestionsRound"].Value : _localizer["CompeitionQuestionsPerPlayer"].Value;
+                    response.QuestionForEachPlayer = competition.QuestionForEachPlayer;
 
                     response.RoundCount = competition.RoundCount;
                     response.ParentCompetitionName = competition.ParentId.HasValue ? competition.Parent.Name : _localizer["None"].Value;
@@ -623,6 +646,7 @@ namespace CMC.Presentation.Application.Services.Competitions
             }
             catch (Exception ex)
             {
+                await _logger.LogError(ex, "ViewCompetitionScore", Id, null, false);
                 throw ex;
             }
         }
@@ -664,7 +688,9 @@ namespace CMC.Presentation.Application.Services.Competitions
                         LatestCompeitionsScore latestCompeitionsScore = new LatestCompeitionsScore();
                         latestCompeitionsScore.CompeititonName = competition.Name;
                         latestCompeitionsScore.EndDate = competition.EndDate.Value;
-                        latestCompeitionsScore.WinningTeamName = competition.WinningTeam.Id == competition.Team1Id ? _localizer["CityMallTeam"].Value : _localizer["VisitorsTeam"].Value;
+                        latestCompeitionsScore.Team1Name = competition.Team1.TeamName;
+                        latestCompeitionsScore.Team2Name = competition.Team2.TeamName;
+                        latestCompeitionsScore.WinningTeamName = competition.WinningTeam.Id == competition.Team1Id ? competition.Team1.TeamName: competition.Team2.TeamName;
                         var cityMallWinningPlayer = competition.CompetitionQuestions
                                 .Where(a => a.IsTeam1 == true)
                                 .GroupBy(a => a.PlayerId)
@@ -711,6 +737,7 @@ namespace CMC.Presentation.Application.Services.Competitions
             }
             catch (Exception ex)
             {
+                await _logger.LogError(ex, "GetLatestScores", null, null, false);
                 throw ex;
             }
         }
@@ -743,6 +770,7 @@ namespace CMC.Presentation.Application.Services.Competitions
             }
             catch (Exception ex)
             {
+                await _logger.LogError(ex, "DeleteCompetition", id, null, false);
                 return new Response()
                 {
                     Message = ex.InnerException != null ? ex.InnerException.Message : ex.Message
@@ -790,14 +818,24 @@ namespace CMC.Presentation.Application.Services.Competitions
                 {
                     CompetitionStartDTO competitionStartDTO = new CompetitionStartDTO();
                     competitionStartDTO.Id = id;
+
+                    competitionStartDTO.IsFinalCompetition = competition.IsFinalCompetition ?? false;
+                    competitionStartDTO.IsQuestionsTypeIsRound = competition.CompetitionQuestionType == (int)CompetitionQuestionType.Rounds;
+                    if (!competitionStartDTO.IsQuestionsTypeIsRound)
+                        competitionStartDTO.QuestionPerPlayer = competition.QuestionForEachPlayer ?? 0;
+                    
                     competitionStartDTO.TotalRound = competition.RoundCount;
                     competitionStartDTO.CurrentRound = 1;
+                    
                     competitionStartDTO.RoundTime = competition.Round1Time ?? 0;
                     competitionStartDTO.RoundPoints = competition.Round1Points ?? 0;
+                    
                     competitionStartDTO.TeamCityMall = new List<CompetitionsPlayerDTO>();
                     competitionStartDTO.OtherTeam = new List<CompetitionsPlayerDTO>();
                     competitionStartDTO.Team1Name = competition.Team1.TeamName;
                     competitionStartDTO.Team2Name = competition.Team2.TeamName;
+                    
+
                     List<CompetitionQuestion> AllQuestionsWasAskedBefore = new List<CompetitionQuestion>();
                     if (competition.Parent != null)
                         AllQuestionsWasAskedBefore = await GetAllQuestionsForCompetitionAndParentsAsync(competition.Parent.Id);
@@ -934,6 +972,7 @@ namespace CMC.Presentation.Application.Services.Competitions
             }
             catch (Exception ex)
             {
+                await _logger.LogError(ex, "StartCompetiton", id, null, false);
                 throw ex;
             }
         }
@@ -972,6 +1011,7 @@ namespace CMC.Presentation.Application.Services.Competitions
             }
             catch (Exception ex)
             {
+                await _logger.LogError(ex, "AnswerOnQuestions", answerOnQuestionDTO, $"CompetitionId:{competitionId}", false);
                 return new Response()
                 {
                     Succeeded = false,
@@ -988,32 +1028,39 @@ namespace CMC.Presentation.Application.Services.Competitions
         private async Task<List<CompetitionQuestion>> GetAllQuestionsForCompetitionAndParentsAsync(int competitionId)
         {
             List<CompetitionQuestion> allQuestions = new List<CompetitionQuestion>();
-
-            async Task GetQuestions(int id)
+            try
             {
-                var competition = await _competitionRepository.GetAll(a => a.Id == id && a.IsDeleted != true && a.EndDate.HasValue)
-                    .Include(a => a.CompetitionQuestions)
-                       .ThenInclude(a => a.Question)
-                    .Include(a => a.Parent)
-                    .FirstOrDefaultAsync();
-
-                if (competition != null)
+                async Task GetQuestions(int id)
                 {
-                    if (competition.CompetitionQuestions != null)
-                    {
-                        allQuestions.AddRange(competition.CompetitionQuestions);
-                    }
+                    var competition = await _competitionRepository.GetAll(a => a.Id == id && a.IsDeleted != true && a.EndDate.HasValue)
+                        .Include(a => a.CompetitionQuestions)
+                           .ThenInclude(a => a.Question)
+                        .Include(a => a.Parent)
+                        .FirstOrDefaultAsync();
 
-                    if (competition.Parent != null)
+                    if (competition != null)
                     {
-                        await GetQuestions(competition.Parent.Id);
+                        if (competition.CompetitionQuestions != null)
+                        {
+                            allQuestions.AddRange(competition.CompetitionQuestions);
+                        }
+
+                        if (competition.Parent != null)
+                        {
+                            await GetQuestions(competition.Parent.Id);
+                        }
                     }
                 }
+
+                await GetQuestions(competitionId);
+
+                return allQuestions;
             }
-
-            await GetQuestions(competitionId);
-
-            return allQuestions;
+            catch (Exception ex)
+            {
+                await _logger.LogError(ex, "GetAllQuestionsForCompetitionAndParentsAsync", competitionId, null, false);
+                throw ex;
+            }
         }
 
         /// <summary>
@@ -1070,6 +1117,88 @@ namespace CMC.Presentation.Application.Services.Competitions
                     break;
             }
             return points;
+        }
+
+        /// <summary>
+        /// Get Score details for player
+        /// </summary>
+        /// <param name="competitionId"></param>
+        /// <param name="playerId"></param>
+        /// <returns></returns>
+        public async Task<Response<CompetitionsPlayerDTO>> GetPlayerScoreDetails(int competitionId, int playerId)
+        {
+            try
+            {
+                CompetitionsPlayerDTO competitionsPlayerDTO = new CompetitionsPlayerDTO();
+                bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
+
+                var competitonQuestions = await _compQuestRepository.GetAll(a => a.PlayerId == playerId && a.CompetitionId == competitionId)
+                    .Include(a=>a.Player)
+                    .Include(a => a.Question)
+                    .ThenInclude(a => a.Answers)
+                    .Include(a => a.Answer)
+                    .ToListAsync();
+
+                if(competitonQuestions.Count==0)
+                {
+                    //Player didn't answer on questions
+                    var player = await _playerRepository.FindAsync(playerId);
+                    competitionsPlayerDTO.Name = player.Name;
+                    competitionsPlayerDTO.competitonQuestions = new List<CompetitonQuestions>();
+                    return new Response<CompetitionsPlayerDTO>()
+                    {
+                        Succeeded = true,
+                        Data = competitionsPlayerDTO
+                    };
+                }
+
+                competitionsPlayerDTO.Name = competitonQuestions.FirstOrDefault().Player.Name;
+                competitionsPlayerDTO.Points = competitonQuestions.Sum(a => a.Point).Value;
+
+                List<CompetitonQuestions> listQuestions = new List<CompetitonQuestions>();
+
+                foreach (var question in competitonQuestions)
+                {
+                    CompetitonQuestions competitonQuestion = new CompetitonQuestions();
+                    competitonQuestion.QuestionText = IsAr ? question.Question.TextAr : question.Question.TextEn;
+                    if (question.Question.HasImg == true)
+                    {
+                        competitonQuestion.IsQuestionImg = true;
+                        var attachmentQuestion = await _attachmentRepository.GetAll(a => a.EntityType == (int)AttachmentTypes.Questions && a.EntityId == question.Question.Id && a.IsDeleted != true).SingleOrDefaultAsync();
+                        if (attachmentQuestion != null)
+                            competitonQuestion.QuestionImg = Convert.ToBase64String(attachmentQuestion.FileData);
+                    }
+                    competitonQuestion.AnswerText = IsAr ? question.Answer.TextAr : question.Answer.TextEn;
+                    competitonQuestion.IsCorrectAnswer = question.IsCorrectAnswer ?? false;
+                    if (question.Answer.IsImg == true)
+                    {
+                        competitonQuestion.IsAnswerImg = true;
+                        var attachmentAnswer = await _attachmentRepository.GetAll(a => a.EntityType == (int)AttachmentTypes.Answers && a.EntityId == question.Answer.Id && a.IsDeleted != true).SingleOrDefaultAsync();
+                        if (attachmentAnswer != null)
+                            competitonQuestion.AnswerImg = Convert.ToBase64String(attachmentAnswer.FileData);
+                    }
+                    competitonQuestion.Time = question.Time;
+                    competitonQuestion.Points = question.Point;
+                    listQuestions.Add(competitonQuestion);
+                }
+
+                competitionsPlayerDTO.competitonQuestions = listQuestions;
+               
+                return new Response<CompetitionsPlayerDTO>()
+                {
+                    Succeeded = true,
+                    Data = competitionsPlayerDTO
+                };
+
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogError(ex, "GetPlayerScoreDetails", $"competitionId:{competitionId} - PlayerId:{playerId}", null, false);
+                return new Response<CompetitionsPlayerDTO>()
+                {
+                    Message = ex.Message
+                };
+            }
         }
     }
 }

@@ -29,6 +29,13 @@
     }
   },
   {
+    "Key": "UserNameIsInActive",
+    "LocalizedValue": {
+      "en-US": "Username is In-Active",
+      "ar-JO": "اسم المستخدم غير فعال"
+    }
+  },
+  {
     "Key": "UsernameOrPasswordInvalid",
     "LocalizedValue": {
       "en-US": "Username or password is incorrect",
@@ -87,15 +94,15 @@
   {
     "Key": "PleaseAddTwoOptionsAtLeast",
     "LocalizedValue": {
-      "en-US": "Please add at least first two options in English",
-      "ar-JO": "يرجى إضافة أول خيارين على الأقل بالعربية"
+      "en-US": "Please add at least first two options in English, and choose the correct answer",
+      "ar-JO": "يرجى إضافة أول خيارين على الأقل بالعربية واختيار الإجابة الصحيحة"
     }
   },
   {
     "Key": "PleaseAddTwoImagesAtLeast",
     "LocalizedValue": {
-      "en-US": "Please attach at least first two Images",
-      "ar-JO": "يرجى إرفاق أول صورتين على الأقل"
+      "en-US": "Please attach at least first two Images and choose the correct answer",
+      "ar-JO": "يرجى إرفاق أول صورتين على الأقل واختيار الاجابة الصحيحة"
     }
   },
   {
@@ -445,7 +452,62 @@
       "ar-JO": "المجموعة"
     }
   },
-
+  {
+    "Key": "UserStatus",
+    "LocalizedValue": {
+      "en-US": "User status",
+      "ar-JO": "حالة المستخدم"
+    }
+  },
+  {
+    "Key": "Active",
+    "LocalizedValue": {
+      "en-US": "Active",
+      "ar-JO": "فعال"
+    }
+  },
+  {
+    "Key": "InActive",
+    "LocalizedValue": {
+      "en-US": "In Active",
+      "ar-JO": "غير فعال"
+    }
+  },
+  {
+    "Key": "Common_PageNotFound",
+    "LocalizedValue": {
+      "en-US": "Page Not Found",
+      "ar-JO": "الصفحة غير موجودة"
+    }
+  },
+  {
+    "Key": "Common_NotFoundMessage",
+    "LocalizedValue": {
+      "en-US": "We couldn't find the page you want to visit. You can go back to the previous page, go to the home page or contact the technical team.",
+      "ar-JO": "لم نستطع العثور على الصفحة التي ترغب في زيارتها. بإمكانك الرجوع للصفحة السابقة أو التوجه إلى الصفحة الرئيسية أو التواصل مع الفريق التقني."
+    }
+  },
+  {
+    "Key": "Common_ErrorOccurred",
+    "LocalizedValue": {
+      "en-US": "An error occurred",
+      "ar-JO": "حدث خطأ"
+    }
+  },
+  {
+    "Key": "Common_ErrorPageMessage",
+    "LocalizedValue": {
+      "en-US": "Sorry for the mistake. You can go back to the previous page, go to the home page or contact the technical team.",
+      "ar-JO": "نأسف على هذا الخطأ. بإمكانك الرجوع للصفحة السابقة أو التوجه إلى الصفحة الرئيسية أو التواصل مع الفريق التقني."
+    }
+  },
+  {
+    "Key": "Common_HomePageGo",
+    "LocalizedValue": {
+      "en-US": "Go home page",
+      "ar-JO": "إذهب إلى الرئيسية"
+    }
+  },
 
 
 
@@ -566,11 +628,27 @@
       "ar-JO": "الاعدادات"
     }
   },
+  {
+    "Key": "Menu_Profile",
+    "LocalizedValue": {
+      "en-US": "Profile",
+      "ar-JO": "حسابي"
+    }
+  },
 
 
 
 
 
+
+  //Profile
+  {
+    "Key": "PersonalInformation",
+    "LocalizedValue": {
+      "en-US": "Personal information",
+      "ar-JO": "معلوماتي الشخصية"
+    }
+  },
 
 
   //Categories
@@ -673,10 +751,66 @@
     }
   },
   {
+    "Key": "DeleteImage",
+    "LocalizedValue": {
+      "en-US": "Delete image!",
+      "ar-JO": "حذف الصورة"
+    }
+  },
+  {
     "Key": "DeleteExistingImage_SuccessMsg",
     "LocalizedValue": {
       "en-US": "Image has been deleted.",
       "ar-JO": "تم حذف الصورة الحالية"
+    }
+  },
+  {
+    "Key": "DeleteImage_SuccessMsg",
+    "LocalizedValue": {
+      "en-US": "Image has been deleted!",
+      "ar-JO": "تم حذف الصورة"
+    }
+  },
+  {
+    "Key": "CurrentPassword",
+    "LocalizedValue": {
+      "en-US": "Current Password",
+      "ar-JO": "كلمة المرور الحالية"
+    }
+  },
+  {
+    "Key": "NewPassword",
+    "LocalizedValue": {
+      "en-US": "New password",
+      "ar-JO": "كلمة المرور الجديدة"
+    }
+  },
+  {
+    "Key": "ConfirmNewPassword",
+    "LocalizedValue": {
+      "en-US": "Confirm new password",
+      "ar-JO": "تأكيد كلمة المرور الجديدة"
+    }
+  },
+  {
+    "Key": "PasswordsDoNotMatch",
+    "LocalizedValue": {
+      "en-US": "New password doesn't match",
+      "ar-JO": "كلمة المرور الجديدة غير متطابقة"
+    }
+  },
+  {
+    "Key": "CurrentPasswordIncorrect",
+    "LocalizedValue": {
+      "en-US": "Current password is incorrect",
+      "ar-JO": "كلمة المرور الحالية غير صحيحة"
+    }
+  },
+  {
+    "Key": "YourProfileHasBeenUpdated",
+    "LocalizedValue": {
+      "en-US": "Your profile has been updated",
+      "ar-JO": "تم تحديث معلوماتك الشخصية"
     }
   },
 
@@ -731,6 +865,20 @@
     "LocalizedValue": {
       "en-US": "User deleted successfully!",
       "ar-JO": "تم حذف المستخدم"
+    }
+  },
+  {
+    "Key": "Message_ActivationCancel",
+    "LocalizedValue": {
+      "en-US": "Cancel activation!",
+      "ar-JO": "هل تريد بالفعل إلغاء التفعيل؟"
+    }
+  },
+  {
+    "Key": "Message_ActivationConfirm",
+    "LocalizedValue": {
+      "en-US": "Confirm activation?",
+      "ar-JO": "هل تريد تأكيد التفعيل؟"
     }
   },
 
@@ -971,6 +1119,34 @@
     }
   },
   {
+    "Key": "PlayerStatus",
+    "LocalizedValue": {
+      "en-US": "Player status",
+      "ar-JO": "حالة اللاعب"
+    }
+  },
+  {
+    "Key": "Blocked",
+    "LocalizedValue": {
+      "en-US": "Blocked",
+      "ar-JO": "محظور"
+    }
+  },
+  {
+    "Key": "NonBlocked",
+    "LocalizedValue": {
+      "en-US": "Non-Blocked",
+      "ar-JO": "غير محظور"
+    }
+  },
+  {
+    "Key": "Comment",
+    "LocalizedValue": {
+      "en-US": "Comment",
+      "ar-JO": "التعليق"
+    }
+  },
+  {
     "Key": "PlayerAddedSuccessfully",
     "LocalizedValue": {
       "en-US": "Player has been added successfully",
@@ -1030,10 +1206,10 @@
     }
   },
   {
-    "Key": "QuestionCountMustBeGreaterThanOrEqualToPlayerCount",
+    "Key": "RoundCountMustBeGreaterThanOrEqualToPlayerCount",
     "LocalizedValue": {
-      "en-US": "Question count must be greater than or equal to player count",
-      "ar-JO": "يجب أن يكون عدد الأسئلة أكبر من أو يساوي عدد اللاعبين"
+      "en-US": "Round count must be greater than or equal to player count",
+      "ar-JO": "يجب أن يكون عدد الجولات أكبر من أو يساوي عدد اللاعبين"
     }
   },
   {
@@ -1065,10 +1241,73 @@
     }
   },
   {
+    "Key": "MoveToRound",
+    "LocalizedValue": {
+      "en-US": "Move to",
+      "ar-JO": "الانتقال إلى"
+    }
+  },
+  {
+    "Key": "RoundCount",
+    "LocalizedValue": {
+      "en-US": "Round count",
+      "ar-JO": "عدد الجولات"
+    }
+  },
+  {
+    "Key": "Round1",
+    "LocalizedValue": {
+      "en-US": "Round 1",
+      "ar-JO": "الجولة الأولى"
+    }
+  },
+  {
+    "Key": "Round2",
+    "LocalizedValue": {
+      "en-US": "Round 2",
+      "ar-JO": "الجولة الثانية"
+    }
+  },
+  {
+    "Key": "Round3",
+    "LocalizedValue": {
+      "en-US": "Round 3",
+      "ar-JO": "الجولة الثالثة"
+    }
+  },
+  {
+    "Key": "Round4",
+    "LocalizedValue": {
+      "en-US": "Round 4",
+      "ar-JO": "الجولة الرابعة"
+    }
+  },
+  {
+    "Key": "CalculatingRounds",
+    "LocalizedValue": {
+      "en-US": "Calculating rounds",
+      "ar-JO": "احتساب الجولات"
+    }
+  },
+  {
+    "Key": "IfCompetitionBasedOnAnotherCompetition",
+    "LocalizedValue": {
+      "en-US": "In continuation of the competition",
+      "ar-JO": "استكمالا للمسابقة"
+    }
+  },
+  {
     "Key": "CompetitionEndDate",
     "LocalizedValue": {
       "en-US": "Competition end date",
       "ar-JO": "تاريخ انتهاء المسابقة"
+    }
+  },
+  {
+    "Key": "TimeAndPointsForRoundIsRequired",
+    "LocalizedValue": {
+      "en-US": "Time and points is required",
+      "ar-JO": "الوقت والنقاط مطلوبة"
     }
   },
   {
@@ -1083,6 +1322,41 @@
     "LocalizedValue": {
       "en-US": "City Mall Team",
       "ar-JO": "فريق سيتي مول"
+    }
+  },
+  {
+    "Key": "Team",
+    "LocalizedValue": {
+      "en-US": "Team",
+      "ar-JO": "فريق"
+    }
+  },
+  {
+    "Key": "Team1",
+    "LocalizedValue": {
+      "en-US": "First team",
+      "ar-JO": "الفريق الأول"
+    }
+  },
+  {
+    "Key": "Team2",
+    "LocalizedValue": {
+      "en-US": "Second team",
+      "ar-JO": "الفريق الثاني"
+    }
+  },
+  {
+    "Key": "Team1Name",
+    "LocalizedValue": {
+      "en-US": "First team name",
+      "ar-JO": "اسم الفريق الأول"
+    }
+  },
+  {
+    "Key": "Team2Name",
+    "LocalizedValue": {
+      "en-US": "Second team name",
+      "ar-JO": "اسم الفريق الثاني"
     }
   },
   {
@@ -1254,17 +1528,17 @@
     }
   },
   {
-    "Key": "WinningPlayerFromCityMall",
+    "Key": "WinningPlayerFromFirstTeam",
     "LocalizedValue": {
-      "en-US": "Winning player from City Mall",
-      "ar-JO": "اللاعب الفائز من فريق سيتي مول"
+      "en-US": "Winning player from first team",
+      "ar-JO": "اللاعب الفائز من الفريق الأول"
     }
   },
   {
-    "Key": "WinningPlayerFromOtherTeam",
+    "Key": "WinningPlayerFromSecondTeam",
     "LocalizedValue": {
-      "en-US": "Winning player from visitors team",
-      "ar-JO": "اللاعب الفائز من فريق الزوار"
+      "en-US": "Winning player from second team",
+      "ar-JO": "اللاعب الفائز من الفريق الثاني"
     }
   },
   {
@@ -1279,6 +1553,90 @@
     "LocalizedValue": {
       "en-US": "View Last competitions score",
       "ar-JO": "عرض نتائج المسابقات الأخيرة"
+    }
+  },
+  {
+    "Key": "ViewScores",
+    "LocalizedValue": {
+      "en-US": "View scores",
+      "ar-JO": "عرض النتائج"
+    }
+  },
+  {
+    "Key": "ContinueRound",
+    "LocalizedValue": {
+      "en-US": "Continue round",
+      "ar-JO": "متابعة الجولة"
+    }
+  },
+  {
+    "Key": "None",
+    "LocalizedValue": {
+      "en-US": "None",
+      "ar-JO": "لا يوجد"
+    }
+  },
+  {
+    "Key": "CorrectAnswer",
+    "LocalizedValue": {
+      "en-US": "Correct Answer",
+      "ar-JO": "الاجابة صحيحة"
+    }
+  },
+  {
+    "Key": "InCorrectAnswer",
+    "LocalizedValue": {
+      "en-US": "InCorrect Answer",
+      "ar-JO": "الاجابة غير صحيحة"
+    }
+  },
+  {
+    "Key": "PlayerDidntAnswer",
+    "LocalizedValue": {
+      "en-US": "Player didnt answer on question",
+      "ar-JO": "لم يجب اللاعب على السؤال"
+    }
+  },
+  {
+    "Key": "TheQuestion",
+    "LocalizedValue": {
+      "en-US": "Question",
+      "ar-JO": "السؤال"
+    }
+  },
+  {
+    "Key": "Time",
+    "LocalizedValue": {
+      "en-US": "Time",
+      "ar-JO": "الوقت"
+    }
+  },
+  {
+    "Key": "Seconds",
+    "LocalizedValue": {
+      "en-US": "Secends",
+      "ar-JO": "ثواني"
+    }
+  },
+  {
+    "Key": "PlayerDIdntAnswerOnQuestions",
+    "LocalizedValue": {
+      "en-US": "Player didn't answer on questions",
+      "ar-JO": "اللاعب لم يجب على أي سؤال"
+    }
+  },
+  {
+    "Key": "PlayerAnswer",
+    "LocalizedValue": {
+      "en-US": "Player answer",
+      "ar-JO": "اجابة اللاعب"
+    }
+  },
+  {
+    "Key": "PlayerScore",
+    "LocalizedValue": {
+      "en-US": "Player Score",
+      "ar-JO": "نتائح اللاعب"
     }
   }
 ]

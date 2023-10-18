@@ -402,7 +402,36 @@
         ];
         Grid.fillGrid('#tblQuestions', data.data, columns, true, [], '#pagination', data.totalCount, GeneralClass.pageSize, 'Categories');
     },
+}
 
+var AllCategories = {
+    OnLoad: function () {
+        $(document).ready(function () {
+            AllCategories.GetAllWithPager(1, GeneralClass.pageSize);
+        });
+    },
+    GetAllWithPager: function (pageIndex, pageSize) {
+        Grid.currentPageIndex = pageIndex;
+        APIHelper.httpGet(generalSettings.BaseURL + 'Questions/GetLastQuestions', null, null, this.getAll_Success, null);
+    },
+    getAll_Success: function (data, textStatus, xhr) {
+        if (data != undefined) {
+            currentPage = data.currentPage;
+        }
+        var page = data.currentPage;
+        if (page === 0) { page = 1; }
+        var columns = [
+            {
+                data: '', sortable: false,
+                render: function (data, type, row, meta) {
+                    return (meta.row + meta.settings._iDisplayStart + 1) + ((currentPage - 1) * GeneralClass.pageSize);
+                }
+            },
+            { data: "text", sortable: false, name: "Question text", autoWidth: true },
+            { data: "categoryName", sortable: false, name: "Category name", autoWidth: true }
+        ];
+        Grid.fillGrid('#tblLastQuestion', data.data, columns, true, [], '#pagination', data.totalCount, GeneralClass.pageSize, 'Categories');
+    }
 }
 
 var Questions = {

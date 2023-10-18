@@ -42,8 +42,16 @@ namespace CMC.Presentation.Web.Controllers
         [RolePermission(PermissionCodes.WebPlayerView)]
         public async Task<IActionResult> GetAllPlayers([FromQuery] SearchPlayersDTO searchPlayerDto)
         {
-            var result = await _playerService.GetPlayers(searchPlayerDto);
-            return Json(result);
+            try
+            {
+                var result = await _playerService.GetPlayers(searchPlayerDto);
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogError(ex, "GetAllPlayers", searchPlayerDto, null, false);
+                return Json(new { });
+            }
         }
 
 
@@ -67,7 +75,8 @@ namespace CMC.Presentation.Web.Controllers
             }
             catch (Exception ex)
             {
-                throw ex;
+                await _logger.LogError(ex, "CreatePlayer", id, null, false);
+                return RedirectToAction("Index", "Error");
             }
         }
 
@@ -84,6 +93,7 @@ namespace CMC.Presentation.Web.Controllers
             }
             catch (Exception ex)
             {
+                await _logger.LogError(ex, "CreatePlayer", playerDTO, null, false);
                 return Json(new { isSuccess = false });
             }
         }
@@ -106,6 +116,7 @@ namespace CMC.Presentation.Web.Controllers
             }
             catch (Exception ex)
             {
+                await _logger.LogError(ex, "DeletePlayer", id, null, false);
                 return Json(new { isSuccess = false });
             }
         }

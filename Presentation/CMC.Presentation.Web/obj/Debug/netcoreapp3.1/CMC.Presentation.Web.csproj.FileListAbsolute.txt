@@ -1869,7 +1869,6 @@ D:\Profile\Projects\CMC\Presentation\CMC.Presentation.Web\obj\Debug\netcoreapp3.
 D:\Profile\Projects\CMC\Presentation\CMC.Presentation.Web\obj\Debug\netcoreapp3.1\Razor\Views\Questions\AddQuestion.cshtml.g.cs
 D:\Profile\Projects\CMC\Presentation\CMC.Presentation.Web\obj\Debug\netcoreapp3.1\Razor\Views\Questions\Index.cshtml.g.cs
 D:\Profile\Projects\CMC\Presentation\CMC.Presentation.Web\obj\Debug\netcoreapp3.1\Razor\Views\Questions\PartialViews\_QuestionsList.cshtml.g.cs
-D:\Profile\Projects\CMC\Presentation\CMC.Presentation.Web\obj\Debug\netcoreapp3.1\Razor\Views\Shared\Error.cshtml.g.cs
 D:\Profile\Projects\CMC\Presentation\CMC.Presentation.Web\obj\Debug\netcoreapp3.1\Razor\Views\Shared\PartialViews\_MenuBar.cshtml.g.cs
 D:\Profile\Projects\CMC\Presentation\CMC.Presentation.Web\obj\Debug\netcoreapp3.1\Razor\Views\Shared\PartialViews\_TopNavBar.cshtml.g.cs
 D:\Profile\Projects\CMC\Presentation\CMC.Presentation.Web\obj\Debug\netcoreapp3.1\Razor\Views\Shared\_Language.cshtml.g.cs
@@ -1901,3 +1900,5 @@ D:\Profile\Projects\CMC\Presentation\CMC.Presentation.Web\obj\Debug\netcoreapp3.
 D:\Profile\Projects\CMC\Presentation\CMC.Presentation.Web\obj\Debug\netcoreapp3.1\Razor\Views\Competitions\PartialViews\_PlayerScoreModal.cshtml.g.cs
 D:\Profile\Projects\CMC\Presentation\CMC.Presentation.Web\obj\Debug\netcoreapp3.1\Razor\Views\Competitions\View.cshtml.g.cs
 D:\Profile\Projects\CMC\Presentation\CMC.Presentation.Web\obj\Debug\netcoreapp3.1\Razor\Views\Users\Profile.cshtml.g.cs
+D:\Profile\Projects\CMC\Presentation\CMC.Presentation.Web\obj\Debug\netcoreapp3.1\Razor\Views\Competitions\PlayerScoreDetails.cshtml.g.cs
+D:\Profile\Projects\CMC\Presentation\CMC.Presentation.Web\obj\Debug\netcoreapp3.1\Razor\Views\Error\Error.cshtml.g.cs

@@ -13,5 +13,7 @@ namespace CMC.Presentation.Application.DTOs.Competitions
         public bool? IsCorrectAnswer { get; set; }
         public int? Points { get; set; }
         public double? Time { get; set; }
+        public bool IsCityMallPlayerAnswered { get; set; }
+        public bool IsOtherPlayerAnswered { get; set; }
     }
 }

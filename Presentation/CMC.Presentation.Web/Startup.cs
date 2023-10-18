@@ -11,6 +11,7 @@ using CMC.Presentation.Application.DTOs.Identity;
 using CMC.Kernel.Core.Helpers;
 using Microsoft.Diagnostics.Tracing;
 using System;
+using Microsoft.Extensions.Hosting;
 
 namespace CMC.Presentation.Web
 {
@@ -40,6 +41,17 @@ namespace CMC.Presentation.Web
             app.UseAuthorization();
             app.UseLocalizationForPresnetationExtention();
 
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseExceptionHandler("/Error");
+                app.UseStatusCodePagesWithReExecute("/Error/{0}");
+                app.UseHsts();
+            }
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
@@ -64,7 +76,8 @@ namespace CMC.Presentation.Web
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => !string.IsNullOrEmpty(src.Name) ? Security.Decrypt(src.Name) : src.Name))
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => !string.IsNullOrEmpty(src.UserName) ? Security.Decrypt(src.UserName) : src.UserName))
                 .ForMember(dest => dest.EmailAddress, opt => opt.MapFrom(src => !string.IsNullOrEmpty(src.EmailAddress) ? Security.Decrypt(src.EmailAddress) : src.EmailAddress))
-                .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => !string.IsNullOrEmpty(src.PhoneNumber) ? Security.Decrypt(src.PhoneNumber) : src.PhoneNumber));
+                .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => !string.IsNullOrEmpty(src.PhoneNumber) ? Security.Decrypt(src.PhoneNumber) : src.PhoneNumber))
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => !string.IsNullOrEmpty(src.UserName) ? Security.Decrypt(src.UserName) : src.UserName));
         }
     }
 }

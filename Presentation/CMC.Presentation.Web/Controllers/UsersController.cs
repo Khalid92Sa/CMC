@@ -16,6 +16,7 @@ using CMC.Kernel.Infrastructure.Persistence.Services;
 using CMC.Presentation.Application.ActionFilters;
 using CMC.Kernel.Core.Constants;
 using CMC.Presentation.Application.DTOs.Competitions;
+using CMC.Presentation.Application.DTOs.Questions;
 
 namespace CMC.Presentation.Web.Controllers
 {
@@ -49,19 +50,36 @@ namespace CMC.Presentation.Web.Controllers
         [RolePermission(PermissionCodes.WebUsersView)]
         public async Task<IActionResult> Index()
         {
-            var loggedInUser = _userService.GetLoggedInUser();
-            ViewData["CanDelete"] = loggedInUser.PermissionCodes.Contains(PermissionCodes.WebUsersDelete);
-            ViewData["CanCreate"] = loggedInUser.PermissionCodes.Contains(PermissionCodes.WebUsersAdd);
-            ViewBag.Groups = await _groupPermissionService.GetGroups();
-            return View();
+            try
+            {
+                var loggedInUser = await _userService.GetLoggedInUser();
+                ViewData["CanDelete"] = loggedInUser.PermissionCodes.Contains(PermissionCodes.WebUsersDelete);
+                ViewData["CanCreate"] = loggedInUser.PermissionCodes.Contains(PermissionCodes.WebUsersAdd);
+                ViewBag.Groups = await _groupPermissionService.GetGroups();
+                return View();
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogError(ex, "Users-Index", null, null, false);
+                return RedirectToAction("Index", "Error");
+            }
         }
 
 
         [HttpGet]
         public async Task<IActionResult> GetAllUsers([FromQuery] SearchUserDTO searchUserDTO)
         {
-            var result = await _userService.GetUsers(searchUserDTO);
-            return Json(result);
+            try
+            {
+                var result = await _userService.GetUsers(searchUserDTO);
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogError(ex, "GetAllUsers", searchUserDTO, null, false);
+                return Json(new { });
+            }
+           
         }
 
         public IActionResult Login()
@@ -85,6 +103,7 @@ namespace CMC.Presentation.Web.Controllers
             }
             catch (Exception ex)
             {
+                await _logger.LogError(ex, "Login", login, null, false);
                 return Json(new { resultCode = (int)HttpStatusCode.BadRequest, msg = ex.InnerException != null ? ex.InnerException.Message : ex.Message });
             }
         }
@@ -117,7 +136,7 @@ namespace CMC.Presentation.Web.Controllers
             try
             {
                 UserDTO userDTO = new UserDTO();
-                if (id.HasValue)
+                if (id.HasValue && id != 1)
                 {
                     var userDb = await _userService.GetUser(id.Value);
                     if (userDb.Succeeded)
@@ -130,7 +149,8 @@ namespace CMC.Presentation.Web.Controllers
             }
             catch (Exception ex)
             {
-                throw ex;
+                await _logger.LogError(ex, "AddUser", id, null, false);
+                return RedirectToAction("Index", "Error");
             }
         }
 
@@ -146,11 +166,14 @@ namespace CMC.Presentation.Web.Controllers
             try
             {
                 var result = await _userService.CreateOrUpdateUser(userDTO);
-                string msg = userDTO.Id.HasValue ? _localizer["UserHasBeenUpdatedSuccessfully"].Value : _localizer["UserHasBeenSavedSuccessfully"].Value;
+                string msg = "";
+                if (result.Succeeded)
+                    msg = userDTO.Id.HasValue ? _localizer["UserHasBeenUpdatedSuccessfully"].Value : _localizer["UserHasBeenSavedSuccessfully"].Value;
                 return Json(new { isSuccess = result.Succeeded, resultCode = result.StatusCode, brokenRoles = result.BrokenRules, msg = msg });
             }
             catch (Exception ex)
             {
+                await _logger.LogError(ex, "AddUser", userDTO, null, false);
                 return Json(new { isSuccess = false });
             }
         }
@@ -172,23 +195,33 @@ namespace CMC.Presentation.Web.Controllers
             }
             catch (Exception ex)
             {
+                await _logger.LogError(ex, "DeleteUser", id, null, false);
                 return Json(new { isSuccess = false });
             }
         }
 
 
-        public IActionResult Profile()
+        public async Task<IActionResult> Profile()
         {
-            var loggedInUser = _userService.GetLoggedInUser();
-            ProfileDTO profileDTO = new ProfileDTO()
+            try
             {
-                Name = loggedInUser.Name,
-                EmailAddress = loggedInUser.EmailAddress,
-                PhoneNumber = loggedInUser.PhoneNumber,
-                UserId = loggedInUser.Id.Value,
-            };
+                var loggedInUser = await _userService.GetLoggedInUser();
+                ProfileDTO profileDTO = new ProfileDTO()
+                {
+                    Name = loggedInUser.Name,
+                    EmailAddress = loggedInUser.EmailAddress,
+                    PhoneNumber = loggedInUser.PhoneNumber,
+                    UserId = loggedInUser.Id.Value,
+                };
 
-            return View(profileDTO);
+                return View(profileDTO);
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogError(ex, "Profile", null, null, false);
+                throw ex;
+            }
+            
         }
 
 
@@ -198,11 +231,12 @@ namespace CMC.Presentation.Web.Controllers
             try
             {
                 var result = await _userService.UpdateProfile(profileDTO);
-                string msg = _localizer["YourProfileHasBeenUpdated"].Value;
+                string msg = result.Succeeded ? _localizer["YourProfileHasBeenUpdated"].Value : "";
                 return Json(new { isSuccess = result.Succeeded, resultCode = result.StatusCode, brokenRoles = result.BrokenRules, msg = msg });
             }
             catch (Exception ex)
             {
+                await _logger.LogError(ex, "Profile", profileDTO, null, false);
                 return Json(new { isSuccess = false });
             }
         }
@@ -219,6 +253,7 @@ namespace CMC.Presentation.Web.Controllers
             }
             catch (Exception ex)
             {
+                await _logger.LogError(ex, "ActivateUser", $"UserId:{userId} - IsActive:{isActive}", null, false);
                 return Json(new { isSuccess = false });
             }
         }

@@ -917,7 +917,6 @@ D:\Profile\Projects\CMC\Presentation\CMC.Presentation.Web\obj\Release\netcoreapp
 D:\Profile\Projects\CMC\Presentation\CMC.Presentation.Web\obj\Release\netcoreapp3.1\Razor\Views\Questions\AddQuestion.cshtml.g.cs
 D:\Profile\Projects\CMC\Presentation\CMC.Presentation.Web\obj\Release\netcoreapp3.1\Razor\Views\Questions\Index.cshtml.g.cs
 D:\Profile\Projects\CMC\Presentation\CMC.Presentation.Web\obj\Release\netcoreapp3.1\Razor\Views\Questions\PartialViews\_QuestionsList.cshtml.g.cs
-D:\Profile\Projects\CMC\Presentation\CMC.Presentation.Web\obj\Release\netcoreapp3.1\Razor\Views\Shared\Error.cshtml.g.cs
 D:\Profile\Projects\CMC\Presentation\CMC.Presentation.Web\obj\Release\netcoreapp3.1\Razor\Views\Shared\PartialViews\_MenuBar.cshtml.g.cs
 D:\Profile\Projects\CMC\Presentation\CMC.Presentation.Web\obj\Release\netcoreapp3.1\Razor\Views\Shared\PartialViews\_TopNavBar.cshtml.g.cs
 D:\Profile\Projects\CMC\Presentation\CMC.Presentation.Web\obj\Release\netcoreapp3.1\Razor\Views\Shared\_CompetitionLayout.cshtml.g.cs
@@ -937,3 +936,6 @@ D:\Profile\Projects\CMC\Presentation\CMC.Presentation.Web\obj\Release\netcoreapp
 D:\Profile\Projects\CMC\Presentation\CMC.Presentation.Web\obj\Release\netcoreapp3.1\CMC.Presentation.Web.dll
 D:\Profile\Projects\CMC\Presentation\CMC.Presentation.Web\obj\Release\netcoreapp3.1\CMC.Presentation.Web.pdb
 D:\Profile\Projects\CMC\Presentation\CMC.Presentation.Web\obj\Release\netcoreapp3.1\CMC.Presentation.Web.genruntimeconfig.cache
+D:\Profile\Projects\CMC\Presentation\CMC.Presentation.Web\obj\Release\netcoreapp3.1\Razor\Views\Competitions\PlayerScoreDetails.cshtml.g.cs
+D:\Profile\Projects\CMC\Presentation\CMC.Presentation.Web\obj\Release\netcoreapp3.1\Razor\Views\Users\Profile.cshtml.g.cs
+D:\Profile\Projects\CMC\Presentation\CMC.Presentation.Web\obj\Release\netcoreapp3.1\Razor\Views\Error\Error.cshtml.g.cs

@@ -48,6 +48,12 @@ namespace CMC.Presentation.Application.Services.Questions
         /// <param name="searchQuestionDTO"></param>
         /// <returns></returns>
         Task<PagedResult<QuestionListVM>> GetAllQuestions(SearchQuestionDTO searchQuestionDTO);
+
+        /// <summary>
+        /// Get Last questions
+        /// </summary>
+        /// <returns></returns>
+        Task<PagedResult<QuestionListVM>> GetLastQuestions();
         /// <summary>
         /// Add questions for category
         /// </summary>
