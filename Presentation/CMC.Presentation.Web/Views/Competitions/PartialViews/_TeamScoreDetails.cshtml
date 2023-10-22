@@ -22,7 +22,7 @@
                         string TopPoints = TopPlayer.Points == 0 || TopPlayer.Points > 2 && TopPlayer.Points < 11 ? Localizer["Points"].Value :
                         TopPlayer.Points == 2 ? Localizer["TwoPoint"].Value : Localizer["Point"].Value;
                     }
-                    <div class="col-md-4 player-modal-details" data-player-Id="@TopPlayer.Id" data-city-mall="true" style="cursor:pointer">
+                    <div class="col-md-4" data-player-Id="@TopPlayer.Id" data-city-mall="true" style="cursor:pointer">
                         <div class="d-flex justify-content-center">
                             <img src="~/assets/competition/images/player.svg" style="width:40%" />
                         </div>
@@ -49,7 +49,7 @@
                         string points = player.Points == 0 || player.Points > 2 && player.Points < 11 ? Localizer["Points"].Value :
                         player.Points == 2 ? Localizer["TwoPoint"].Value : Localizer["Point"].Value;
 
-                        <div class="col-md-4 player-modal-details" data-player-Id="@player.Id" data-city-mall="true" style="cursor:pointer">
+                        <div class="col-md-4" data-player-Id="@player.Id" data-city-mall="true" style="cursor:pointer">
                             <div class="d-flex justify-content-center">
                                 <img src="~/assets/competition/images/player.svg" style="width:40%" />
                             </div>
@@ -78,7 +78,7 @@
                         string otherTopPoints = otherTopPlayer.Points == 0 || otherTopPlayer.Points > 2 && otherTopPlayer.Points < 11 ? Localizer["Points"].Value :
                         otherTopPlayer.Points == 2 ? Localizer["TwoPoint"].Value : Localizer["Point"].Value;
                     }
-                    <div class="col-md-4 player-modal-details" data-player-Id="@otherTopPlayer.Id" data-city-mall="false" style="cursor:pointer">
+                    <div class="col-md-4" data-player-Id="@otherTopPlayer.Id" data-city-mall="false" style="cursor:pointer">
                         <div class="d-flex justify-content-center">
                             <img src="~/assets/competition/images/player.svg" style="width:40%" />
                         </div>
@@ -105,7 +105,7 @@
                         string points = player.Points == 0 || player.Points > 2 && player.Points < 11 ? Localizer["Points"].Value :
                         player.Points == 2 ? Localizer["TwoPoint"].Value : Localizer["Point"].Value;
 
-                        <div class="col-md-4 player-modal-details" data-player-Id="@player.Id" data-city-mall="false" style="cursor:pointer">
+                        <div class="col-md-4" data-player-Id="@player.Id" data-city-mall="false" style="cursor:pointer">
                             <div class="d-flex justify-content-center">
                                 <img src="~/assets/competition/images/player.svg" style="width:40%" />
                             </div>

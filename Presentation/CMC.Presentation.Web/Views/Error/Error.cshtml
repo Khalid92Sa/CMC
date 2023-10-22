@@ -1,0 +1,24 @@
+﻿@{
+    ViewData["Title"] = "Error";
+}
+
+<div class="w-100 h-100 text-center d-flex flex-column justify-content-center align-items-center">
+    <div class="d-flex">
+        <img src="~/assets/images/404-page-not-found.svg" style="width:100%; max-width: 300px;margin-left: 68px;object-fit: contain;}" />
+        <div class="text-left d-flex flex-column align-items-start justify-content-center" style="max-width:500px;">
+            @if (ViewBag.NotFound != null)
+            {
+                <h6 class="mb-4" style="font-size:2rem;">@Localizer["Common_PageNotFound"]</h6>
+                <p>@Localizer["Common_NotFoundMessage"]</p>
+            }
+            else
+            {
+                <h6 class="mb-4" style="font-size:2rem;">@Localizer["Common_ErrorOccurred"]</h6>
+                <p>@Localizer["Common_ErrorPageMessage"]</p>
+            }
+            <div>
+                <a href="@Url.Action("Index","Home")" class="btn btn-outline btn-sm mt-3 mx-0 mr-2">@Localizer["Common_HomePageGo"]</a>
+            </div>
+        </div>
+    </div>
+</div>

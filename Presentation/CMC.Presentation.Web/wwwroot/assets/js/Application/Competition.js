@@ -16,11 +16,17 @@ var playerTimer = {
     'IsTimerFinishedAfterAnswer': false
 };
 
+var player;
+var pathPlayer;
 
 var newTimerQuestion = 0;
 
 var CityMallPlayed = [];
 var OtherTeamPlayed = [];
+
+var CityMallFullQuestion = false;
+var OtherPlayerFullQuestion = false;
+
 
 var timerDiv = `<div class="h4 h4-responsive text-primary bg-light-white dv-full-timer" style="position: absolute; width: 100%; border-radius: 2.2rem !important; ">
                             <svg class="Timer" viewBox="0 0 100 100" id="timer">
@@ -196,24 +202,47 @@ var CompetitionForm = {
         //    CompetitionForm.HandleOtherTeamDDL(e);
         //});
 
-        $('#RoundCount').on('change', function () {
-            var roundNum = parseInt($(this).val());
+        var competitionQuestionType = parseInt($('#CompettionQuestionType').val());
+        if (IsViewCompetition) {
+            competitionQuestionType = parseInt($("#hdnCompetitionQuestionType").val());
+        }
+        CompetitionForm.OnChangeQuestionType(competitionQuestionType);
 
-            // Clear values in textboxes for rounds greater than roundNum
-            for (var i = roundNum + 1; i <= 4; i++) {
-                $('.round-' + i + ' input[type="text"]').val('');
-            }
-
-            // Show/hide round divs
-            $('.round-2, .round-3, .round-4').addClass('d-none');
-            for (var i = 0; i < roundNum; i++) {
-                $('.round-' + (i + 1)).removeClass('d-none');
-            }
+        $('#CompettionQuestionType').on('change', function () {
+            CompetitionForm.OnChangeQuestionType(parseInt($(this).val()));
         });
 
+        $('#RoundCount').on('change', function () {
+            CompetitionForm.OnRoundChange();
+        });
+       
+    },
+    OnChangeQuestionType: function (type) {
+        if (type == 1) {
+            //Rounds
+            $('.dvRoundCount').removeClass('d-none');
+            $('#dvQuestionCount').addClass('d-none');
+            CompetitionForm.OnRoundChange();
+        }
+        else {
+            //Question Count
+            $('#dvQuestionCount').removeClass('d-none');
+            $('.dvRoundCount').addClass('d-none');
+            $('.round-2, .round-3, .round-4').addClass('d-none');
+            //CompetitionForm.OnRoundChange();
+        }
+    },
+    OnRoundChange: function () {
+        var roundNum = parseInt($('#RoundCount').val());
 
-        var currentRoundCount = $('#RoundCount').val();
-        for (var i = 0; i < currentRoundCount; i++) {
+        // Clear values in textboxes for rounds greater than roundNum
+        for (var i = roundNum + 1; i <= 4; i++) {
+            $('.round-' + i + ' input[type="text"]').val('');
+        }
+
+        // Show/hide round divs
+        $('.round-2, .round-3, .round-4').addClass('d-none');
+        for (var i = 0; i < roundNum; i++) {
             $('.round-' + (i + 1)).removeClass('d-none');
         }
     },
@@ -386,6 +415,16 @@ var CompetitionForm = {
         var value = $(e).attr('id');
         var id = value.split("_")[1];
         window.location.href = publicURls.ViewCompetition + '?id=' + id;
+    },
+    ViewPlayerScore: function (e) {
+        var id = $(e).attr('data-player-Id');
+        var competitionId = $(e).attr('data-compId');
+
+        var url = publicURls.GetPlayerScoreDetails + '?competitionId=' + competitionId + '&playerId=' + id;
+        window.open(url, '_blank');
+    },
+    ClosePlayerScoreModal: function () {
+        $('#modal-data-player-details').modal('hide');
     }
 }
 
@@ -425,6 +464,8 @@ var StartCompetition = {
                     $(this).css('pointer-events', 'none');
                 }
             });
+
+            StartCompetition.ResetObjects();
         });
     },
     FullScreen: function () {
@@ -467,8 +508,16 @@ var StartCompetition = {
         }
     },
     GoToPlayerVsPlayer: function () {
-        if (playersInCompetition.CityMallPlayer == '' || playersInCompetition.OtherPlayer == '') {
-            return;
+
+        if (isFinalCompetition) {
+            if (playersInCompetition.CityMallPlayer == '' && playersInCompetition.OtherPlayer == '') {
+                return;
+            }
+        }
+        else {
+            if (playersInCompetition.CityMallPlayer == '' || playersInCompetition.OtherPlayer == '') {
+                return;
+            }
         }
 
         var parsCityPlayer = parseInt(playersInCompetition.CityMallPlayer);
@@ -596,8 +645,23 @@ var StartCompetition = {
         }
 
         // Both players answeres
-        if (playerTimer.IsPlayerCityMallAnswered && playerTimer.IsOtherPlayerAnswered) {
-            return;
+        if (isFinalCompetition) {
+            if ((CityMallFullQuestion && id == 'dv-cityMall-player') || playerTimer.IsPlayerCityMallAnswered) {
+                return;
+            }
+            else if ((OtherPlayerFullQuestion && id == 'dv-other-player-timer') || playerTimer.IsOtherPlayerAnswered) {
+                return;
+            }
+        }
+        else {
+            // Not final competition
+            if (playerTimer.IsPlayerCityMallAnswered && playerTimer.IsOtherPlayerAnswered) {
+                return;
+            }
+
+            if ((id == 'dv-cityMall-player' && playerTimer.IsPlayerCityMallAnswered) || (id == 'dv-Other-player' && playerTimer.IsOtherPlayerAnswered)) {
+                return;
+            }
         }
 
         var isImgAnswer = $('.img-answer-options').length > 0;
@@ -617,12 +681,14 @@ var StartCompetition = {
             $('#dv-other-player-timer').find('.dv-full-timer').remove();
             $('#dv-citymall-player-timer').append(timerDiv);
             playerTimer.IsCityMallPlayer = true;
+            playerTimer.IsPlayerCityMallAnswered = true;
             playerTimer.PlayerId = $('#' + id).find('.hdn-cPlayer').val();
         } else {
             $('#dv-citymall-player-timer').find('.dv-full-timer').remove();
             $('#dv-other-player-timer').append(timerDiv);
 
             playerTimer.IsCityMallPlayer = false;
+            playerTimer.IsOtherPlayerAnswered = true;
             playerTimer.PlayerId = $('#' + id).find('.hdn-oPlayer').val();
         }
 
@@ -650,7 +716,7 @@ var StartCompetition = {
 
         if (timer.animate) {
             var pathLength = path.r.baseVal.value * 2 * Math.PI;
-            var player = path.animate([
+            player = path.animate([
                 { strokeDasharray: pathLength, strokeDashoffset: pathLength },
                 { strokeDasharray: pathLength, strokeDashoffset: 0 },
             ], {
@@ -668,7 +734,7 @@ var StartCompetition = {
             });
 
             var runningOutDelay = duration * .6;
-            var pathPlayer = timer.animate([
+            pathPlayer = timer.animate([
                 { transform: 'scale(.82) rotate(-90deg)' },
                 { transform: 'scale(1) rotate(-90deg)' },
             ], {
@@ -696,7 +762,14 @@ var StartCompetition = {
                 }
                 playerTimer.IsTimerFinished = true;
                 playerTimer.IsFirstTime = false;
-                StartCompetition.AnswerOnQuestion();
+                player.cancel();
+                pathPlayer.playbackRate = 1;
+                pathPlayer.cancel();
+                if (playerTimer.PlayerId != '') {
+                    StartCompetition.AnswerOnQuestion();
+                }
+                timerFinishedSound.play();
+                StartCompetition.StopTimer();
             }
         }
     },
@@ -718,6 +791,9 @@ var StartCompetition = {
     },
     StopTimer: function () {
         setTimeout(function () {
+            player.cancel();
+            pathPlayer.playbackRate = 1;
+            pathPlayer.cancel();
             $('#dv-other-player-timer').find('.dv-full-timer').remove();
             $('#dv-citymall-player-timer').find('.dv-full-timer').remove();
             $('#p-timer').text('');
@@ -748,7 +824,7 @@ var StartCompetition = {
             isCorrect = answerRadio.data('iscorrect');
         }
 
-        if (playerId == 0) {
+        if (playerId == 0 || playerId == '' || playerId == undefined) {
             return;
         }
 
@@ -762,6 +838,22 @@ var StartCompetition = {
         data.append("Time", (newTimerQuestion / 60));
 
         playerTimer.IsPlayerAnswered = true;
+        if (isFinalCompetition) {
+            playerTimer.IsPlayerCityMallAnswered = true;
+            playerTimer.IsOtherPlayerAnswered = true;
+        }
+        else {
+            if (playerTimer.IsCityMallPlayer) {
+                playerTimer.IsPlayerCityMallAnswered = true;
+            }
+            else {
+                playerTimer.IsOtherPlayerAnswered = true;
+            }
+        }
+        
+
+        data.append("IsCityMallPlayerAnswered", playerTimer.IsPlayerCityMallAnswered);
+        data.append("IsOtherPlayerAnswered", playerTimer.IsOtherPlayerAnswered);
 
         $.ajax({
             type: 'POST',
@@ -770,86 +862,158 @@ var StartCompetition = {
             contentType: false,
             processData: false,
             success: function (data) {
+                StartCompetition.StopTimer();
                 if (data.isSuccess) {
-                    if (playerTimer.IsCityMallPlayer) {
-                        playerTimer.IsPlayerCityMallAnswered = true;
-                    }
-                    else {
-                        playerTimer.IsOtherPlayerAnswered = true;
-                    }
                     newTimerQuestion = 0;
-                    if (data.correct) {
-                        //Run sound effect with modal success
-                        correctAnswerSound.play();
-                        $('#goodModal').modal('show');
+
+                    if (data.isFinalComp && !isRoundCompetition) {
+                        if (data.correct) {
+                            correctAnswerSound.play();
+                            $('#goodModal').modal('show');
+                        }
+                        else {
+                            // wrong answer
+                            if (playerTimer.IsTimerFinished == true) {
+                                playerTimer.IsTimerFinishedAfterAnswer = true;
+                            }
+                            $('#notCorrectModal').modal('show');
+                            InCorrectAnswerSound.play();
+                            playerTimer.IsTimerStarted = false;
+                            playerTimer.IsFirstTime = false;
+                        }
+
                         setTimeout(function () {
                             $('#goodModal, #notCorrectModal').modal('hide');
-                            StartCompetition.OnLoad();
+
+
+                            //In case reset both player for case both points are the same
                             if (data.reset) {
                                 StartCompetition.ResetPlayed();
-                            }
-
-                            if (!data.finished && !data.continueRound) {
-                                //Continue to next question normal
-                                $('#dv-partial').html(data.partial);
+                                CityMallFullQuestion = false;
+                                OtherPlayerFullQuestion = false;
                             }
                             else {
-                                //Competiton finish
+                                if (data.isCityMallFullQuestion) {
+                                    CityMallFullQuestion = true;
+                                }
+                                else {
+                                    CityMallPlayed = [];
+                                }
+
+
+                                if (data.isOtherPlayerFullQuestion) {
+                                    OtherPlayerFullQuestion = true
+                                }
+                                else {
+                                    OtherTeamPlayed = [];
+                                }
+                            }
+
+                            //In case user can go to full scores
+                            if (data.isScoreView) {
+                                $('#dv-viewScore').find('#spn-lbl-goToScore').html(globalResources.ViewScores);
+                                $('#dv-viewScore').removeAttr('style');
+                                $('#dv-viewScore').on('click', function () {
+                                    $('#dv-partial').html(data.scorePartial);
+                                    StartCompetition.FinishFinalCompetition();
+                                });
+
+
+                                $('#dv-homePage').removeAttr('style');
+                                $('#dv-homePage').on('click', function () {
+                                    StartCompetition.OnLoad();
+                                    $('#dv-partial').html(data.partial);
+                                });
+                            }
+                            else {
+
+                                $('#dv-homePage').removeAttr('style');
+                                $('#dv-homePage').on('click', function () {
+                                    StartCompetition.OnLoad();
+                                    $('#dv-partial').html(data.partial);
+                                });
+                            }
+                        }, 3000);
+                    }
+                    else {
+                        // Not final competition Or Not questions per player..
+                        if (data.correct) {
+                            //Run sound effect with modal success
+                            correctAnswerSound.play();
+                            $('#goodModal').modal('show');
+                            setTimeout(function () {
+                                $('#goodModal, #notCorrectModal').modal('hide');
+                                StartCompetition.OnLoad();
+                                if (data.reset) {
+                                    StartCompetition.ResetPlayed();
+                                }
+
+                                if (!data.finished && !data.continueRound) {
+                                    //Continue to next question normal
+                                    $('#dv-partial').html(data.partial);
+                                }
+                                else {
+                                    //Competiton finish
+                                    if (data.finished) {
+                                        $('#dv-homePage').find('#spn-lbl-goTo').html(globalResources.ViewScores);
+                                    }
+                                    else if (data.continueRound) {
+                                        $('#dv-homePage').find('#spn-lbl-goTo').html(data.roundText);
+                                    }
+
+                                    $('#dv-homePage').removeAttr('style');
+
+                                    $('#dv-homePage').on('click', function () {
+                                        if (data.continueRound) {
+                                            StartCompetition.OnLoad();
+                                            if (data.reset) {
+                                                StartCompetition.ResetPlayed();
+                                            }
+                                        }
+                                        $('#dv-partial').html(data.partial);
+                                    });
+                                }
+                            }, 4000);
+                        }
+                        else {
+                            if (playerTimer.IsTimerFinished == true) {
+                                //InCase Timer Finished before player answered
+                                //Host must clicked on another player.
+                                playerTimer.IsTimerFinishedAfterAnswer = true;
+                            }
+                            else {
+                                //Run sound effect with modal wrong
+                                $('#notCorrectModal').modal('show');
+                                InCorrectAnswerSound.play();
+                                playerTimer.IsTimerStarted = false;
+                                playerTimer.IsFirstTime = false;
+                                setTimeout(function () {
+                                    $('#notCorrectModal').modal('hide');
+                                }, 4000);
+                            }
+
+
+                            if (playerTimer.IsPlayerCityMallAnswered && playerTimer.IsOtherPlayerAnswered) {
+
                                 if (data.finished) {
                                     $('#dv-homePage').find('#spn-lbl-goTo').html(globalResources.ViewScores);
                                 }
                                 else if (data.continueRound) {
                                     $('#dv-homePage').find('#spn-lbl-goTo').html(data.roundText);
-                                    StartCompetition.StopTimer();
                                 }
 
-                                $('#dv-homePage').removeAttr('style');
-
+                                //Show home page button
                                 $('#dv-homePage').on('click', function () {
-                                    if (data.continueRound) {
-                                        StartCompetition.OnLoad();
-                                        if (data.reset) {
-                                            StartCompetition.ResetPlayed();
-                                        }
+                                    StartCompetition.OnLoad();
+                                    if (data.reset) {
+                                        StartCompetition.ResetPlayed();
                                     }
                                     $('#dv-partial').html(data.partial);
                                 });
+
+                                $('#dv-homePage').removeAttr('style');
+
                             }
-                        }, 6000);
-                    }
-                    else {
-                        if (playerTimer.IsTimerFinished == true) {
-                            //InCase Timer Finished before player answered
-                            //Host must clicked on another player.
-                            timerFinishedSound.play();
-                            StartCompetition.StopTimer();
-                            playerTimer.IsTimerFinishedAfterAnswer = true;
-                        }
-                        else {
-                            //Run sound effect with modal wrong
-                            $('#notCorrectModal').modal('show');
-                            InCorrectAnswerSound.play();
-                            StartCompetition.StopTimer();
-                            playerTimer.IsTimerStarted = false;
-                            playerTimer.IsFirstTime = false;
-                            setTimeout(function () {
-                                $('#notCorrectModal').modal('hide');
-                            }, 4000);
-                        }
-
-
-                        if (playerTimer.IsPlayerCityMallAnswered && playerTimer.IsOtherPlayerAnswered) {
-                            //Show home page button
-                            $('#dv-homePage').on('click', function () {
-                                StartCompetition.OnLoad();
-                                if (data.reset) {
-                                    StartCompetition.ResetPlayed();
-                                }
-                                $('#dv-partial').html(data.partial);
-                            });
-
-                            $('#dv-homePage').removeAttr('style');
-
                         }
                     }
                 }
@@ -1001,5 +1165,24 @@ var StartCompetition = {
     },
     CloseModal: function () {
         $('#staticBackdrop').modal('hide');
+    },
+    FinishFinalCompetition: function () {
+
+        $.ajax({
+            type: 'GET',
+            url: publicURls.FinishFinalCompetition,
+            dataType: 'json',
+            success: function (data) {
+                if (data.isSuccess) {
+                   
+                }
+                else {
+                    //GeneralClass.ShowErrorAlert(globalResources.ErrorOccurred);
+                }
+            },
+            error: function (e) {
+                //GeneralClass.ShowErrorAlert(globalResources.ErrorOccurred);
+            }
+        }); 
     }
 }

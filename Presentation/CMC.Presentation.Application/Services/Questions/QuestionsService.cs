@@ -259,6 +259,7 @@ namespace CMC.Presentation.Application.Services.Questions
             }
             catch (Exception ex)
             {
+                await _logger.LogError(ex, "DeleteCategory", $"Id:{id} - WithQuestions:{withQuestions}", null, false);
                 return new Response()
                 {
                     Message = ex.Message,
@@ -323,6 +324,7 @@ namespace CMC.Presentation.Application.Services.Questions
             }
             catch (Exception ex)
             {
+                await _logger.LogError(ex, "DeleteExistingImg", $"Id:{id} - type:{type}", null, false);
                 return new Response()
                 {
                     Message = ex.Message,
@@ -383,6 +385,7 @@ namespace CMC.Presentation.Application.Services.Questions
             }
             catch (Exception ex)
             {
+                await _logger.LogError(ex, "GetCategory", id, null, false);
                 throw ex;
             }
         }
@@ -421,6 +424,43 @@ namespace CMC.Presentation.Application.Services.Questions
             }
             catch (Exception ex)
             {
+                await _logger.LogError(ex, "GetAllQuestions", searchQuestionDTO, null, false);
+                throw ex;
+            }
+        }
+
+
+        public async Task<PagedResult<QuestionListVM>> GetLastQuestions()
+        {
+            try
+            {
+                bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
+
+                PagedResult<QuestionListVM> response = new PagedResult<QuestionListVM>();
+                var questions = _questionRepository.GetAll(a => a.IsDeleted != true)
+                    .Include(a => a.Category)
+                    .AsQueryable();
+
+                var result = questions
+                        .OrderByDescending(a => a.CreatedOn)
+                        .ToQueryResultAsync(1, 15);
+
+                response.PageSize = result.Result.PageSize;
+                response.CurrentPage = result.Result.CurrentPage;
+                response.TotalCount = result.Result.TotalCount;
+                response.BrokenRules = result.Result.BrokenRules;
+                response.Data = result.Result.Data.Select(x => new QuestionListVM
+                {
+                    Id = x.Id,
+                    Text = IsAr ? x.TextAr : x.TextEn,
+                    CategoryName = IsAr ? x.Category.NameAr : x.Category.NameEn
+                });
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogError(ex, "GetLastQuestions", null, null, false);
                 throw ex;
             }
         }
@@ -729,6 +769,7 @@ namespace CMC.Presentation.Application.Services.Questions
             }
             catch (Exception ex)
             {
+                await _logger.LogError(ex, "AddQuestions", questionVM, null, false);
                 throw ex;
             }
         }
@@ -791,6 +832,7 @@ namespace CMC.Presentation.Application.Services.Questions
             }
             catch (Exception ex)
             {
+                await _logger.LogError(ex, "GetQuestion", id, null, false);
                 return new Response<QuestionVM>()
                 {
                     Message = ex.InnerException != null ? ex.InnerException.Message : ex.Message
@@ -820,6 +862,7 @@ namespace CMC.Presentation.Application.Services.Questions
             }
             catch (Exception ex)
             {
+                await _logger.LogError(ex, "DeleteQuestion", id, null, false);
                 return new Response()
                 {
                     Message = ex.InnerException != null ? ex.InnerException.Message : ex.Message
@@ -899,6 +942,7 @@ namespace CMC.Presentation.Application.Services.Questions
             }
             catch (Exception ex)
             {
+                await _logger.LogError(ex, "GetRandomQuestionPerCategory", $"categoryId:{categoryId} - ListQuestion:{questions}", null, false);
                 return new Response<QuestionVM>() { StatusCode = (int)HttpStatusCode.BadRequest };
             }
         }

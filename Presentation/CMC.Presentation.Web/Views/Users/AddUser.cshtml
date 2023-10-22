@@ -54,14 +54,11 @@
                                 <input class="form-control" type="text" asp-for="EmailAddress" autocomplete="off" />
                                 <span asp-validation-for="EmailAddress" class="text-danger"></span>
                             </div>
-                            @if (!Model.Id.HasValue)
-                            {
-                                <div class="form-group col-md-3">
-                                    <label class="requiredLabel">@Localizer["Username"]</label>
-                                    <input class="form-control" type="text" asp-for="UserName" autocomplete="off" />
-                                    <span asp-validation-for="UserName" class="text-danger"></span>
-                                </div>
-                            }
+                            <div class="form-group col-md-3">
+                                <label class="requiredLabel">@Localizer["Username"]</label>
+                                <input class="form-control" type="text" asp-for="UserName" autocomplete="off" />
+                                <span asp-validation-for="UserName" class="text-danger"></span>
+                            </div>
                             <div class="form-group col-md-3 pt-2">
                                 <label class="">@Localizer["Groups"]</label>
                                 <select id="ddlGroups" class="form-select w-100" asp-for="GroupId" asp-items="@(new SelectList(Model.Groups, "Id", IsAr ? "NameAr" : "NameEn"))">
@@ -71,12 +68,26 @@
                             </div>
                         </div>
                     </div>
+                    <div class="mb-2">
+                        <div class="form-row">
+                            <div class="form-group col-md-3">
+                                <label class="requiredLabel">@Localizer["NewPassword"]</label>
+                                <input class="form-control" type="password" asp-for="NewPassword" autocomplete="off" value="" onfocus="this.value=''" />
+                                <span asp-validation-for="NewPassword" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label class="requiredLabel">@Localizer["ConfirmNewPassword"]</label>
+                                <input class="form-control" type="password" asp-for="ConfirmNewPassword" autocomplete="off" value="" onfocus="this.value=''" />
+                                <span asp-validation-for="ConfirmNewPassword" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
                     <div class="col-12 text-center">
                         <button type="button" class="btn btn-primary" onclick="Users.CreateOrUpdate()">@Localizer["Save"]</button>
                         <button type="button" class="btn btn-secondary" onclick="window.location.href='@Url.Action("Index", "Users")';">@Localizer["Cancel"]</button>
                         @if (Model.Id.HasValue && userInfoDTO.PermissionCodes.Contains(PermissionCodes.WebUsersDelete))
                         {
-                            <button type="button" class="btn btn-danger" onclick="Users.DeleteUsers()">@Localizer["Delete"]</button>
+                            <button type="button" class="btn btn-danger" id="btndelete_@Model.Id" onclick="Users.DeleteUser(this)">@Localizer["Delete"]</button>
                         }
                     </div>
                 </div>

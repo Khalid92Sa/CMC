@@ -14,6 +14,8 @@ namespace CMC.Presentation.Application.DTOs.Identity
         public string EmailAddress { get; set; }
         public string PhoneNumber { get; set; }
         public int? GroupId { get; set; }
+        public string NewPassword { get; set; }
+        public string ConfirmNewPassword { get; set; }
         public List<LookupModel> Groups { get; set; } = new List<LookupModel>();
         public GroupsEnum GroupCode { get; set; }
         public List<string> PermissionCodes { get; set; } = new List<string>();

@@ -31,7 +31,7 @@ namespace CMC.Presentation.Application.Services.Identity.Interfaces
         /// Get Logged in user
         /// </summary>
         /// <returns></returns>
-        UserDTO GetLoggedInUser();
+        Task<UserDTO> GetLoggedInUser();
         /// <summary>
         /// Get All users with search
         /// </summary>

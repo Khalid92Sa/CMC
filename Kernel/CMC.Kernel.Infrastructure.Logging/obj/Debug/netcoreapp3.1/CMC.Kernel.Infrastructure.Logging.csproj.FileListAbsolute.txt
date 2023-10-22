@@ -832,6 +832,7 @@ C:\Users\khalids\Desktop\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\obj\Debug\
 C:\Users\khalids\Desktop\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\obj\Debug\netcoreapp3.1\CMC.Kernel.Infrastructure.Logging.csproj.CopyComplete
 C:\Users\khalids\Desktop\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\obj\Debug\netcoreapp3.1\CMC.Kernel.Infrastructure.Logging.dll
 C:\Users\khalids\Desktop\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\obj\Debug\netcoreapp3.1\CMC.Kernel.Infrastructure.Logging.pdb
+D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\CMC.Kernel.Domain.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\CMC.Kernel.Infrastructure.Logging.deps.json
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\CMC.Kernel.Infrastructure.Logging.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\CMC.Kernel.Infrastructure.Logging.pdb
@@ -1090,7 +1091,6 @@ D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netco
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\refs\System.Xml.XPath.XDocument.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\refs\WindowsBase.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\CMC.Kernel.Core.dll
-D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\CMC.Kernel.Domain.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\CMC.Kernel.Infrastructure.Caching.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\CMC.Kernel.Infrastructure.Persistence.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Logging\bin\Debug\netcoreapp3.1\CMC.Presentation.Domain.dll

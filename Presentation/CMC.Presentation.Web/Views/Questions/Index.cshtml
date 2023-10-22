@@ -104,10 +104,43 @@
             }
         </div>
     </div>
+
+    <div class="card mt-5">
+        <div class="card-body">
+            <div class="row justify-content-between">
+                <div class="col-12 d-flex flex-row justify-content-between">
+                    <h6 class="justify-content-start align-middle align-self-center mb-3">@Localizer["LastQuestionAddedd"]</h6>
+                </div>
+            </div>
+            <div class="from-row mb-3">
+                <table id="tblLastQuestion" class="table table-sm table-striped NoPagenation">
+                    <thead>
+                        <tr>
+                            <th scope="col" style="width:70px;">#</th>
+                            <th scope="col">@Localizer["QuestionText"]</th>
+                            <th scope="col">@Localizer["Category"]</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            @*<div class="form-row justify-content-end">
+                <div class="pt-2 mr-3">
+                    <span id="pagerInfo">
+                    </span>
+                </div>
+                <div id="pager" class="site-pagination">
+                    <ul id="pagination" class="pagination justify-content-end mb-0"></ul>
+                </div>
+            </div>*@
+        </div>
+    </div>
+
 </div>
+<script src="~/assets/js/Application/QuestionsCategories.js"></script>
 <script>
     GeneralClass.ActivationSubMenuItem('#lnkQuestions', '#lnkQuestionCategory');
     GeneralClass.ActivationSubMenuItem('#lnkQuestions2', '#lnkQuestionCategory2');
+    AllCategories.OnLoad();
     var CanDelete = '@userInfoDTO.PermissionCodes.Contains(PermissionCodes.WebQuestionsDelete)' == 'True';
     var CanCreate = '@userInfoDTO.PermissionCodes.Contains(PermissionCodes.WebQuestionsCreate)' == 'True';
 

@@ -18,6 +18,9 @@ namespace CMC.Presentation.Domain.Entities
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
 
+        public int? CompetitionQuestionType { get; set; }
+        public int? QuestionForEachPlayer { get; set; }
+        public bool? IsFinalCompetition { get; set; }
         public int? HostID { get; set; }
         public virtual User Host { get; set; }
 

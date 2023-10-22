@@ -8,6 +8,7 @@ using CMC.Presentation.Application.ActionFilters;
 using CMC.Presentation.Application.DTOs.Questions;
 using CMC.Presentation.Application.Services.Questions;
 using CMC.Presentation.Application.Services.Settings;
+using CMC.Presentation.Domain.Entities;
 using iTextSharp.text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -45,8 +46,17 @@ namespace CMC.Presentation.Web.Controllers
         [RolePermission(PermissionCodes.WebQuestionsView)]
         public async Task<IActionResult> Index()
         {
-            var categories = await _questionsService.GetCategories();
-            return View(categories);
+            try
+            {
+                var categories = await _questionsService.GetCategories();
+                return View(categories);
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogError(ex, "Index_Questions", null, null, false);
+                return RedirectToAction("Index", "Error");
+            }
+            
         }
 
         /// <summary>
@@ -72,7 +82,8 @@ namespace CMC.Presentation.Web.Controllers
             }
             catch (Exception ex)
             {
-                throw ex;
+                await _logger.LogError(ex, "AddCategory", id, null, false);
+                return RedirectToAction("Index", "Error");
             }
         }
 
@@ -93,6 +104,7 @@ namespace CMC.Presentation.Web.Controllers
             }
             catch (Exception ex)
             {
+                await _logger.LogError(ex, "AddCategory", categoryDTO, null, false);
                 return Json(new { resultCode = (int)HttpStatusCode.BadRequest });
             }
         }
@@ -114,6 +126,7 @@ namespace CMC.Presentation.Web.Controllers
             }
             catch (Exception ex)
             {
+                await _logger.LogError(ex, "DeleteCategory", $"Id:{id} - WithQuestions:{withQuestions}", null, false);
                 return Json(new { isSuccess = false });
             }
         }
@@ -135,6 +148,7 @@ namespace CMC.Presentation.Web.Controllers
             }
             catch (Exception ex)
             {
+                await _logger.LogError(ex, "DeleteExistingImg", $"Id:{id} - type:{type}", null, false);
                 return Json(new { isSuccess = false });
             }
         }
@@ -148,8 +162,35 @@ namespace CMC.Presentation.Web.Controllers
         [RolePermission(PermissionCodes.WebQuestionsView)]
         public async Task<IActionResult> GetAllQuestions([FromQuery] SearchQuestionDTO searchQuestionDTO)
         {
-            var result = await _questionsService.GetAllQuestions(searchQuestionDTO);
-            return Json(result);
+            try
+            {
+                var result = await _questionsService.GetAllQuestions(searchQuestionDTO);
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogError(ex, "GetAllQuestions", searchQuestionDTO, null, false);
+                return Json(new { });
+            }
+           
+        }
+
+
+        [HttpGet]
+        [RolePermission(PermissionCodes.WebQuestionsView)]
+        public async Task<IActionResult> GetLastQuestions()
+        {
+            try
+            {
+                var result = await _questionsService.GetLastQuestions();
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogError(ex, "GetLastQuestions", null, null, false);
+                return Json(new { });
+            }
+
         }
         #endregion
 
@@ -187,7 +228,8 @@ namespace CMC.Presentation.Web.Controllers
             }
             catch (Exception ex)
             {
-                throw ex;
+                await _logger.LogError(ex, "GetAllQuestions", id, null, false);
+                return RedirectToAction("Index", "Error");
             }
         }
 
@@ -208,7 +250,8 @@ namespace CMC.Presentation.Web.Controllers
             }
             catch (Exception ex)
             {
-                throw ex;
+                await _logger.LogError(ex, "AddQuestion", question, null, false);
+                return Json(new { isSuccess = false });
             }
         }
 
@@ -223,7 +266,8 @@ namespace CMC.Presentation.Web.Controllers
             }
             catch (Exception ex)
             {
-                throw;
+                await _logger.LogError(ex, "DeleteQuestion", id, null, false);
+                return Json(new { isSuccess = false });
             }
         } 
         #endregion

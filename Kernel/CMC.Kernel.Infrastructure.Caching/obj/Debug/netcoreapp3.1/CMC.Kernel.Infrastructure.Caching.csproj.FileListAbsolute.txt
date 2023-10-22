@@ -820,6 +820,7 @@ C:\Users\khalids\Desktop\CMC\Kernel\CMC.Kernel.Infrastructure.Caching\obj\Debug\
 C:\Users\khalids\Desktop\CMC\Kernel\CMC.Kernel.Infrastructure.Caching\obj\Debug\netcoreapp3.1\CMC.Kernel.Infrastructure.Caching.csproj.CopyComplete
 C:\Users\khalids\Desktop\CMC\Kernel\CMC.Kernel.Infrastructure.Caching\obj\Debug\netcoreapp3.1\CMC.Kernel.Infrastructure.Caching.dll
 C:\Users\khalids\Desktop\CMC\Kernel\CMC.Kernel.Infrastructure.Caching\obj\Debug\netcoreapp3.1\CMC.Kernel.Infrastructure.Caching.pdb
+D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Caching\bin\Debug\netcoreapp3.1\refs\System.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Caching\bin\Debug\netcoreapp3.1\CMC.Kernel.Infrastructure.Caching.deps.json
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Caching\bin\Debug\netcoreapp3.1\CMC.Kernel.Infrastructure.Caching.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Caching\bin\Debug\netcoreapp3.1\CMC.Kernel.Infrastructure.Caching.pdb
@@ -967,7 +968,6 @@ D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Caching\bin\Debug\netco
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Caching\bin\Debug\netcoreapp3.1\refs\System.Diagnostics.Tools.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Caching\bin\Debug\netcoreapp3.1\refs\System.Diagnostics.TraceSource.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Caching\bin\Debug\netcoreapp3.1\refs\System.Diagnostics.Tracing.dll
-D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Caching\bin\Debug\netcoreapp3.1\refs\System.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Caching\bin\Debug\netcoreapp3.1\refs\System.Drawing.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Caching\bin\Debug\netcoreapp3.1\refs\System.Drawing.Primitives.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Caching\bin\Debug\netcoreapp3.1\refs\System.Dynamic.Runtime.dll

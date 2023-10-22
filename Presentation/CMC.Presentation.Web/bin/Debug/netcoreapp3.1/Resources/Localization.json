@@ -473,6 +473,43 @@
       "ar-JO": "غير فعال"
     }
   },
+  {
+    "Key": "Common_PageNotFound",
+    "LocalizedValue": {
+      "en-US": "Page Not Found",
+      "ar-JO": "الصفحة غير موجودة"
+    }
+  },
+  {
+    "Key": "Common_NotFoundMessage",
+    "LocalizedValue": {
+      "en-US": "We couldn't find the page you want to visit. You can go back to the previous page, go to the home page or contact the technical team.",
+      "ar-JO": "لم نستطع العثور على الصفحة التي ترغب في زيارتها. بإمكانك الرجوع للصفحة السابقة أو التوجه إلى الصفحة الرئيسية أو التواصل مع الفريق التقني."
+    }
+  },
+  {
+    "Key": "Common_ErrorOccurred",
+    "LocalizedValue": {
+      "en-US": "An error occurred",
+      "ar-JO": "حدث خطأ"
+    }
+  },
+  {
+    "Key": "Common_ErrorPageMessage",
+    "LocalizedValue": {
+      "en-US": "Sorry for the mistake. You can go back to the previous page, go to the home page or contact the technical team.",
+      "ar-JO": "نأسف على هذا الخطأ. بإمكانك الرجوع للصفحة السابقة أو التوجه إلى الصفحة الرئيسية أو التواصل مع الفريق التقني."
+    }
+  },
+  {
+    "Key": "Common_HomePageGo",
+    "LocalizedValue": {
+      "en-US": "Go home page",
+      "ar-JO": "إذهب إلى الرئيسية"
+    }
+  },
+
+
 
   //Buttons
   {
@@ -881,6 +918,13 @@
     }
   },
   {
+    "Key": "LastQuestionAddedd",
+    "LocalizedValue": {
+      "en-US": "Last questions added",
+      "ar-JO": "آخر أسئلة تمت اضافتها"
+    }
+  },
+  {
     "Key": "AddNewQuestion",
     "LocalizedValue": {
       "en-US": "Add new question",
@@ -1253,6 +1297,48 @@
     }
   },
   {
+    "Key": "CompetitionQuestionsType",
+    "LocalizedValue": {
+      "en-US": "Questions type",
+      "ar-JO": "نوع أسئلة المسابقة"
+    }
+  },
+  {
+    "Key": "CompeitionQuestionsRound",
+    "LocalizedValue": {
+      "en-US": "Rounds",
+      "ar-JO": "جولات"
+    }
+  },
+  {
+    "Key": "CompeitionQuestionsPerPlayer",
+    "LocalizedValue": {
+      "en-US": "Questions for each player",
+      "ar-JO": "أسئلة لكل لاعب"
+    }
+  },
+  {
+    "Key": "FinalCompetition",
+    "LocalizedValue": {
+      "en-US": "Final Competition",
+      "ar-JO": "مسابقة نهائية"
+    }
+  },
+  {
+    "Key": "FinalCompetitionPlayerCountValidation",
+    "LocalizedValue": {
+      "en-US": "Final competition must have one player from both team",
+      "ar-JO": "في المبارة النهائية يجب أن يكون لاعب واحد من كل فريق"
+    }
+  },
+  {
+    "Key": "OptionQuestionForEachPlayerOnlyForFinalCompetition",
+    "LocalizedValue": {
+      "en-US": "Question for each player only in Final competition",
+      "ar-JO": "خيار الأسئلة لكل لاعب فقط للمباراة النهائية"
+    }
+  },
+  {
     "Key": "IfCompetitionBasedOnAnotherCompetition",
     "LocalizedValue": {
       "en-US": "In continuation of the competition",
@@ -1491,17 +1577,17 @@
     }
   },
   {
-    "Key": "WinningPlayerFromCityMall",
+    "Key": "WinningPlayerFromFirstTeam",
     "LocalizedValue": {
-      "en-US": "Winning player from City Mall",
-      "ar-JO": "اللاعب الفائز من فريق سيتي مول"
+      "en-US": "Winning player from first team",
+      "ar-JO": "اللاعب الفائز من الفريق الأول"
     }
   },
   {
-    "Key": "WinningPlayerFromOtherTeam",
+    "Key": "WinningPlayerFromSecondTeam",
     "LocalizedValue": {
-      "en-US": "Winning player from visitors team",
-      "ar-JO": "اللاعب الفائز من فريق الزوار"
+      "en-US": "Winning player from second team",
+      "ar-JO": "اللاعب الفائز من الفريق الثاني"
     }
   },
   {
@@ -1537,6 +1623,69 @@
     "LocalizedValue": {
       "en-US": "None",
       "ar-JO": "لا يوجد"
+    }
+  },
+  {
+    "Key": "CorrectAnswer",
+    "LocalizedValue": {
+      "en-US": "Correct Answer",
+      "ar-JO": "الاجابة صحيحة"
+    }
+  },
+  {
+    "Key": "InCorrectAnswer",
+    "LocalizedValue": {
+      "en-US": "InCorrect Answer",
+      "ar-JO": "الاجابة غير صحيحة"
+    }
+  },
+  {
+    "Key": "PlayerDidntAnswer",
+    "LocalizedValue": {
+      "en-US": "Player didnt answer on question",
+      "ar-JO": "لم يجب اللاعب على السؤال"
+    }
+  },
+  {
+    "Key": "TheQuestion",
+    "LocalizedValue": {
+      "en-US": "Question",
+      "ar-JO": "السؤال"
+    }
+  },
+  {
+    "Key": "Time",
+    "LocalizedValue": {
+      "en-US": "Time",
+      "ar-JO": "الوقت"
+    }
+  },
+  {
+    "Key": "Seconds",
+    "LocalizedValue": {
+      "en-US": "Secends",
+      "ar-JO": "ثواني"
+    }
+  },
+  {
+    "Key": "PlayerDIdntAnswerOnQuestions",
+    "LocalizedValue": {
+      "en-US": "Player didn't answer on questions",
+      "ar-JO": "اللاعب لم يجب على أي سؤال"
+    }
+  },
+  {
+    "Key": "PlayerAnswer",
+    "LocalizedValue": {
+      "en-US": "Player answer",
+      "ar-JO": "اجابة اللاعب"
+    }
+  },
+  {
+    "Key": "PlayerScore",
+    "LocalizedValue": {
+      "en-US": "Player Score",
+      "ar-JO": "نتائح اللاعب"
     }
   }
 ]

@@ -29,13 +29,12 @@ namespace CMC.Kernel.Core.Controllers
             }
             else
             {
-                httpContext.Session.SetString("UserId", "1");
                 // Check if session contains a value for the sessionId
-                //if (string.IsNullOrEmpty(httpContext.Session.GetString("UserId")))
-                //{
-                //    // Redirect to the Login action of the Profile controller
-                //    context.Result = new RedirectToActionResult("Login", "Users", null);
-                //}
+                if (string.IsNullOrEmpty(httpContext.Session.GetString("UserId")))
+                {
+                    // Redirect to the Login action of the Profile controller
+                    context.Result = new RedirectToActionResult("Login", "Users", null);
+                }
             }
 
             base.OnActionExecuting(context);

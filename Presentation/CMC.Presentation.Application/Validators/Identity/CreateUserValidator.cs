@@ -17,12 +17,13 @@ namespace CMC.Presentation.Application.Validators.Identity
             RuleFor(a => a.Name).NotNull().WithMessage(localizer["FieldRequired"]);
 
             //UserName
-            When(a => !a.Id.HasValue, () =>
-            {
-                //Only in create user
-                RuleFor(a => a.UserName).NotNull().WithMessage(localizer["FieldRequired"]);
-            });
-            
+            //When(a => !a.Id.HasValue, () =>
+            //{
+            //    //Only in create user
+            //    RuleFor(a => a.UserName).NotNull().WithMessage(localizer["FieldRequired"]);
+            //});
+            RuleFor(a => a.UserName).NotNull().WithMessage(localizer["FieldRequired"]);
+
             //Email
             RuleFor(a => a.EmailAddress).NotNull().WithMessage(localizer["FieldRequired"])
                 .Matches(RegularExpressionsValidator.EmailAddress).WithMessage(localizer["EmailAddressInvalid"])
@@ -33,6 +34,12 @@ namespace CMC.Presentation.Application.Validators.Identity
 
             //Group
             RuleFor(a => a.GroupId).NotNull().WithMessage(localizer["FieldRequired"]);
+
+            When(a => !string.IsNullOrEmpty(a.NewPassword), () =>
+            {
+                RuleFor(a => a.ConfirmNewPassword).NotNull().WithMessage(localizer["FieldRequired"]);
+                RuleFor(a => a.ConfirmNewPassword).Equal(a => a.NewPassword).WithMessage(localizer["PasswordsDoNotMatch"]);
+            });
         }
     }
 }

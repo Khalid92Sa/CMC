@@ -93,6 +93,13 @@ namespace CMC.Presentation.Application.Services.Identity.Implementations
                         StatusCode = (int)HttpStatusCode.BusinessRuleViolation
                     };
 
+                if (userDTO.Id == 1)
+                    return new Response<UserDTO>()
+                    {
+                        BrokenRules = validModel.BrokenRules,
+                        StatusCode = (int)HttpStatusCode.BusinessRuleViolation,
+                    };
+
 
                 bool isUpdate = userDTO.Id.HasValue;
                 //Check if the username or email is already exist
@@ -101,18 +108,20 @@ namespace CMC.Presentation.Application.Services.Identity.Implementations
                 string encUserName = null;
                 if (isUpdate)
                 {
-                    existUser = await _userRepository.GetAll(u => (u.EmailAddress == encEmail) && u.Id != userDTO.Id.Value && u.IsDeleted != true).FirstOrDefaultAsync();
+                    encUserName = Security.Encrypt(userDTO.UserName);
+                    existUser = await _userRepository.GetAll(u => (u.UserName == encUserName || u.EmailAddress == encEmail) && u.Id != userDTO.Id.Value && u.IsDeleted != true).FirstOrDefaultAsync();
                 }
                 else
                 {
                     encUserName = Security.Encrypt(userDTO.UserName);
-                    existUser = await _userRepository.GetAll(u => u.UserName == encUserName || u.EmailAddress == encEmail && u.IsDeleted != true).FirstOrDefaultAsync();
+                    existUser = await _userRepository.GetAll(u => (u.UserName == encUserName || u.EmailAddress == encEmail) && u.IsDeleted != true).FirstOrDefaultAsync();
                 }
 
                 if (existUser != null)
                 {
-                    var duplicatedField = !isUpdate ? (existUser.UserName == encUserName ? "Username" : "EmailAddress") : "EmailAddress";
-                    List<ValidationRule> validationRule = new List<ValidationRule>() { new ValidationRule() { Message = $"{_localizer[duplicatedField].Value} {_localizer["AlreadyExist"].Value}" } };
+                    var duplicatedField = existUser.UserName == encUserName ? "Username" : "EmailAddress";
+                    var fieldName = duplicatedField == "Username" ? "UserName" : duplicatedField;
+                    List <ValidationRule> validationRule = new List<ValidationRule>() { new ValidationRule() { Message = $"{_localizer[duplicatedField].Value} {_localizer["AlreadyExist"].Value}",PropertyName = fieldName } };
                     return new Response<UserDTO>()
                     {
                         BrokenRules = validationRule,
@@ -129,6 +138,11 @@ namespace CMC.Presentation.Application.Services.Identity.Implementations
                     updatedUser.Name = mappedUpdatedUser.Name;
                     updatedUser.PhoneNumber = mappedUpdatedUser.PhoneNumber;
                     updatedUser.EmailAddress = mappedUpdatedUser.EmailAddress;
+                    updatedUser.EmailAddress = mappedUpdatedUser.EmailAddress;
+                    updatedUser.UserName = mappedUpdatedUser.UserName;
+
+                    if (!string.IsNullOrEmpty(userDTO.NewPassword))
+                        updatedUser.Password = Security.Hash(userDTO.NewPassword);
 
                     updatedUser.ModifiedBy = int.Parse(_httpContextAccessor.HttpContext.Session.GetString("UserId"));
                     updatedUser.ModifiedOn = DateTime.Now;
@@ -151,7 +165,17 @@ namespace CMC.Presentation.Application.Services.Identity.Implementations
                     {
                         //Update session infromation
                         var userInfo = await GetUser(loggedInUser);
-                        var userInfoDTO = JsonConvert.SerializeObject(userInfo);
+                        UserDTO newUserDTO = new UserDTO()
+                        {
+                            Id = userDTO.Id,
+                            EmailAddress = userInfo.Data.EmailAddress,
+                            PhoneNumber = userInfo.Data.PhoneNumber,
+                            Name = userInfo.Data.Name,
+                            GroupId = userInfo.Data.GroupId,
+                            GroupCode = userInfo.Data.GroupCode,
+                            PermissionCodes = userInfo.Data.PermissionCodes,
+                        };
+                        var userInfoDTO = JsonConvert.SerializeObject(newUserDTO);
                         _httpContextAccessor.HttpContext.Session.SetString("UserInfoDTO", userInfoDTO);
                         _httpContextAccessor.HttpContext.Session.SetString("UserId", userInfo.Data.Id.ToString());
                         _httpContextAccessor.HttpContext.Session.SetString("UserFullName", userInfo.Data.Name);
@@ -164,7 +188,13 @@ namespace CMC.Presentation.Application.Services.Identity.Implementations
                     newUser.CreatedBy = int.Parse(_httpContextAccessor.HttpContext.Session.GetString("UserId"));
                     newUser.CreatedOn = DateTime.Now;
                     newUser.IsActive = true;
-                    newUser.Password = Security.Hash(SystemSettings.DefaultPassword);
+                    newUser.IsDeleted = false;
+
+                    if (!string.IsNullOrEmpty(userDTO.NewPassword))
+                        newUser.Password = Security.Hash(userDTO.NewPassword);
+                    else
+                        newUser.Password = Security.Hash(SystemSettings.DefaultPassword);
+
                     newUser.UserGroups = new List<UserGroup>() 
                     { 
                         new UserGroup()
@@ -179,7 +209,6 @@ namespace CMC.Presentation.Application.Services.Identity.Implementations
                     await _userRepository.UnitOfWork.SaveChangesAsync();
                 }
                
-
 
                 return new Response<UserDTO>()
                 {
@@ -215,9 +244,9 @@ namespace CMC.Presentation.Application.Services.Identity.Implementations
 
 
                 string username = Security.Encrypt(loginDTO.UserName);
-                var existUser = await _userRepository.GetAll(u => u.UserName == username)
-                    .Include(u=>u.UserGroups)
-                    .ThenInclude(g=>g.Group)
+                var existUser = await _userRepository.GetAll(u => u.UserName == username && u.IsDeleted != true)
+                    .Include(u => u.UserGroups)
+                    .ThenInclude(g => g.Group)
                     .SingleOrDefaultAsync();
 
                 if (existUser != null)
@@ -350,7 +379,7 @@ namespace CMC.Presentation.Application.Services.Identity.Implementations
             }
             catch (Exception ex)
             {
-                await _logger.LogError(ex, "GetUsers", null, null, false);
+                await _logger.LogError(ex, "GetUsers", searchUserDTO, null, false);
                 return new PagedResult<UserListDTO>
                 {
                     Message = ex.Message,
@@ -369,7 +398,7 @@ namespace CMC.Presentation.Application.Services.Identity.Implementations
         {
             try
             {
-                var user = await _userRepository.GetAll(a => a.Id == id && a.IsDeleted != true)
+                var user = await _userRepository.GetAll(a => a.Id == id)
                     .Include(a=>a.UserGroups)
                     .ThenInclude(a=>a.Group)
                     .SingleOrDefaultAsync();
@@ -384,7 +413,6 @@ namespace CMC.Presentation.Application.Services.Identity.Implementations
                 var userGroup = user.UserGroups.Select(gr => gr.Group).FirstOrDefault();
                 userDto.GroupId = userGroup.Id;
                 userDto.GroupCode = (GroupsEnum)Enum.Parse(typeof(GroupsEnum), userGroup.Code);
-
                 var permission = await _groupPermissionService.GetPermissionByGroupId(userDto.GroupId.Value);
                 userDto.PermissionCodes = permission.Select(a => a.Code).ToList();
 
@@ -397,12 +425,12 @@ namespace CMC.Presentation.Application.Services.Identity.Implementations
             }
             catch (Exception ex)
             {
-                await _logger.LogError(ex, "GetUserById", null, null, false);
+                await _logger.LogError(ex, "GetUserById", id, null, false);
                 throw ex;
             }
         }
 
-        public UserDTO GetLoggedInUser()
+        public async Task<UserDTO> GetLoggedInUser()
         {
             try
             {
@@ -416,6 +444,7 @@ namespace CMC.Presentation.Application.Services.Identity.Implementations
             }
             catch (Exception ex)
             {
+                await _logger.LogError(ex, "GetLoggedInUser", null, null, false);
                 throw ex;
             }
         }
@@ -448,7 +477,7 @@ namespace CMC.Presentation.Application.Services.Identity.Implementations
             }
             catch (Exception ex)
             {
-                await _logger.LogError(ex, "DeleteUser", null, null, false);
+                await _logger.LogError(ex, "DeleteUser", id, null, false);
                 return new Response()
                 {
                     Message = ex.InnerException != null ? ex.InnerException.Message : ex.Message
@@ -479,7 +508,7 @@ namespace CMC.Presentation.Application.Services.Identity.Implementations
             }
             catch (Exception ex)
             {
-                await _logger.LogError(ex, "CheckCurrentUserPermissions", null, null, false);
+                await _logger.LogError(ex, "CheckCurrentUserPermissions", $"userId:{userId} - Permissions:{permissions}", null, false);
                 return false;
             }
         }
@@ -563,6 +592,7 @@ namespace CMC.Presentation.Application.Services.Identity.Implementations
             }
             catch (Exception ex)
             {
+                await _logger.LogError(ex, "UpdateProfile", profileDTO, null, false);
                 throw ex;
             }
         }
@@ -583,6 +613,7 @@ namespace CMC.Presentation.Application.Services.Identity.Implementations
             }
             catch (Exception ex)
             {
+                await _logger.LogError(ex, "ActivateUser", $"UserId:{userId} - IsActive:{IsActive}", null, false);
                 throw ex;
             }
         }

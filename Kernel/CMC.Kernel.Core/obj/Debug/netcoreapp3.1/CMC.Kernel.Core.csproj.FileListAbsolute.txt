@@ -276,6 +276,10 @@ C:\Users\khalids\Desktop\CMC\Kernel\CMC.Kernel.Core\obj\Debug\netcoreapp3.1\CMC.
 C:\Users\khalids\Desktop\CMC\Kernel\CMC.Kernel.Core\obj\Debug\netcoreapp3.1\CMC.Kernel.Core.csproj.CopyComplete
 C:\Users\khalids\Desktop\CMC\Kernel\CMC.Kernel.Core\obj\Debug\netcoreapp3.1\CMC.Kernel.Core.dll
 C:\Users\khalids\Desktop\CMC\Kernel\CMC.Kernel.Core\obj\Debug\netcoreapp3.1\CMC.Kernel.Core.pdb
+D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Core\bin\Debug\netcoreapp3.1\refs\System.Reflection.dll
+D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Core\bin\Debug\netcoreapp3.1\refs\System.Resources.ResourceManager.dll
+D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Core\bin\Debug\netcoreapp3.1\refs\System.Text.Encoding.Extensions.dll
+D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Core\bin\Debug\netcoreapp3.1\refs\System.Threading.Overlapped.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Core\bin\Debug\netcoreapp3.1\CMC.Kernel.Core.deps.json
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Core\bin\Debug\netcoreapp3.1\CMC.Kernel.Core.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Core\bin\Debug\netcoreapp3.1\CMC.Kernel.Core.pdb
@@ -471,7 +475,6 @@ D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Core\bin\Debug\netcoreapp3.1\refs\Syst
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Core\bin\Debug\netcoreapp3.1\refs\System.Numerics.Vectors.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Core\bin\Debug\netcoreapp3.1\refs\System.ObjectModel.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Core\bin\Debug\netcoreapp3.1\refs\System.Reflection.DispatchProxy.dll
-D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Core\bin\Debug\netcoreapp3.1\refs\System.Reflection.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Core\bin\Debug\netcoreapp3.1\refs\System.Reflection.Emit.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Core\bin\Debug\netcoreapp3.1\refs\System.Reflection.Emit.ILGeneration.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Core\bin\Debug\netcoreapp3.1\refs\System.Reflection.Emit.Lightweight.dll
@@ -479,7 +482,6 @@ D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Core\bin\Debug\netcoreapp3.1\refs\Syst
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Core\bin\Debug\netcoreapp3.1\refs\System.Reflection.Primitives.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Core\bin\Debug\netcoreapp3.1\refs\System.Reflection.TypeExtensions.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Core\bin\Debug\netcoreapp3.1\refs\System.Resources.Reader.dll
-D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Core\bin\Debug\netcoreapp3.1\refs\System.Resources.ResourceManager.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Core\bin\Debug\netcoreapp3.1\refs\System.Resources.Writer.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Core\bin\Debug\netcoreapp3.1\refs\System.Runtime.CompilerServices.Unsafe.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Core\bin\Debug\netcoreapp3.1\refs\System.Runtime.CompilerServices.VisualC.dll
@@ -515,11 +517,9 @@ D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Core\bin\Debug\netcoreapp3.1\refs\Syst
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Core\bin\Debug\netcoreapp3.1\refs\System.ServiceProcess.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Core\bin\Debug\netcoreapp3.1\refs\System.Text.Encoding.CodePages.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Core\bin\Debug\netcoreapp3.1\refs\System.Text.Encoding.dll
-D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Core\bin\Debug\netcoreapp3.1\refs\System.Text.Encoding.Extensions.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Core\bin\Debug\netcoreapp3.1\refs\System.Text.RegularExpressions.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Core\bin\Debug\netcoreapp3.1\refs\System.Threading.Channels.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Core\bin\Debug\netcoreapp3.1\refs\System.Threading.dll
-D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Core\bin\Debug\netcoreapp3.1\refs\System.Threading.Overlapped.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Core\bin\Debug\netcoreapp3.1\refs\System.Threading.Tasks.Dataflow.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Core\bin\Debug\netcoreapp3.1\refs\System.Threading.Tasks.dll
 D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Core\bin\Debug\netcoreapp3.1\refs\System.Threading.Tasks.Extensions.dll

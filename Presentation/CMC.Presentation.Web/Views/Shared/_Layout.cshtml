@@ -15,7 +15,7 @@
     var returnUrl = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}{Context.Request.QueryString}";
     string direction = IsAr ? "dir=rtl" : "";
     string baseURL = configuration.GetValue<string>("BaseURL");
-    ViewBag.Title = Localizer["LayoutTitle"].Value;
+    string Title = ViewBag.Title != null ? ViewBag.Title : Localizer["LayoutTitle"].Value;
     UserDTO userInfoDTO = HttpContextAccessor.HttpContext.Session.GetString("UserInfoDTO") != null ?
         JsonConvert.DeserializeObject<UserDTO>(HttpContextAccessor.HttpContext.Session.GetString("UserInfoDTO")) : null;
 }
@@ -27,8 +27,8 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewBag.Title</title>
-    <meta content="@ViewBag.Title" name="description" />
+    <title>@Title</title>
+    <meta content="@Title" name="description" />
 
     @if (IsAr)
     {
@@ -372,6 +372,7 @@
             StartCompetition: '@Url.Action("StartCompetition","Competitions")',
             ViewCompetition: '@Url.Action("ViewCompetition","Competitions")',
             GetModalPlayer: '@Url.Action("GetModalPlayer","Competitions")',
+            GetPlayerScoreDetails:'@Url.Action("GetPlayerScoreDetails","Competitions")'
         };
 
         var globalResources = {

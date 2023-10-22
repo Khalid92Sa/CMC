@@ -6,6 +6,8 @@ namespace CMC.Presentation.Application.DTOs.Competitions
 {
     public class LatestCompeitionsScore
     {
+        public string Team1Name { get; set; }
+        public string Team2Name { get; set; }
         public string CompeititonName { get; set; }
         public DateTime? EndDate { get; set; }
         public string WinningTeamName { get; set; }
