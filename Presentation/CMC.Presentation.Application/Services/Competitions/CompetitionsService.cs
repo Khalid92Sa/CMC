@@ -122,7 +122,7 @@ namespace CMC.Presentation.Application.Services.Competitions
                 competition.RoundCount = competitionsDTO.RoundCount;
                 if (competitionsDTO.CompettionQuestionType == (int)CompetitionQuestionType.QuestionsPerPlayer)
                 {
-                    competitionsDTO.RoundCount = 1;
+                    competitionsDTO.RoundCount = competition.RoundCount = 1;
                     competition.QuestionForEachPlayer = competitionsDTO.QuestionForEachPlayer;
                 }
                 else
@@ -343,7 +343,7 @@ namespace CMC.Presentation.Application.Services.Competitions
         {
             try
             {
-                var competitions = await _competitionRepository.GetAll(a => a.IsDeleted != true && a.EndDate.HasValue)
+                var competitions = await _competitionRepository.GetAll(a => a.IsDeleted != true)
                     .OrderByDescending(a => a.EndDate)
                     .Select(a => new LookupModel()
                     {

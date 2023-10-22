@@ -1,6 +1,7 @@
 ﻿using CMC.Kernel.Core.Enums;
 using CMC.Presentation.Application.DTOs.Competitions;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Localization;
 using System.Linq;
 
@@ -51,7 +52,7 @@ namespace CMC.Presentation.Application.Validators.Competitions
                 RuleFor(a => a.QuestionForEachPlayer)
                  .NotNull().WithMessage(localizer["FieldRequired"]);
             });
-           
+
 
             RuleFor(a => a.Team1Name).NotNull().WithMessage(localizer["FieldRequired"]);
             RuleFor(a => a.Team2Name).NotNull().WithMessage(localizer["FieldRequired"]);
@@ -82,14 +83,14 @@ namespace CMC.Presentation.Application.Validators.Competitions
                         context.AddFailure("Team2.Player1", localizer["TeamsMustHaveSamePlayerCount"]);
                     }
 
-                    When(a => a.IsFinalCompetition, () =>
+                    if (dto.IsFinalCompetition)
                     {
-                        if(team1PlayerCount>1 || team2PlayerCount > 1)
+                        if (team1PlayerCount > 1 || team2PlayerCount > 1)
                         {
                             context.AddFailure("Team1.Player1", localizer["FinalCompetitionPlayerCountValidation"]);
                             context.AddFailure("Team2.Player1", localizer["FinalCompetitionPlayerCountValidation"]);
                         }
-                    });
+                    }
                 });
         }
     }

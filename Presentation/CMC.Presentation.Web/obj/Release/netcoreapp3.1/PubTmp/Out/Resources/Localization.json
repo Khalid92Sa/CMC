@@ -918,6 +918,13 @@
     }
   },
   {
+    "Key": "LastQuestionAddedd",
+    "LocalizedValue": {
+      "en-US": "Last questions added",
+      "ar-JO": "آخر أسئلة تمت اضافتها"
+    }
+  },
+  {
     "Key": "AddNewQuestion",
     "LocalizedValue": {
       "en-US": "Add new question",
@@ -1287,6 +1294,48 @@
     "LocalizedValue": {
       "en-US": "Calculating rounds",
       "ar-JO": "احتساب الجولات"
+    }
+  },
+  {
+    "Key": "CompetitionQuestionsType",
+    "LocalizedValue": {
+      "en-US": "Questions type",
+      "ar-JO": "نوع أسئلة المسابقة"
+    }
+  },
+  {
+    "Key": "CompeitionQuestionsRound",
+    "LocalizedValue": {
+      "en-US": "Rounds",
+      "ar-JO": "جولات"
+    }
+  },
+  {
+    "Key": "CompeitionQuestionsPerPlayer",
+    "LocalizedValue": {
+      "en-US": "Questions for each player",
+      "ar-JO": "أسئلة لكل لاعب"
+    }
+  },
+  {
+    "Key": "FinalCompetition",
+    "LocalizedValue": {
+      "en-US": "Final Competition",
+      "ar-JO": "مسابقة نهائية"
+    }
+  },
+  {
+    "Key": "FinalCompetitionPlayerCountValidation",
+    "LocalizedValue": {
+      "en-US": "Final competition must have one player from both team",
+      "ar-JO": "في المبارة النهائية يجب أن يكون لاعب واحد من كل فريق"
+    }
+  },
+  {
+    "Key": "OptionQuestionForEachPlayerOnlyForFinalCompetition",
+    "LocalizedValue": {
+      "en-US": "Question for each player only in Final competition",
+      "ar-JO": "خيار الأسئلة لكل لاعب فقط للمباراة النهائية"
     }
   },
   {
