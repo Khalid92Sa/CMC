@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "WH8QE+O3fdnv56P0/8XgSW4TE3cjbLK2gX7ODDnJHagGblVvhHM93Ex8KTUl9ReRw5AWwOryiDwLc//o5W1hbA==",
+  "dgSpecHash": "w09jxd4xI5m7cHlQQ1XcgFm9KAtBpuY8wc4jgXjUcJfwM+8Wd3CNSiP8Sv74DksPLWr6sKGgK4KRa03VcJM5hw==",
   "success": true,
-  "projectFilePath": "D:\\Profile\\Projects\\CMC\\Kernel\\CMC.Kernel.Domain\\CMC.Kernel.Domain.csproj",
+  "projectFilePath": "D:\\Projects\\CityMall\\CMC\\Kernel\\CMC.Kernel.Domain\\CMC.Kernel.Domain.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

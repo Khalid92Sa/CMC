@@ -10902,50 +10902,43 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\khalids\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\THINKBOOK\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Profile\\Projects\\CMC\\Kernel\\CMC.Kernel.Infrastructure.Persistence\\CMC.Kernel.Infrastructure.Persistence.csproj",
+      "projectUniqueName": "D:\\Projects\\CityMall\\CMC\\Kernel\\CMC.Kernel.Infrastructure.Persistence\\CMC.Kernel.Infrastructure.Persistence.csproj",
       "projectName": "CMC.Kernel.Infrastructure.Persistence",
-      "projectPath": "D:\\Profile\\Projects\\CMC\\Kernel\\CMC.Kernel.Infrastructure.Persistence\\CMC.Kernel.Infrastructure.Persistence.csproj",
-      "packagesPath": "C:\\Users\\khalids\\.nuget\\packages\\",
-      "outputPath": "D:\\Profile\\Projects\\CMC\\Kernel\\CMC.Kernel.Infrastructure.Persistence\\obj\\",
+      "projectPath": "D:\\Projects\\CityMall\\CMC\\Kernel\\CMC.Kernel.Infrastructure.Persistence\\CMC.Kernel.Infrastructure.Persistence.csproj",
+      "packagesPath": "C:\\Users\\THINKBOOK\\.nuget\\packages\\",
+      "outputPath": "D:\\Projects\\CityMall\\CMC\\Kernel\\CMC.Kernel.Infrastructure.Persistence\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\khalids\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+        "C:\\Users\\THINKBOOK\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp3.1"
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "netcoreapp3.1": {
           "targetAlias": "netcoreapp3.1",
           "projectReferences": {
-            "D:\\Profile\\Projects\\CMC\\Kernel\\CMC.Kernel.Core\\CMC.Kernel.Core.csproj": {
-              "projectPath": "D:\\Profile\\Projects\\CMC\\Kernel\\CMC.Kernel.Core\\CMC.Kernel.Core.csproj"
+            "D:\\Projects\\CityMall\\CMC\\Kernel\\CMC.Kernel.Core\\CMC.Kernel.Core.csproj": {
+              "projectPath": "D:\\Projects\\CityMall\\CMC\\Kernel\\CMC.Kernel.Core\\CMC.Kernel.Core.csproj"
             },
-            "D:\\Profile\\Projects\\CMC\\Kernel\\CMC.Kernel.Domain\\CMC.Kernel.Domain.csproj": {
-              "projectPath": "D:\\Profile\\Projects\\CMC\\Kernel\\CMC.Kernel.Domain\\CMC.Kernel.Domain.csproj"
+            "D:\\Projects\\CityMall\\CMC\\Kernel\\CMC.Kernel.Domain\\CMC.Kernel.Domain.csproj": {
+              "projectPath": "D:\\Projects\\CityMall\\CMC\\Kernel\\CMC.Kernel.Domain\\CMC.Kernel.Domain.csproj"
             },
-            "D:\\Profile\\Projects\\CMC\\Kernel\\CMC.Kernel.Infrastructure.Caching\\CMC.Kernel.Infrastructure.Caching.csproj": {
-              "projectPath": "D:\\Profile\\Projects\\CMC\\Kernel\\CMC.Kernel.Infrastructure.Caching\\CMC.Kernel.Infrastructure.Caching.csproj"
+            "D:\\Projects\\CityMall\\CMC\\Kernel\\CMC.Kernel.Infrastructure.Caching\\CMC.Kernel.Infrastructure.Caching.csproj": {
+              "projectPath": "D:\\Projects\\CityMall\\CMC\\Kernel\\CMC.Kernel.Infrastructure.Caching\\CMC.Kernel.Infrastructure.Caching.csproj"
             },
-            "D:\\Profile\\Projects\\CMC\\Presentation\\CMC.Presentation.Domain\\CMC.Presentation.Domain.csproj": {
-              "projectPath": "D:\\Profile\\Projects\\CMC\\Presentation\\CMC.Presentation.Domain\\CMC.Presentation.Domain.csproj"
+            "D:\\Projects\\CityMall\\CMC\\Presentation\\CMC.Presentation.Domain\\CMC.Presentation.Domain.csproj": {
+              "projectPath": "D:\\Projects\\CityMall\\CMC\\Presentation\\CMC.Presentation.Domain\\CMC.Presentation.Domain.csproj"
             }
           }
         }
@@ -10954,6 +10947,11 @@
         "warnAsError": [
           "NU1605"
         ]
+      },
+      "restoreAuditProperties": {
+        "enableAudit": "true",
+        "auditLevel": "low",
+        "auditMode": "direct"
       }
     },
     "frameworks": {
@@ -10999,7 +10997,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.306\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.204\\RuntimeIdentifierGraph.json"
       }
     }
   }

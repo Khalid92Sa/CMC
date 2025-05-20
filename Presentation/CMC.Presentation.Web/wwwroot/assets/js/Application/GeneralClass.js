@@ -24,12 +24,20 @@ var GeneralClass = {
         $.ajax({
             url: publicURls.setCulture,
             type: 'post',
+            dataType: 'json',
             data: { 'culture': lang, 'returnUrl': returnedUrl },
             success: function (data) {
-                location.reload();
+                if (data.url) {
+                    location.reload();
+                } else {
+                    console.log(data);
+                }
+                
             },
-            error: function (er) {
-                consol.log(er);
+            error: function (xhr, status, error) {
+                console.log('AJAX Error:', xhr.responseText);
+                console.log('Status:', status);
+                console.log('Error:', error);
             }
         });
     },

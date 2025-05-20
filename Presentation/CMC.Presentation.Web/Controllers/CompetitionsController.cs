@@ -13,6 +13,7 @@ using CMC.Presentation.Application.Services.Players;
 using CMC.Presentation.Application.Services.Questions;
 using CMC.Presentation.Application.Services.Settings;
 using CMC.Presentation.Domain.Entities;
+using Elastic.Apm.Api;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -195,12 +196,16 @@ namespace CMC.Presentation.Web.Controllers
                 var competitionStart = await _competitionsService.StartCompetiton(id);
                 if (competitionStart.Succeeded)
                 {
-
                     PartialViewResult otpPartialView = PartialView("PartialViews/_AllPlayers", competitionStart.Data);
                     string viewContent = ConvertViewToString(this.ControllerContext, otpPartialView, _viewEngine);
                     ViewData["Partial"] = viewContent;
 
                     return View(competitionStart.Data);
+                }
+                else if(competitionStart.StatusCode == (int)HttpStatusCode.NotAuthenticated)
+                {
+                    // means the parent competition not ended
+                    return RedirectToAction("Index", "Error", new { message  = "CompetitionNotEndedValidation" });
                 }
                 else
                     return RedirectToAction("Index", "Error");

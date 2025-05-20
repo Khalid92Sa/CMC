@@ -1,6 +1,6 @@
 {
   "ConnectionStrings": {
-    "Default": "Data Source=KHALIDS-DELL;Initial Catalog=CMC;Integrated Security=True;MultipleActiveResultSets=True"
+    "Default": "Data Source=KHALIDSALAMEH;Initial Catalog=CMC;Integrated Security=True;MultipleActiveResultSets=True"
   },
   "ElasticApm": {
     "LogLevel": "None",

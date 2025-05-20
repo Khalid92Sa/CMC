@@ -29,7 +29,8 @@ namespace CMC.Presentation.Web.Controllers
         readonly IStringLocalizer<QuestionsController> _localizer;
         readonly ISettingsService _settingService;
         readonly IMapper _mapper;
-        public QuestionsController(IQuestionsService questionsService,IApplicationLogger logger, IStringLocalizer<QuestionsController> localizer,ISettingsService settingsService,IMapper mapper)
+        public QuestionsController(IQuestionsService questionsService,IApplicationLogger logger, IStringLocalizer<QuestionsController> localizer,
+            ISettingsService settingsService,IMapper mapper)
         {
             _questionsService = questionsService;
             _logger = logger;

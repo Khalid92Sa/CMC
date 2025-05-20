@@ -7,5 +7,6 @@ namespace CMC.Kernel.Core.Controllers
     [ApiConventionType(typeof(DefaultApiConventions))]
     public class BaseApiController : BaseController
     {
+
     }
 }

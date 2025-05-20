@@ -1,3 +1,5 @@
 is_global = true
 build_property.RootNamespace = CMC.Kernel.Infrastructure.Persistence
-build_property.ProjectDir = D:\Profile\Projects\CMC\Kernel\CMC.Kernel.Infrastructure.Persistence\
+build_property.ProjectDir = D:\Projects\CityMall\CMC\Kernel\CMC.Kernel.Infrastructure.Persistence\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 

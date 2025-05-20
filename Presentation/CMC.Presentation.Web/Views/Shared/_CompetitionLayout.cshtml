@@ -48,7 +48,7 @@
     @if (!IsTest)
     {
         <style>
-            #starting-div {
+           @* #starting-div {
                 position: absolute;
                 top: 0;
                 left: 0;
@@ -57,7 +57,7 @@
                 background-image: url('/assets/competition/images/competition-start.jpg');
                 background-size: cover;
                 background-position: center;
-            }
+            }*@
 
             #next-content {
                 display: none;
@@ -84,7 +84,16 @@
         string hideNextContent = IsTest ? "" : "style=display:none";
     }
     <button type="button" id="btn-fscr" style="display:none" onclick="StartCompetition.FullScreen()"></button>
-    <div id="starting-div" @hideStartingDiv></div>
+    <div id="starting-div" @hideStartingDiv>
+        <div style="z-index:-1000; background-repeat:repeat-y;">
+            @if (!string.IsNullOrEmpty(Model.StartBackground))
+            {
+                string ImgSrc = $"data:image/jpeg;base64,{Model.StartBackground}";
+                <img class="min-vh-100" src="@ImgSrc" style="width:100%; position:absolute; top:0; left:0;" />
+            }
+        </div>
+    </div>
+
     <div id="next-content" @hideNextContent>
         <div class="min-vh-100 d-flex flex-column">
             <!-- main section -->

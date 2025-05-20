@@ -12,6 +12,7 @@ using CMC.Kernel.Core.Helpers;
 using Microsoft.Diagnostics.Tracing;
 using System;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Server.IISIntegration;
 
 namespace CMC.Presentation.Web
 {
@@ -25,6 +26,8 @@ namespace CMC.Presentation.Web
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddHttpContextAccessor();
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
+            services.AddLogging();
+            services.AddAuthentication(IISDefaults.AuthenticationScheme);
             services.AddSession(option =>
             {
                 option.IdleTimeout = TimeSpan.FromMinutes(40);
@@ -37,8 +40,10 @@ namespace CMC.Presentation.Web
         {
             base.ConfigureAdditional(app, env);
             app.UseSession();
+
             app.UseAuthentication();
             app.UseAuthorization();
+
             app.UseLocalizationForPresnetationExtention();
 
             if (env.IsDevelopment())

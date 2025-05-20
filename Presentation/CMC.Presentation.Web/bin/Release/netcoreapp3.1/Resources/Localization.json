@@ -1472,6 +1472,13 @@
     }
   },
   {
+    "Key": "CompetitionNotEndedValidation",
+    "LocalizedValue": {
+      "en-US": "This competition is a continuation of another competition that has not ended",
+      "ar-JO": "هذه المسابقة هي استكمالا لمسابقة اخرى لم تنتهي"
+    }
+  },
+  {
     "Key": "Alert_CompetitionDeletedSuccessfully",
     "LocalizedValue": {
       "en-US": "Competition deleted successfully!",
@@ -1612,6 +1619,13 @@
     }
   },
   {
+    "Key": "Continue",
+    "LocalizedValue": {
+      "en-US": "Continue",
+      "ar-JO": "متابعة"
+    }
+  },
+  {
     "Key": "ContinueRound",
     "LocalizedValue": {
       "en-US": "Continue round",
@@ -1686,6 +1700,29 @@
     "LocalizedValue": {
       "en-US": "Player Score",
       "ar-JO": "نتائح اللاعب"
+    }
+  },
+
+  // Settings
+  {
+    "Key": "SystemSettings",
+    "LocalizedValue": {
+      "en-US": "System settings",
+      "ar-JO": "إعدادات النظام"
+    }
+  },
+  {
+    "Key": "CompetitionStartImg",
+    "LocalizedValue": {
+      "en-US": "Competition start Image",
+      "ar-JO": "صورة بدء المسابقة"
+    }
+  },
+  {
+    "Key": "SystemSettingsUpdatedSuccessfully",
+    "LocalizedValue": {
+      "en-US": "System Settings Updated Successfully",
+      "ar-JO": "تم حفظ معلومات النظام بنجاح"
     }
   }
 ]

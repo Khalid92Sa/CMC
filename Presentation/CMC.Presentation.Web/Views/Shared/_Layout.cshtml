@@ -63,17 +63,6 @@
             BaseURL: '@baseURL'
         };
 
-        // $(document).ready(function () {
-        //    debugger;
-        //    const cors = require('cors');
-        //    const corsOptions = {
-        //        origin: generalSettings.BaseURL,
-        //        credentials: true,
-        //        optionSuccessStatus: 200
-        //    }
-        //    app.use(cors(corsOptions));
-        //});
-
     </script>
     <link type="text/css" rel="stylesheet" href="~/assets/shared/sweetalert2/sweetalert2.min.css" />
 
@@ -85,7 +74,6 @@
     <script type="text/javascript" src="~/assets/shared/font-awesome-5.1/js/all.min.js"></script>
     <script type="text/javascript" src="~/assets/shared/sweetalert2/sweetalert2.min.js"></script>
     <script type="text/javascript" src="~/assets/js/scripts.js"></script>
-    @*<script type="text/javascript" src="~/assets/js/autologout.js"></script>*@
     <script type="text/javascript" src="~/assets/js/calender/jquery.calendars.js"></script>
     <script type="text/javascript" src="~/assets/js/calender/jquery.calendars.plus.js"></script>
     <script type="text/javascript" src="~/assets/js/calender/jquery.calendars.ummalqura.js"></script>
@@ -193,12 +181,12 @@
                                                 <a class="nav-link text-primary pl-5" id="lnkUsers" href="@Url.Action("Index", "Users")">@Localizer["Menu_UsersAccountsManagement"]</a>
                                             </li>
                                         }
-                                        @*@if (userInfoDTO.PermissionCodes.Contains(PermissionCodes.SystemSettings))
-                                    {
-                                    <li>
-                                    <a class="nav-link text-primary pl-5" id="lnkSettings" href="@Url.Action("Index", "Settings")">@Localizer["Menu_Settings"]</a>
-                                    </li>
-                                    }*@
+                                        @if (userInfoDTO.PermissionCodes.Contains(PermissionCodes.SystemSettings))
+                                        {
+                                            <li>
+                                                <a class="nav-link text-primary pl-5" id="lnkSettings" href="@Url.Action("Index", "Settings")">@Localizer["Menu_Settings"]</a>
+                                            </li>
+                                        }
                                     </ul>
                                 </li>
                             }
@@ -266,12 +254,12 @@
                                         <a class="nav-link text-primary pl-5" id="lnkUsers2" href="@Url.Action("Index", "Users")">@Localizer["Menu_UsersAccountsManagement"]</a>
                                     </li>
                                 }
-                                @*@if (userInfoDTO.PermissionCodes.Contains(PermissionCodes.SystemSettings))
-                            {
-                            <li>
-                            <a class="nav-link text-primary pl-5" id="lnkSettings2" href="@Url.Action("Index", "Settings")">@Localizer["Menu_Settings"]</a>
-                            </li>
-                            }*@
+                                @if (userInfoDTO.PermissionCodes.Contains(PermissionCodes.SystemSettings))
+                                {
+                                    <li>
+                                        <a class="nav-link text-primary pl-5" id="lnkSettings2" href="@Url.Action("Index", "Settings")">@Localizer["Menu_Settings"]</a>
+                                    </li>
+                                }
                             </ul>
                         </li>
                     }
@@ -342,11 +330,11 @@
         var publicURls = {
             setCulture: '@Url.Action("SetCulture","Home")',
             //Users-Profile
-            logout: '@Url.Action("Logout","Users")',
+            logout: '@Url.Action("Logout", "Users")',
             UsersList: '@Url.Action("Index","Users")',
             AddUser: '@Url.Action("AddUser","Users")',
             DeleteUser: '@Url.Action("DeleteUser","Users")',
-            ActivateUser:'@Url.Action("ActivateUser","Users")',
+            ActivateUser: '@Url.Action("ActivateUser","Users")',
 
             //Categories
             Categories: '@Url.Action("Index","Questions")',
@@ -372,7 +360,12 @@
             StartCompetition: '@Url.Action("StartCompetition","Competitions")',
             ViewCompetition: '@Url.Action("ViewCompetition","Competitions")',
             GetModalPlayer: '@Url.Action("GetModalPlayer","Competitions")',
-            GetPlayerScoreDetails:'@Url.Action("GetPlayerScoreDetails","Competitions")'
+            GetPlayerScoreDetails: '@Url.Action("GetPlayerScoreDetails","Competitions")',
+
+
+            //Settings
+            UpdateSettings:'@Url.Action("UpdateSetting","Settings")',
+            HomePage:'@Url.Action("Index","Home")',
         };
 
         var globalResources = {
@@ -405,7 +398,7 @@
 
             //Users
             Alert_DeleteUser: '@Localizer["Alert_DeleteUser"]',
-            Active:'@Localizer["Active"]',
+            Active: '@Localizer["Active"]',
             InActive: '@Localizer["InActive"]',
             ActivationCancel: '@Localizer["Message_ActivationCancel"]',
             ActivationConfirm: '@Localizer["Message_ActivationConfirm"]',
@@ -434,13 +427,16 @@
 
             //Players
             Alert_DeletePlayer: '@Localizer["Alert_DeletePlayer"]',
-            Blocked:'@Localizer["Blocked"]',
-            NonBlocked:'@Localizer["NonBlocked"]',
+            Blocked: '@Localizer["Blocked"]',
+            NonBlocked: '@Localizer["NonBlocked"]',
 
             //Competitons
             Alert_DeleteCompetition: '@Localizer["Alert_DeleteCompetition"]',
             StartCompetition: '@Localizer["StartCompetition"]',
             ViewCompetitionScores: '@Localizer["ViewCompetitionScores"]',
+
+            //Settings
+            SystemSettingsUpdated: '@Localizer["SystemSettingsUpdatedSuccessfully"]',
         };
     </script>
 </body>

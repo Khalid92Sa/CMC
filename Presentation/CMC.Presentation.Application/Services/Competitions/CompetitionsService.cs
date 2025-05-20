@@ -107,6 +107,9 @@ namespace CMC.Presentation.Application.Services.Competitions
                         };
                 }
 
+
+                
+
                 //Map fields
                 competition.Name = competitionsDTO.Name;
                 competition.StartDate = competitionsDTO.StartDate;
@@ -819,6 +822,25 @@ namespace CMC.Presentation.Application.Services.Competitions
                     CompetitionStartDTO competitionStartDTO = new CompetitionStartDTO();
                     competitionStartDTO.Id = id;
 
+                    if (competition.ParentId.HasValue)
+                    {
+                        var parentCompetition = await _competitionRepository.GetAll(a => a.Id == competition.ParentId.Value).SingleOrDefaultAsync();
+                        if (!parentCompetition.EndDate.HasValue)
+                        {
+                            return new Response<CompetitionStartDTO>()
+                            {
+                                StatusCode = (int)HttpStatusCode.NotAuthenticated
+                            };
+                        }
+                    }
+
+
+                    //Check start background
+                    var attachmentBackground = await _attachmentRepository.GetAll(a => a.EntityId == 1 && a.EntityType == (int)AttachmentTypes.BackgroundImg).SingleOrDefaultAsync();
+                    if (attachmentBackground != null)
+                        competitionStartDTO.StartBackground = Convert.ToBase64String(attachmentBackground.FileData);
+
+
                     competitionStartDTO.IsFinalCompetition = competition.IsFinalCompetition ?? false;
                     competitionStartDTO.IsQuestionsTypeIsRound = competition.CompetitionQuestionType == (int)CompetitionQuestionType.Rounds;
                     if (!competitionStartDTO.IsQuestionsTypeIsRound)
@@ -1032,7 +1054,7 @@ namespace CMC.Presentation.Application.Services.Competitions
             {
                 async Task GetQuestions(int id)
                 {
-                    var competition = await _competitionRepository.GetAll(a => a.Id == id && a.IsDeleted != true && a.EndDate.HasValue)
+                    var competition = await _competitionRepository.GetAll(a => a.Id == id && a.IsDeleted != true)
                         .Include(a => a.CompetitionQuestions)
                            .ThenInclude(a => a.Question)
                         .Include(a => a.Parent)

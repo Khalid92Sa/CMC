@@ -11,33 +11,45 @@ using System.Text;
 using CMC.Kernel.Core.Wrappers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
+using CMC.Kernel.Core.Infrastructure;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
 
 namespace CMC.Kernel.Core.Controllers
 {
     public abstract class BaseController : Controller
     {
         protected static IHttpContextAccessor _httpContextAccessor { get { return new HttpContextAccessor(); } }
-
+        private ILogger<BaseController> _logger => HttpContext.RequestServices.GetService<ILogger<BaseController>>();
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            var httpContext = context.HttpContext;
+            try
+            {
+                var httpContext = context.HttpContext;
 
-            if (context.RouteData.Values["controller"].ToString().Equals("Users", StringComparison.OrdinalIgnoreCase) &&
-            context.RouteData.Values["action"].ToString().Equals("Login", StringComparison.OrdinalIgnoreCase))
-            {
-                // Skip UserId check
-            }
-            else
-            {
-                // Check if session contains a value for the sessionId
-                if (string.IsNullOrEmpty(httpContext.Session.GetString("UserId")))
+                if (context.RouteData.Values["controller"].ToString().Equals("Users", StringComparison.OrdinalIgnoreCase) &&
+                context.RouteData.Values["action"].ToString().Equals("Login", StringComparison.OrdinalIgnoreCase))
                 {
-                    // Redirect to the Login action of the Profile controller
-                    context.Result = new RedirectToActionResult("Login", "Users", null);
+                    // Skip UserId check
                 }
-            }
+                else
+                {
+                    // Check if session contains a value for the sessionId
+                    if (string.IsNullOrEmpty(httpContext.Session.GetString("UserId")))
+                    {
+                        // Redirect to the Login action of the Profile controller
+                        context.Result = new RedirectToActionResult("Login", "Users", null);
+                    }
+                }
 
-            base.OnActionExecuting(context);
+                base.OnActionExecuting(context);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                throw ex;
+            }
+            
         }
         protected ActionResult ProcessResponse<T>(T data)
         {

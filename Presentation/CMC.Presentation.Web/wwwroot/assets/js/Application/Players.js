@@ -134,7 +134,7 @@ var Players = {
                         showConfirmButton: false,
                         timer: 2000
                     }).then(function (result) {
-                        window.location = publicURls.PlayerList;
+                        
                     });
                 }
                 else {

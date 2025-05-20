@@ -11,6 +11,7 @@ namespace CMC.Presentation.Application.DTOs.Competitions
         public int Id { get; set; }
         public string Team1Name { get; set; }
         public string Team2Name { get; set; }
+        public string StartBackground { get; set; }
         public List<CompetitionsPlayerDTO> TeamCityMall { get; set; } = new List<CompetitionsPlayerDTO>();
         public List<CompetitionsPlayerDTO> OtherTeam { get; set; } = new List<CompetitionsPlayerDTO>();
         public List<LookupModel> Categories { get; set; } = new List<LookupModel>();

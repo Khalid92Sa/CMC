@@ -26,6 +26,7 @@ var OtherTeamPlayed = [];
 
 var CityMallFullQuestion = false;
 var OtherPlayerFullQuestion = false;
+var isFirstTimePlayerConfirmed = false;
 
 
 var timerDiv = `<div class="h4 h4-responsive text-primary bg-light-white dv-full-timer" style="position: absolute; width: 100%; border-radius: 2.2rem !important; ">
@@ -464,7 +465,7 @@ var StartCompetition = {
                     $(this).css('pointer-events', 'none');
                 }
             });
-
+            isFirstTimePlayerConfirmed = false;
             StartCompetition.ResetObjects();
         });
     },
@@ -599,7 +600,7 @@ var StartCompetition = {
             success: function (data) {
                 if (data.isSuccess) {
                     if (data.partial != '') {
-
+                        isFirstTimePlayerConfirmed = false;
                         $('#dv-partial').html(data.partial);
                         newTimerQuestion = 0;
                         $('#btn-answer').on('click', function (e) {
@@ -610,12 +611,28 @@ var StartCompetition = {
 
                         $('#dv-cityMall-player, #dv-Other-player').on('click', function () {
                             var id = $(this).attr('id');
-                            StartCompetition.StartTimeForPlayer(id);
 
-                            $('#dv-answers-options').find('.col-6').each(function () {
-                                var element = this;
-                                $(element).removeAttr('style');
-                            });
+                            if (isFirstTimePlayerConfirmed == false) {
+                                $('#dv-confirmPlayer').removeClass('d-none');
+                                $('#btn-confirmPlayer').on('click', function () {
+                                    $('#dv-confirmPlayer').addClass('d-none');
+                                    StartCompetition.StartTimeForPlayer(id);
+                                    $('#dv-answers-options').find('.col-6').each(function () {
+                                        var element = this;
+                                        $(element).removeAttr('style');
+                                    });
+                                });
+                            }
+                            else {
+                                StartCompetition.StartTimeForPlayer(id);
+
+                                $('#dv-answers-options').find('.col-6').each(function () {
+                                    var element = this;
+                                    $(element).removeAttr('style');
+                                });
+                            }
+                            
+                            
                         });
 
                         setTimeout(function () {
@@ -634,6 +651,7 @@ var StartCompetition = {
         });
     },
     StartTimeForPlayer: function (id) {
+        isFirstTimePlayerConfirmed = true;
         if (playerTimer.IsTimerStarted == true && playerTimer.IsTimerFinished != true) {
             return;
         }

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CMC.Kernel.Domain")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6d45f836581bde295b840f31843d9711d6c7397a")]
 [assembly: System.Reflection.AssemblyProductAttribute("CMC.Kernel.Domain")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CMC.Kernel.Domain")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

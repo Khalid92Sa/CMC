@@ -1,0 +1,63 @@
+﻿@model CMC.Presentation.Application.DTOs.SettingDTO
+
+@using Microsoft.AspNetCore.Http;
+@using CMC.Kernel.Core.Constants
+@using CMC.Presentation.Application.DTOs.Identity
+@using Newtonsoft.Json
+@inject IHttpContextAccessor HttpContextAccessor
+
+
+
+<form method="post" id="form-settings" enctype="multipart/form-data" asp-controller="Settings" asp-action="UpdateSetting">
+    <div class="flex flex-column justify-content-center align-items-center">
+        <div class="row justify-content-between">
+            <div class="col-12 d-flex flex-row justify-content-between">
+                <h6 class="justify-content-start align-middle align-self-center mb-3">@Localizer["SystemSettings"]</h6>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="register py-3 p-md-4 h-100" style="overflow-y: auto">
+                    <div class="mb-2">
+                        <div class="form-group">
+                            <div class="form-row">
+                                <label class="requiredLabel">@Localizer["CompetitionStartImg"]</label>
+                                <div class="col-md-3">
+                                    <div class="category-box" style="cursor:pointer">
+                                        <div class="image-container p-3 d-none" id="dv-img-background">
+                                            <img src="" class="w-50" alt="Image" style="">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!--File upload for background image -->
+                            <div class="form-row">
+                                <div class="form-group col-md-4 d-flex flex-column d-flex">
+
+                                    <div class="custom-file mt-3">
+                                        <input type="file" name="Img" class="custom-file-input" id="background-img" style="cursor:pointer" data-answer="2"
+                                               placeholder="@Localizer["ChooseImg"].Value" accept=".jpg, .jpeg, .png">
+                                        <label class="custom-file-label upload-btn" for="file">
+                                            <span id="lblBackgroundImgName">@Localizer["ChooseImg"]</span>
+                                            <span class="danger"></span> <i id="lblBackgroundImgStatus" class="fas fa-upload"></i>
+                                        </label>
+                                    </div>
+                                    <span id="background-Img-invalid" class="text-danger field-validation-error"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 text-center">
+                        <button type="button" class="btn btn-primary" onclick="Settings.Save()">@Localizer["Save"]</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script src="~/assets/js/Application/CommonFunctions.js"></script>
+<script>
+    Settings.OnLoad();
+</script>

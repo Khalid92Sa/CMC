@@ -14,7 +14,14 @@
             else
             {
                 <h6 class="mb-4" style="font-size:2rem;">@Localizer["Common_ErrorOccurred"]</h6>
-                <p>@Localizer["Common_ErrorPageMessage"]</p>
+                @if (ViewBag.Message != null)
+                {
+                    <p>@ViewBag.Message</p>
+                }
+                else
+                {
+                    <p>@Localizer["Common_ErrorPageMessage"]</p>
+                }
             }
             <div>
                 <a href="@Url.Action("Index","Home")" class="btn btn-outline btn-sm mt-3 mx-0 mr-2">@Localizer["Common_HomePageGo"]</a>

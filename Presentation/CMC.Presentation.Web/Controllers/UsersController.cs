@@ -1,22 +1,16 @@
-﻿using CMC.Kernel.Core.Wrappers;
-using CMC.Presentation.Application.DTOs.Identity;
-using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System;
+﻿using CMC.Kernel.Core.Constants;
 using CMC.Kernel.Core.Controllers;
-using CMC.Presentation.Application.Services.Identity.Interfaces;
 using CMC.Kernel.Core.Enums;
-using System.Threading.Tasks.Sources;
-using CMC.Presentation.Application.DTOs.Players;
 using CMC.Kernel.Core.Infrastructure;
-using CMC.Presentation.Application.Services.Settings;
-using Microsoft.Extensions.Localization;
 using CMC.Kernel.Infrastructure.Persistence.Services;
 using CMC.Presentation.Application.ActionFilters;
-using CMC.Kernel.Core.Constants;
-using CMC.Presentation.Application.DTOs.Competitions;
-using CMC.Presentation.Application.DTOs.Questions;
+using CMC.Presentation.Application.DTOs.Identity;
+using CMC.Presentation.Application.Services.Identity.Interfaces;
+using CMC.Presentation.Application.Services.Settings;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
+using System;
+using System.Threading.Tasks;
 
 namespace CMC.Presentation.Web.Controllers
 {
@@ -81,8 +75,9 @@ namespace CMC.Presentation.Web.Controllers
             }
            
         }
-
-        public IActionResult Login()
+       
+        
+        public async Task<IActionResult> Login()
         {
             return View();
         }
@@ -94,6 +89,7 @@ namespace CMC.Presentation.Web.Controllers
         /// <param name="login"></param>
         /// <returns></returns>
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginDTO login)
         {
             try
@@ -120,7 +116,7 @@ namespace CMC.Presentation.Web.Controllers
             {
                 _httpContextAccessor.HttpContext.Session.Remove(key);
             }
-            return View("Login");
+            return RedirectToAction("Login");
         }
 
 

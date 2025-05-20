@@ -13,6 +13,7 @@
             type: 'POST',
             data: $('#LoginForm').serialize(),
             dataType: 'json',
+            processData: false,
             success: function (data) {
                 if (data.resultCode != 200) {
                     if (data.resultCode == 422) {
@@ -27,8 +28,10 @@
                     window.location.href = publicURls.HomePage;
                 }
             },
-            error: function (er) {
-
+            error: function (xhr, status, error) {
+                console.log('AJAX Error:', xhr.responseText);
+                console.log('Status:', status);
+                console.log('Error:', error);
             }
         });
     },

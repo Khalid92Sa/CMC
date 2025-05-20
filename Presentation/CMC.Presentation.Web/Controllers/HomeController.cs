@@ -15,10 +15,6 @@ namespace CMC.Presentation.Web.Controllers
 {
     public class HomeController : BaseController
     {
-        public HomeController()
-        {
-        }
-
         public IActionResult Index()
         {
 
@@ -29,12 +25,20 @@ namespace CMC.Presentation.Web.Controllers
         [HttpPost]
         public IActionResult SetCulture(string culture, string returnUrl)
         {
-            Response.Cookies.Append(
-                        CookieNames.SelectedLanguage,
-                        culture,
-                        new CookieOptions { Expires = DateTimeOffset.Now.AddYears(1) }
-                    );
-            return Json(new { url = returnUrl });
+            try
+            {
+                Response.Cookies.Append(
+                       CookieNames.SelectedLanguage,
+                       culture,
+                       new CookieOptions { Expires = DateTimeOffset.Now.AddYears(1) }
+                   );
+
+                return Json(new { isSuccess = true, url = returnUrl });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { isSuccess = false, msg = ex.Message, interalMsg = ex.InnerException != null ? ex.InnerException.Message : "" });
+            }
         }
     }
 }
