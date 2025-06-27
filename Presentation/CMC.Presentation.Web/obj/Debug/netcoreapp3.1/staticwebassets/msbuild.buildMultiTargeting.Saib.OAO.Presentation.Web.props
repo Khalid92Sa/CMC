@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="..\build\Saib.OAO.Presentation.Web.props" />
-</Project>
