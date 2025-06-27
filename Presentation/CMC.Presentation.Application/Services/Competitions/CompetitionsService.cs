@@ -158,7 +158,17 @@ namespace CMC.Presentation.Application.Services.Competitions
                 }
 
                 competition.ParentId = competitionsDTO.ParentId;
+                
+                // Map Archive Settings
+                competition.ArchiveType = competitionsDTO.ArchiveType;
+                competition.ArchiveMonths = competitionsDTO.ArchiveMonths;
+                competition.ArchiveFromDate = competitionsDTO.ArchiveFromDate;
+                competition.ArchiveToDate = competitionsDTO.ArchiveToDate;
 
+                if (competitionsDTO.ExcludedCompetitionIds != null && competitionsDTO.ExcludedCompetitionIds.Count > 0)
+                    competition.ExcludedCompetitionIds = string.Join(",", competitionsDTO.ExcludedCompetitionIds);
+                else
+                    competition.ExcludedCompetitionIds = null;
 
                 if (competition.Team1 == null)
                     competition.Team1 = new Team();
@@ -450,6 +460,13 @@ namespace CMC.Presentation.Application.Services.Competitions
                             IsFinalCompetition = competition.IsFinalCompetition ?? false,
                             QuestionForEachPlayer = competition.QuestionForEachPlayer,
                             ParentId = competition.ParentId,
+                            ArchiveType = competition.ArchiveType,
+                            ArchiveMonths = competition.ArchiveMonths,
+                            ArchiveFromDate = competition.ArchiveFromDate,
+                            ArchiveToDate = competition.ArchiveToDate,
+                            ExcludedCompetitionIds = !string.IsNullOrEmpty(competition.ExcludedCompetitionIds) ?
+                                                     competition.ExcludedCompetitionIds.Split(',').Select(int.Parse).ToList() :
+                                                     new List<int>(),
                             Round1Points = competition.Round1Points,
                             Round1Time = competition.Round1Time,
                             Round2Points = competition.Round2Points,
@@ -782,6 +799,97 @@ namespace CMC.Presentation.Application.Services.Competitions
         }
 
         /// <summary>
+        /// Get all questions to be excluded based on competition archive settings
+        /// </summary>
+        /// <param name="competition">Current competition with archive settings</param>
+        /// <returns>List of questions to exclude</returns>
+        private async Task<List<CompetitionQuestion>> GetAllExcludedQuestionsAsync(Competition competition)
+        {
+            List<CompetitionQuestion> excludedQuestions = new List<CompetitionQuestion>();
+
+            try
+            {
+                // Always include parent competition questions (existing behavior)
+                if (competition.Parent != null)
+                {
+                    var parentQuestions = await GetAllQuestionsForCompetitionAndParentsAsync(competition.Parent.Id);
+                    excludedQuestions.AddRange(parentQuestions);
+                }
+
+                // Apply archive settings based on archive type - Direct enum casting!
+                var archiveType = (QuestionArchiveTypeEnum)(competition.ArchiveType ?? 0);
+
+                switch (archiveType)
+                {
+                    case QuestionArchiveTypeEnum.None:
+                        // Only parent questions already added above
+                        break;
+
+                    case QuestionArchiveTypeEnum.TimeBased:
+                        if (competition.ArchiveMonths.HasValue)
+                        {
+                            var cutoffDate = DateTime.Now.AddMonths(-competition.ArchiveMonths.Value);
+                            var timeBasedQuestions = await _compQuestRepository.GetAll(cq =>
+                                cq.Competition.EndDate.HasValue &&
+                                cq.Competition.EndDate.Value >= cutoffDate &&
+                                cq.Competition.Id != competition.Id)
+                                .Include(cq => cq.Question)
+                                .ToListAsync();
+
+                            excludedQuestions.AddRange(timeBasedQuestions);
+                        }
+                        break;
+
+                    case QuestionArchiveTypeEnum.CompetitionBased:
+                        if (!string.IsNullOrEmpty(competition.ExcludedCompetitionIds))
+                        {
+                            var excludedCompIds = competition.ExcludedCompetitionIds.Split(',').Select(int.Parse).ToList();
+                            var competitionBasedQuestions = await _compQuestRepository.GetAll(cq =>
+                                excludedCompIds.Contains(cq.CompetitionId))
+                                .Include(cq => cq.Question)
+                                .ToListAsync();
+
+                            excludedQuestions.AddRange(competitionBasedQuestions);
+                        }
+                        break;
+
+                    case QuestionArchiveTypeEnum.Global:
+                        var globalQuestions = await _compQuestRepository.GetAll(cq =>
+                            cq.Competition.EndDate.HasValue &&
+                            cq.Competition.Id != competition.Id)
+                            .Include(cq => cq.Question)
+                            .ToListAsync();
+
+                        excludedQuestions.AddRange(globalQuestions);
+                        break;
+
+                    case QuestionArchiveTypeEnum.DateRange:
+                        if (competition.ArchiveFromDate.HasValue && competition.ArchiveToDate.HasValue)
+                        {
+                            var dateRangeQuestions = await _compQuestRepository.GetAll(cq =>
+                                cq.Competition.EndDate.HasValue &&
+                                cq.Competition.EndDate.Value >= competition.ArchiveFromDate.Value &&
+                                cq.Competition.EndDate.Value <= competition.ArchiveToDate.Value &&
+                                cq.Competition.Id != competition.Id)
+                                .Include(cq => cq.Question)
+                                .ToListAsync();
+
+                            excludedQuestions.AddRange(dateRangeQuestions);
+                        }
+                        break;
+                }
+
+                // Remove duplicates based on QuestionId
+                return excludedQuestions.GroupBy(q => q.QuestionId).Select(g => g.First()).ToList();
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogError(ex, "GetAllExcludedQuestionsAsync", competition.Id, null, false);
+                throw;
+            }
+        }
+
+        /// <summary>
         /// Start competitons
         /// </summary>
         /// <returns></returns>
@@ -856,11 +964,12 @@ namespace CMC.Presentation.Application.Services.Competitions
                     competitionStartDTO.OtherTeam = new List<CompetitionsPlayerDTO>();
                     competitionStartDTO.Team1Name = competition.Team1.TeamName;
                     competitionStartDTO.Team2Name = competition.Team2.TeamName;
-                    
 
-                    List<CompetitionQuestion> AllQuestionsWasAskedBefore = new List<CompetitionQuestion>();
-                    if (competition.Parent != null)
-                        AllQuestionsWasAskedBefore = await GetAllQuestionsForCompetitionAndParentsAsync(competition.Parent.Id);
+
+                    List<CompetitionQuestion> AllQuestionsWasAskedBefore = await GetAllExcludedQuestionsAsync(competition);
+                    //List<CompetitionQuestion> AllQuestionsWasAskedBefore = new List<CompetitionQuestion>();
+                    //if (competition.Parent != null)
+                    //    AllQuestionsWasAskedBefore = await GetAllQuestionsForCompetitionAndParentsAsync(competition.Parent.Id);
 
                     bool IsCompetitionStartedBefore = competition.CompetitionQuestions != null && competition.CompetitionQuestions.Count > 0;
 
@@ -883,6 +992,17 @@ namespace CMC.Presentation.Application.Services.Competitions
                         cityMallPlayer1.Points = 0;
                         if (IsCompetitionStartedBefore)
                             cityMallPlayer1.Points = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == cityMallPlayer1.Id).Sum(a => a.Point).Value;
+
+                        if (competition.Team1.Player1.HasProfilePicture == true)
+                        {
+                            var attachment = await _attachmentRepository.GetAll(a =>
+                                a.EntityId == cityMallPlayer1.Id &&
+                                a.EntityType == (int)AttachmentTypes.PlayerProfilePicture &&
+                                a.IsDeleted != true).SingleOrDefaultAsync();
+
+                            cityMallPlayer1.ProfilePicture = attachment != null ? Convert.ToBase64String(attachment.FileData) : null;
+                        }
+
                         competitionStartDTO.TeamCityMall.Add(cityMallPlayer1);
                     }
 
@@ -894,6 +1014,16 @@ namespace CMC.Presentation.Application.Services.Competitions
                         cityMallPlayer2.Points = 0;
                         if (IsCompetitionStartedBefore)
                             cityMallPlayer2.Points = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == cityMallPlayer2.Id).Sum(a => a.Point).Value;
+
+                        if (competition.Team1.Player2.HasProfilePicture == true)
+                        {
+                            var attachment = await _attachmentRepository.GetAll(a =>
+                                a.EntityId == cityMallPlayer2.Id &&
+                                a.EntityType == (int)AttachmentTypes.PlayerProfilePicture &&
+                                a.IsDeleted != true).SingleOrDefaultAsync();
+
+                            cityMallPlayer2.ProfilePicture = attachment != null ? Convert.ToBase64String(attachment.FileData) : null;
+                        }
                         competitionStartDTO.TeamCityMall.Add(cityMallPlayer2);
                     }
 
@@ -905,6 +1035,16 @@ namespace CMC.Presentation.Application.Services.Competitions
                         cityMallPlayer3.Points = 0;
                         if (IsCompetitionStartedBefore)
                             cityMallPlayer3.Points = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == cityMallPlayer3.Id).Sum(a => a.Point).Value;
+                        
+                        if (competition.Team1.Player3.HasProfilePicture == true)
+                        {
+                            var attachment = await _attachmentRepository.GetAll(a =>
+                                a.EntityId == cityMallPlayer3.Id &&
+                                a.EntityType == (int)AttachmentTypes.PlayerProfilePicture &&
+                                a.IsDeleted != true).SingleOrDefaultAsync();
+
+                            cityMallPlayer3.ProfilePicture = attachment != null ? Convert.ToBase64String(attachment.FileData) : null;
+                        }
                         competitionStartDTO.TeamCityMall.Add(cityMallPlayer3);
                     }
 
@@ -916,6 +1056,17 @@ namespace CMC.Presentation.Application.Services.Competitions
                         cityMallPlayer4.Points = 0;
                         if (IsCompetitionStartedBefore)
                             cityMallPlayer4.Points = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == cityMallPlayer4.Id).Sum(a => a.Point).Value;
+
+                        if (competition.Team1.Player4.HasProfilePicture == true)
+                        {
+                            var attachment = await _attachmentRepository.GetAll(a =>
+                                a.EntityId == cityMallPlayer4.Id &&
+                                a.EntityType == (int)AttachmentTypes.PlayerProfilePicture &&
+                                a.IsDeleted != true).SingleOrDefaultAsync();
+
+                            cityMallPlayer4.ProfilePicture = attachment != null ? Convert.ToBase64String(attachment.FileData) : null;
+                        }
+
                         competitionStartDTO.TeamCityMall.Add(cityMallPlayer4);
                     }
 
@@ -929,6 +1080,17 @@ namespace CMC.Presentation.Application.Services.Competitions
                         otherPlayer1.Points = 0;
                         if (IsCompetitionStartedBefore)
                             otherPlayer1.Points = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == otherPlayer1.Id).Sum(a => a.Point).Value;
+
+                        if (competition.Team2.Player1.HasProfilePicture == true)
+                        {
+                            var attachment = await _attachmentRepository.GetAll(a =>
+                                a.EntityId == otherPlayer1.Id &&
+                                a.EntityType == (int)AttachmentTypes.PlayerProfilePicture &&
+                                a.IsDeleted != true).SingleOrDefaultAsync();
+
+                            otherPlayer1.ProfilePicture = attachment != null ? Convert.ToBase64String(attachment.FileData) : null;
+                        }
+
                         competitionStartDTO.OtherTeam.Add(otherPlayer1);
                     }
 
@@ -940,6 +1102,17 @@ namespace CMC.Presentation.Application.Services.Competitions
                         otherPlayer2.Points = 0;
                         if (IsCompetitionStartedBefore)
                             otherPlayer2.Points = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == otherPlayer2.Id).Sum(a => a.Point).Value;
+
+                        if (competition.Team2.Player2.HasProfilePicture == true)
+                        {
+                            var attachment = await _attachmentRepository.GetAll(a =>
+                                a.EntityId == otherPlayer2.Id &&
+                                a.EntityType == (int)AttachmentTypes.PlayerProfilePicture &&
+                                a.IsDeleted != true).SingleOrDefaultAsync();
+
+                            otherPlayer2.ProfilePicture = attachment != null ? Convert.ToBase64String(attachment.FileData) : null;
+                        }
+
                         competitionStartDTO.OtherTeam.Add(otherPlayer2);
 
                     }
@@ -952,6 +1125,17 @@ namespace CMC.Presentation.Application.Services.Competitions
                         otherPlayer3.Points = 0;
                         if (IsCompetitionStartedBefore)
                             otherPlayer3.Points = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == otherPlayer3.Id).Sum(a => a.Point).Value;
+
+                        if (competition.Team2.Player3.HasProfilePicture == true)
+                        {
+                            var attachment = await _attachmentRepository.GetAll(a =>
+                                a.EntityId == otherPlayer3.Id &&
+                                a.EntityType == (int)AttachmentTypes.PlayerProfilePicture &&
+                                a.IsDeleted != true).SingleOrDefaultAsync();
+
+                            otherPlayer3.ProfilePicture = attachment != null ? Convert.ToBase64String(attachment.FileData) : null;
+                        }
+
                         competitionStartDTO.OtherTeam.Add(otherPlayer3);
                     }
 
@@ -963,6 +1147,17 @@ namespace CMC.Presentation.Application.Services.Competitions
                         otherPlayer4.Points = 0;
                         if (IsCompetitionStartedBefore)
                             otherPlayer4.Points = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == otherPlayer4.Id).Sum(a => a.Point).Value;
+
+                        if (competition.Team2.Player4.HasProfilePicture == true)
+                        {
+                            var attachment = await _attachmentRepository.GetAll(a =>
+                                a.EntityId == otherPlayer4.Id &&
+                                a.EntityType == (int)AttachmentTypes.PlayerProfilePicture &&
+                                a.IsDeleted != true).SingleOrDefaultAsync();
+
+                            otherPlayer4.ProfilePicture = attachment != null ? Convert.ToBase64String(attachment.FileData) : null;
+                        }
+
                         competitionStartDTO.OtherTeam.Add(otherPlayer4);
                     }
 

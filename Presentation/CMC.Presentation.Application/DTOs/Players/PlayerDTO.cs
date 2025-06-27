@@ -14,5 +14,10 @@ namespace CMC.Presentation.Application.DTOs.Players
         public bool IsEmployee { get; set; }
         public bool IsBlocked { get; set; }
         public string Comment { get; set; }
+
+
+        public IFormFile ProfilePicture { get; set; }
+        public string ProfilePicturePath { get; set; }
+        public byte[] ProfilePictureBinary { get; set; }
     }
 }

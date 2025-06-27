@@ -120,5 +120,27 @@ namespace CMC.Presentation.Web.Controllers
                 return Json(new { isSuccess = false });
             }
         }
+
+
+        /// <summary>
+        /// Delete Player Profile Picture
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [RolePermission(PermissionCodes.WebPlayerDelete)]
+        public async Task<IActionResult> DeletePlayerProfilePicture(int id)
+        {
+            try
+            {
+                var result = await _playerService.DeletePlayerProfilePicture(id);
+                return Json(new { isSuccess = result.Succeeded, msg = _localizer["Alert_ProfilePictureDeletedSuccessfully"].Value });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogError(ex, "DeletePlayerProfilePicture", id, null, false);
+                return Json(new { isSuccess = false });
+            }
+        }
     }
 }

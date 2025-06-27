@@ -15,6 +15,8 @@ namespace CMC.Presentation.Domain.Entities
         public bool? IsBlocked { get; set; }
         public string Comment { get; set; }
 
+        public bool? HasProfilePicture { get; set; }
+
         public virtual ICollection<CompetitionQuestion> CompetitionQuestions { get; set; }
         public virtual ICollection<Competition> Competitions { get; set; }
 

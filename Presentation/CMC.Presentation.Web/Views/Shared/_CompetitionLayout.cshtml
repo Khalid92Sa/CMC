@@ -5,6 +5,7 @@
     bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
     string baseURL = configuration.GetValue<string>("BaseURL");
     bool IsTest = configuration.GetValue<bool>("IsTest");
+    string competitionFontSize = await SettingService.GetValue<string>(SystemSettings.CompetitionFontSize);
     Layout = null;
 }
 
@@ -15,12 +16,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewData["Title"]</title>
 
-    <!-- CSS -->
+    <!-- Existing CSS -->
     <link type="text/css" rel="stylesheet" href="~/assets/competition/shared/animate/animate.css">
     <link type="text/css" rel="stylesheet" href="~/assets/competition/shared/bootstrap/css/bootstrap.min.rtl.css" />
     <link type="text/css" rel="stylesheet" href="~/assets/competition/styles/css/main.rtl.css" />
+    <link type="text/css" rel="stylesheet" href="~/assets/shared/font-awesome-5.1/css/all.min.css" />
 
-    <!-- JS -->
+    <!-- New Professional Competition CSS -->
+    <link type="text/css" rel="stylesheet" href="~/assets/competition/styles/css/competition.css" />
+
+    <!-- Existing JS -->
     <script type="text/javascript" src="~/assets/competition/scripts/jquery-3.2.1.min.js"></script>
     <script type="text/javascript" src="~/assets/competition/scripts/tether.min.js"></script>
     <script type="text/javascript" src="~/assets/competition/scripts/popper.js"></script>
@@ -31,59 +36,206 @@
             pageSize: '@PaginationSettings.PageSize',
             BaseURL: '@baseURL'
         };
-
-
-        //$(document).ready(function () {
-        //    debugger;
-        //    const cors = require('cors');
-        //    const corsOptions = {
-        //        origin: generalSettings.BaseURL,
-        //        credentials: true,
-        //        optionSuccessStatus: 200
-        //    }
-        //    app.use(cors(corsOptions));
-        //});
     </script>
 
     @if (!IsTest)
     {
         <style>
-           @* #starting-div {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-image: url('/assets/competition/images/competition-start.jpg');
-                background-size: cover;
-                background-position: center;
-            }*@
-
             #next-content {
                 display: none;
             }
         </style>
     }
     <style>
-        .text-player-name-v {
-            text-shadow: 4px 1px 2px black;
+        :root {
+            --competition-font-size: @competitionFontSize;
+            --competition-font-size-num: @competitionFontSize.Replace("px", "");
         }
 
-        .text-player-name-c {
-            text-shadow: 1px 1px 2px black;
+        /* Professional Competition System Integration */
+        .competition-body {
+            font-size: var(--competition-font-size) !important;
+        }
+
+        /* Dynamic Font Scaling for Competition Elements */
+        .competition-team-name {
+            font-size: calc(var(--competition-font-size-num) * 1px + 22px) !important;
+        }
+
+        .competition-team-score {
+            font-size: calc(var(--competition-font-size-num) * 1px + 52px) !important;
+        }
+
+        .competition-vs-circle {
+            font-size: calc(var(--competition-font-size-num) * 1px + 36px) !important;
+        }
+
+        .vs-circle {
+            font-size: calc(var(--competition-font-size-num) * 1px + 36px) !important;
+        }
+
+        .player-name,
+        .player-name-competition {
+            font-size: calc(var(--competition-font-size-num) * 1px + 4px) !important;
+        }
+
+        .team-title,
+        .team-title-header {
+            font-size: calc(var(--competition-font-size-num) * 1px + 20px) !important;
+        }
+
+        .question-title {
+            font-size: calc(var(--competition-font-size-num) * 1px + 8px) !important;
+        }
+
+        .question-text {
+            font-size: calc(var(--competition-font-size-num) * 1px + 5px) !important;
+        }
+
+        .answer-text,
+        .answer-panel,
+        .category-title {
+            font-size: calc(var(--competition-font-size-num) * 1px + 0px) !important;
+        }
+
+        .player-score,
+        .player-score-badge,
+        .score-points-text {
+            font-size: calc(var(--competition-font-size-num) * 1px - 2px) !important;
+        }
+
+        .timer-display {
+            font-size: calc(var(--competition-font-size-num) * 1px + 12px) !important;
+        }
+
+        .confirm-btn,
+        .category-button {
+            font-size: calc(var(--competition-font-size-num) * 1px + 0px) !important;
+        }
+
+        .instruction-title {
+            font-size: calc(var(--competition-font-size-num) * 1px + 16px) !important;
+        }
+
+        /* Enhanced Professional Loading Overlay */
+        .WaitingBar {
+            background: linear-gradient(135deg, rgba(5, 45, 114, 0.95), rgba(84, 86, 161, 0.95)) !important;
+            backdrop-filter: blur(10px);
+        }
+
+        .WaitingBar img {
+            filter: brightness(1.2) contrast(1.1);
+        }
+
+        /* Professional Modal Enhancements */
+        .modal-content.bg-transparent {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.1) !important;
+            border-radius: 25px;
+            border: 2px solid rgba(255, 255, 255, 0.2) !important;
+        }
+
+        /* Alert Enhancement */
+        #alert-error {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            min-width: 300px;
+            text-align: center;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            background: rgba(220, 53, 69, 0.95) !important;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 30px rgba(220, 53, 69, 0.4);
+        }
+
+        /* Starting div background enhancement */
+        #starting-div {
+            position: relative;
+            overflow: hidden;
+        }
+
+        #starting-div::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(5, 45, 114, 0.3), rgba(84, 86, 161, 0.3));
+            z-index: 1;
+        }
+
+        /* Ensure content is above overlay */
+        #next-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Mobile optimizations */
+        @@media (max-width: 768px) {
+            :root {
+                --competition-font-size-num: @Math.Max(16, int.Parse(competitionFontSize.Replace("px", "")) - 2);
+            }
+
+            .competition-team-name {
+                font-size: calc(var(--competition-font-size-num) * 1px + 12px) !important;
+            }
+
+            .competition-team-score {
+                font-size: calc(var(--competition-font-size-num) * 1px + 28px) !important;
+            }
+
+            .team-title,
+            .team-title-header {
+                font-size: calc(var(--competition-font-size-num) * 1px + 8px) !important;
+            }
+
+            .vs-circle,
+            .competition-vs-circle {
+                font-size: calc(var(--competition-font-size-num) * 1px + 16px) !important;
+            }
+        }
+
+        /* High contrast mode support */
+        @@media (prefers-contrast: high) {
+            .glass-card {
+                background: rgba(255, 255, 255, 0.95) !important;
+                border: 3px solid #000 !important;
+                color: #000 !important;
+            }
+        }
+
+        /* Reduced motion support */
+        @@media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
         }
     </style>
     <script type="text/javascript" src="~/assets/js/Application/GeneralClass.js"></script>
 </head>
-<body class="homeBody min-vh-100">
+
+<body class="homeBody competition-body">
+    <!-- Enhanced Alert -->
     <div id="alert-error" class="alert alert-danger" role="alert" style="display:none">
+        <i class="fas fa-exclamation-triangle me-2"></i>
         @Localizer["ErrorOccurred"]
     </div>
+
     @{
         string hideStartingDiv = IsTest ? "style=display:none" : "";
         string hideNextContent = IsTest ? "" : "style=display:none";
     }
+
+    <!-- Full Screen Button -->
     <button type="button" id="btn-fscr" style="display:none" onclick="StartCompetition.FullScreen()"></button>
+
+    <!-- Starting Division with Enhanced Background -->
     <div id="starting-div" @hideStartingDiv>
         <div style="z-index:-1000; background-repeat:repeat-y;">
             @if (!string.IsNullOrEmpty(Model.StartBackground))
@@ -94,68 +246,222 @@
         </div>
     </div>
 
+    <!-- Main Competition Content -->
     <div id="next-content" @hideNextContent>
         <div class="min-vh-100 d-flex flex-column">
-            <!-- main section -->
             @RenderBody()
         </div>
     </div>
+
+    <!-- Audio Elements -->
     <audio id="timerFinishedSound" preload="auto">
         <source src="~/assets/competition/sounds/timer-finished.mp3" type="audio/mpeg">
+        <source src="~/assets/competition/sounds/timer-finished.wav" type="audio/wav">
     </audio>
     <audio id="correctAnswerSound" preload="auto">
         <source src="~/assets/competition/sounds/correct-answer.mp3" type="audio/mpeg">
+        <source src="~/assets/competition/sounds/correct-answer.wav" type="audio/wav">
     </audio>
     <audio id="InCorrectAnswerSound" preload="auto">
         <source src="~/assets/competition/sounds/incorrect-answer.mp3" type="audio/mpeg">
+        <source src="~/assets/competition/sounds/incorrect-answer.wav" type="audio/wav">
     </audio>
 
-    <div class="WaitingBar" id="loading" style="display: none; opacity: 0.3; height: 100%; width: 100%; position: fixed; left: 0px; top: 0px;
-        z-index: 1999; background: rgb(59, 132, 92); justify-content: center; align-items: center;">
-        <img src="~/assets/images/spinner-transparent.gif" style="display: block; margin-left: auto; margin-right: auto; width:111px;" />
+    <!-- Enhanced Loading Overlay -->
+    <div class="WaitingBar" id="loading"
+         style="display: none; opacity: 0.95; height: 100%; width: 100%; position: fixed; left: 0px; top: 0px;
+                z-index: 1999; justify-content: center; align-items: center; flex-direction: column;">
+        <div class="loading-content text-center">
+            <img src="~/assets/images/spinner-transparent.gif"
+                 style="display: block; margin-left: auto; margin-right: auto; width:111px; margin-bottom: 20px;" />
+            <div class="loading-text" style="color: white; font-size: 1.2rem; font-weight: 500;">
+                Loading...
+            </div>
+        </div>
     </div>
 
+    <!-- Enhanced Success Modal -->
     <div class="modal fade" id="goodModal" tabindex="-1" aria-labelledby="goodModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content bg-transparent border-0 d-flex justify-content-center">
                 <div class="text-center">
-                    <img src="~/assets/competition/images/check.gif" style="width:300px" />
-                    <img src="~/assets/competition/images/good.gif" style="width:300px" />
+                    <img src="~/assets/competition/images/check.gif" style="width:300px; border-radius: 15px;" />
+                    <img src="~/assets/competition/images/good.gif" style="width:300px; border-radius: 15px;" />
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Enhanced Error Modal -->
     <div class="modal fade" id="notCorrectModal" tabindex="-1" aria-labelledby="notCorrectModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content bg-transparent border-0 d-flex justify-content-center">
                 <div class="text-center">
-                    <img src="~/assets/competition/images/OhNo.gif" style="width:300px" />
+                    <img src="~/assets/competition/images/OhNo.gif" style="width:300px; border-radius: 15px;" />
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Enhanced JavaScript Configuration -->
     <script>
+        // Existing configuration
         var _isTest = '@IsTest' == 'True';
         var publicURls = {
-            PlayerVsPlayer: '@Url.Action("PlayerVsPlayer","Competitions")',
-            GetCategories: '@Url.Action("GetCategories","Competitions")',
-            GoToQuestion: '@Url.Action("GetQuestion","Competitions")',
-            AnswerOnQuestion: '@Url.Action("AnswerQuestion","Competitions")',
-            GetFullScore: '@Url.Action("GetFullScore","Competitions")',
-            GetScoreDetails: '@Url.Action("GetScoreDetails","Competitions")',
-            GetModalPlayer: '@Url.Action("GetModalPlayer","Competitions")',
-            FinishFinalCompetition: '@Url.Action("FinishFinalCompetition","Competitions")',
-            Logout: '@Url.Action("Logout","Users")',
-        }
+            PlayerVsPlayer: '@Url.Action("PlayerVsPlayer", "Competitions")',
+            GetCategories: '@Url.Action("GetCategories", "Competitions")',
+            GoToQuestion: '@Url.Action("GetQuestion", "Competitions")',
+            AnswerOnQuestion: '@Url.Action("AnswerQuestion", "Competitions")',
+            ChangeQuestion: '@Url.Action("ChangeQuestion","Competitions")',
+            GetFullScore: '@Url.Action("GetFullScore", "Competitions")',
+            GetScoreDetails: '@Url.Action("GetScoreDetails", "Competitions")',
+            GetModalPlayer: '@Url.Action("GetModalPlayer", "Competitions")',
+            FinishFinalCompetition: '@Url.Action("FinishFinalCompetition", "Competitions")',
+            Logout: '@Url.Action("Logout", "Users")',
+        };
 
         var globalResources = {
             ErrorOccurred: '@Localizer["ErrorOccurred"]',
-            Back:'@Localizer["Back"]',
+            Back: '@Localizer["Back"]',
             ViewScores: '@Localizer["ViewScores"]'
+        };
+
+        // Enhanced Competition Configuration
+        window.CompetitionConfig = {
+            sounds: {
+                enabled: true,
+                volume: 0.7
+            },
+            animations: {
+                enabled: !window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+                duration: 400
+            },
+            fontSize: '@competitionFontSize',
+            isTest: _isTest,
+            debug: _isTest
+        };
+
+        // Enhanced Sound Management
+        window.CompetitionSounds = {
+            play: function (soundId) {
+                if (!window.CompetitionConfig.sounds.enabled) return;
+
+                const audio = document.getElementById(soundId);
+                if (audio) {
+                    audio.volume = window.CompetitionConfig.sounds.volume;
+                    audio.currentTime = 0;
+                    audio.play().catch(e => {
+                        if (window.CompetitionConfig.debug) {
+                            console.log('Audio play failed:', e);
+                        }
+                    });
+                }
+            },
+
+            timerFinished: () => window.CompetitionSounds.play('timerFinishedSound'),
+            correctAnswer: () => window.CompetitionSounds.play('correctAnswerSound'),
+            incorrectAnswer: () => window.CompetitionSounds.play('InCorrectAnswerSound')
+        };
+
+        // Enhanced Loading Management
+        window.CompetitionLoader = {
+            show: function () {
+                const loader = document.getElementById('loading');
+                if (loader) {
+                    loader.style.display = 'flex';
+                    // Add fade-in animation
+                    setTimeout(() => {
+                        loader.style.opacity = '0.95';
+                    }, 10);
+                }
+            },
+
+            hide: function () {
+                const loader = document.getElementById('loading');
+                if (loader) {
+                    loader.style.opacity = '0';
+                    setTimeout(() => {
+                        loader.style.display = 'none';
+                    }, 300);
+                }
+            }
+        };
+
+        // Initialize enhanced competition system
+        document.addEventListener('DOMContentLoaded', function () {
+            // Add touch support detection
+            if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+                document.body.classList.add('touch-device');
+            }
+
+            // Add reduced motion support
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.documentElement.style.setProperty('--transition', 'none');
+                window.CompetitionConfig.animations.enabled = false;
+            }
+
+            // Enhanced error handling
+            window.addEventListener('error', function (event) {
+                if (window.CompetitionConfig.debug) {
+                    console.error('Competition System Error:', event.error);
+                }
+            });
+
+            // Add keyboard navigation support
+            document.addEventListener('keydown', function (event) {
+                // ESC key to close modals
+                if (event.key === 'Escape') {
+                    const modals = document.querySelectorAll('.modal.show');
+                    modals.forEach(modal => {
+                        const bootstrapModal = bootstrap.Modal.getInstance(modal);
+                        if (bootstrapModal) {
+                            bootstrapModal.hide();
+                        }
+                    });
+                }
+
+                // F11 for fullscreen toggle
+                if (event.key === 'F11' && typeof StartCompetition !== 'undefined') {
+                    event.preventDefault();
+                    StartCompetition.FullScreen();
+                }
+            });
+
+            console.log('Enhanced Competition System Initialized');
+        });
+
+        // Global error handler for AJAX requests
+        $(document).ajaxError(function (event, xhr, settings, error) {
+            if (window.CompetitionConfig.debug) {
+                console.error('AJAX Error:', error, xhr);
+            }
+
+            // Show user-friendly error message
+            const alertElement = document.getElementById('alert-error');
+            if (alertElement && xhr.status !== 0) { // Don't show for cancelled requests
+                alertElement.style.display = 'block';
+                setTimeout(() => {
+                    alertElement.style.display = 'none';
+                }, 5000);
+            }
+        });
+
+        // Performance monitoring (if enabled)
+        @if (IsTest)
+        {
+            <text>
+                window.addEventListener('load', function () {
+                    setTimeout(function () {
+                        if (performance.getEntriesByType) {
+                            const perfData = performance.getEntriesByType('navigation')[0];
+                            if (perfData) {
+                                console.log('Page Load Time:', Math.round(perfData.loadEventEnd - perfData.fetchStart), 'ms');
+                            }
+                        }
+                    }, 100);
+                });
+            </text>
         }
     </script>
-
-
 </body>
 </html>

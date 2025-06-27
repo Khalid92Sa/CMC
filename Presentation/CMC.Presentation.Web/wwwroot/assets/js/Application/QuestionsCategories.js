@@ -402,6 +402,615 @@
         ];
         Grid.fillGrid('#tblQuestions', data.data, columns, true, [], '#pagination', data.totalCount, GeneralClass.pageSize, 'Categories');
     },
+    BulkImport: {
+        importedQuestions: [],
+        isInitialized: false, // Add this flag
+        OnLoad: function () {
+            console.log('BulkImport OnLoad called, isInitialized:', Categories.BulkImport.isInitialized);
+
+            // Prevent multiple initializations
+            if (Categories.BulkImport.isInitialized) {
+                console.log('Already initialized, skipping...');
+                return;
+            }
+
+            Categories.BulkImport.initializeUploadZone();
+            Categories.BulkImport.initializeEventHandlers();
+            Categories.BulkImport.isInitialized = true;
+
+            console.log('BulkImport initialized successfully');
+        },
+        initializeUploadZone: function () {
+            console.log('Initializing upload zone...');
+
+            const uploadZone = document.getElementById('uploadZone');
+            const fileInput = document.getElementById('excelFile');
+
+            if (!uploadZone || !fileInput) {
+                console.log('Upload zone or file input not found');
+                return;
+            }
+
+            // Remove ALL event listeners (both jQuery and vanilla JS)
+            $(uploadZone).off();
+            $(fileInput).off();
+
+            // Clone and replace the elements to remove ALL event listeners
+            const newUploadZone = uploadZone.cloneNode(true);
+            const newFileInput = fileInput.cloneNode(true);
+
+            uploadZone.parentNode.replaceChild(newUploadZone, uploadZone);
+            fileInput.parentNode.replaceChild(newFileInput, fileInput);
+
+            // Add single event listener using vanilla JavaScript
+            newUploadZone.addEventListener('click', function (e) {
+                console.log('Upload zone clicked - vanilla JS');
+                e.preventDefault();
+                e.stopPropagation();
+                newFileInput.click();
+            }, { once: false }); // Allow multiple clicks
+
+            // Add file change listener
+            newFileInput.addEventListener('change', function (e) {
+                console.log('File input changed - vanilla JS');
+                if (this.files && this.files.length > 0) {
+                    console.log('File selected:', this.files[0].name);
+                    Categories.BulkImport.handleFileUpload(this.files[0]);
+                }
+            });
+
+            console.log('Upload zone initialized with vanilla JS');
+        },
+        initializeEventHandlers: function () {
+            // Select all questions
+            $('#selectAllQuestions').on('click', function () {
+                const checkboxes = $('.question-checkbox');
+                const allChecked = checkboxes.toArray().every(cb => cb.checked);
+                checkboxes.prop('checked', !allChecked);
+                Categories.BulkImport.updateSelectedQuestions();
+            });
+
+            // Save selected questions
+            $('#saveSelectedQuestions').on('click', function () {
+                Categories.BulkImport.saveSelectedQuestions();
+            });
+
+            // Handle individual checkbox changes
+            $(document).on('change', '.question-checkbox', function () {
+                Categories.BulkImport.updateSelectedQuestions();
+            });
+
+            // Handle edit and remove buttons
+            $(document).on('click', '.edit-question-btn', function () {
+                const questionId = $(this).data('question-id');
+                Categories.BulkImport.editQuestion(questionId);
+            });
+
+            $(document).on('click', '.remove-question-btn', function () {
+                const questionId = $(this).data('question-id');
+                Categories.BulkImport.removeQuestion(questionId);
+            });
+        },
+        handleFileUpload: function (file) {
+            if (!file.name.match(/\.(xlsx|xls)$/)) {
+                GeneralClass.ShowErrorAlert(globalResources.InvalidExcelFile || 'Please select a valid Excel file');
+                return;
+            }
+
+            // Show loading
+            Categories.BulkImport.showLoading(true);
+
+            // Create FormData for file upload
+            const formData = new FormData();
+            formData.append('excelFile', file);
+            formData.append('categoryId', $('#ddlBulkCategories').val());
+
+            // AJAX call to backend ProcessExcelFile method
+            $.ajax({
+                url: publicURls.ProcessExcelFile,
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    Categories.BulkImport.showLoading(false);
+
+                    if (response.isSuccess) {
+                        // Filter out empty questions and store the questions data
+                        Categories.BulkImport.importedQuestions = response.questions
+                            .filter(q => {
+                                // Filter out questions that are completely empty
+                                const hasQuestionText = (q.textEn && q.textEn.trim()) || (q.textAr && q.textAr.trim());
+                                const hasAnswers = q.answers && q.answers.length > 0;
+                                const hasValidAnswers = q.answers && q.answers.some(a =>
+                                    (a.textEn && a.textEn.trim()) || (a.textAr && a.textAr.trim())
+                                );
+
+                                return hasQuestionText && hasAnswers && hasValidAnswers;
+                            })
+                            .map((q, index) => ({
+                                id: index + 1,
+                                questionEn: q.textEn || '',
+                                questionAr: q.textAr || '',
+                                answers: (q.answers || []).filter(a =>
+                                    // Filter out empty answer options
+                                    (a.textEn && a.textEn.trim()) || (a.textAr && a.textAr.trim())
+                                ),
+                                categoryId: q.categoryId,
+                                isValid: true,
+                                warnings: [],
+                                selected: true,
+                                isEditing: false
+                            }));
+
+                        // Process and display questions
+                        Categories.BulkImport.validateQuestions();
+                        Categories.BulkImport.updateStatistics();
+                        Categories.BulkImport.renderQuestions();
+                        Categories.BulkImport.showQuestionsContainer();
+
+                        // Show success message
+                        Swal.fire({
+                            title: globalResources.Success || 'Success',
+                            text: response.message,
+                            icon: 'success',
+                            timer: 3000,
+                            showConfirmButton: false
+                        });
+                    } else {
+                        GeneralClass.ShowErrorAlert(response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    Categories.BulkImport.showLoading(false);
+                    console.error('Excel upload error:', error);
+                    GeneralClass.ShowErrorAlert(globalResources.ExcelProcessingError || 'Error processing Excel file');
+                }
+            });
+        },
+        validateQuestions: function () {
+            Categories.BulkImport.importedQuestions.forEach(question => {
+                question.warnings = [];
+                question.isValid = true;
+
+                // Basic validation
+                if (!question.questionEn && !question.questionAr) {
+                    question.isValid = false;
+                    question.warnings.push(globalResources.QuestionTextRequired || 'Question text is required');
+                }
+
+                if (!question.answers || question.answers.length < 2) {
+                    question.isValid = false;
+                    question.warnings.push(globalResources.MinimumTwoAnswers || 'At least 2 answer options are required');
+                }
+
+                // Check if at least one answer is marked as correct
+                if (question.answers && !question.answers.some(a => a.isAnswer)) {
+                    question.isValid = false;
+                    question.warnings.push(globalResources.NoCorrectAnswer || 'No correct answer specified');
+                }
+
+                // Warnings for missing translations
+                if (question.questionEn && !question.questionAr) {
+                    question.warnings.push(globalResources.ArabicTranslationMissing || 'Arabic translation missing');
+                }
+                if (question.questionAr && !question.questionEn) {
+                    question.warnings.push(globalResources.EnglishTranslationMissing || 'English translation missing');
+                }
+            });
+        },
+        updateStatistics: function () {
+            const total = Categories.BulkImport.importedQuestions.length;
+            const valid = Categories.BulkImport.importedQuestions.filter(q => q.isValid && q.warnings.length === 0).length;
+            const withWarnings = Categories.BulkImport.importedQuestions.filter(q => q.isValid && q.warnings.length > 0).length;
+            const invalid = Categories.BulkImport.importedQuestions.filter(q => !q.isValid).length;
+
+            $('#totalQuestions').text(total);
+            $('#validQuestions').text(valid);
+            $('#warningQuestions').text(withWarnings);
+            $('#invalidQuestions').text(invalid);
+        },
+        renderQuestions: function () {
+            const container = $('#questionsListContainer');
+            container.empty();
+
+            Categories.BulkImport.importedQuestions.forEach((question, index) => {
+                const questionCard = Categories.BulkImport.createQuestionCard(question, index);
+                container.append(questionCard);
+            });
+        },
+        createQuestionCard: function (question, index) {
+            const statusClass = !question.isValid ? 'border-danger' :
+                (question.warnings.length > 0 ? 'border-warning' : 'border-success');
+
+            const statusIcon = question.isValid ?
+                (question.warnings.length > 0 ? '<i class="fas fa-exclamation-triangle text-warning"></i>' :
+                    '<i class="fas fa-check-circle text-success"></i>') :
+                '<i class="fas fa-times-circle text-danger"></i>';
+
+            const warningsHtml = question.warnings.length > 0 ? `
+        <div class="mt-2">
+            <small class="text-warning">
+                <i class="fas fa-exclamation-triangle me-1"></i>
+                ${question.warnings.join(', ')}
+            </small>
+        </div>
+    ` : '';
+
+            return $(`
+        <div class="question-card-clean ${statusClass}" data-question-id="${question.id}">
+            <div class="p-3">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div class="d-flex align-items-center">
+                        <input type="checkbox" class="form-check-input question-checkbox mr-2" 
+                               ${question.selected ? 'checked' : ''} 
+                               data-question-id="${question.id}"
+                               ${!question.isValid ? 'disabled' : ''}>
+                        <span class="badge badge-primary mr-2">${globalResources.Question} ${index + 1}</span>
+                        ${statusIcon}
+                    </div>
+                    <div>
+                        <button class="btn btn-sm btn-outline-primary mr-1 edit-question-btn" data-question-id="${question.id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger remove-question-btn" data-question-id="${question.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                ${warningsHtml}
+                
+                <!-- Content Display Mode -->
+                <div id="content-${question.id}" class="question-content">
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <strong class="text-muted">${globalResources.English}:</strong>
+                            <p class="mb-2">${question.questionEn || '<em class="text-muted">' + globalResources.NotProvided + '</em>'}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <strong class="text-muted">${globalResources.Arabic}:</strong>
+                            <p class="mb-2">${question.questionAr || '<em class="text-muted">' + globalResources.NotProvided + '</em>'}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <strong class="text-muted mb-2 d-block">${globalResources.Options}:</strong>
+                        ${Categories.BulkImport.createCleanAnswerOptions(question)}
+                    </div>
+                </div>
+
+                <!-- Edit Mode (Hidden by default) -->
+                <div id="edit-${question.id}" class="question-edit d-none">
+                    ${Categories.BulkImport.createQuestionEditForm(question)}
+                </div>
+            </div>
+        </div>
+    `);
+        },
+        createCleanAnswerOptions: function (question) {
+            if (!question.answers || question.answers.length === 0) {
+                return `<p class="text-muted">${globalResources.NoAnswerOptions}</p>`;
+            }
+
+            const options = [];
+            question.answers.forEach((answer, index) => {
+                const isCorrect = answer.isAnswer;
+                options.push(`
+            <div class="answer-option-clean ${isCorrect ? 'correct' : ''}">
+                <div class="row">
+                    <div class="col-md-6">
+                        <strong>${globalResources.Option} ${index + 1} (EN):</strong> 
+                        ${answer.textEn || '<em class="text-muted">' + globalResources.NotProvided + '</em>'}
+                    </div>
+                    <div class="col-md-6">
+                        <strong>${globalResources.Option} ${index + 1} (AR):</strong> 
+                        ${answer.textAr || '<em class="text-muted">' + globalResources.NotProvided + '</em>'}
+                    </div>
+                </div>
+            </div>
+        `);
+            });
+            return options.join('');
+        },
+        createQuestionContent: function (question) {
+            return `
+        <div class="row">
+            <div class="col-md-6">
+                <h6 class="fw-bold">${globalResources.English}:</h6>
+                <p class="mb-2">${question.questionEn || '<em class="text-muted">' + globalResources.NotProvided + '</em>'}</p>
+            </div>
+            <div class="col-md-6">
+                <h6 class="fw-bold">${globalResources.Arabic}:</h6>
+                <p class="mb-2">${question.questionAr || '<em class="text-muted">' + globalResources.NotProvided + '</em>'}</p>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-12">
+                <h6 class="fw-bold mb-3">${globalResources.Options}:</h6>
+                ${Categories.BulkImport.createAnswerOptions(question)}
+            </div>
+        </div>
+    `;
+        },
+        createQuestionEditForm: function (question) {
+            return `
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">${globalResources.QuestionEnglish}:</label>
+                    <textarea class="form-control question-edit-en" rows="2">${question.questionEn}</textarea>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">${globalResources.QuestionArabic}:</label>
+                    <textarea class="form-control question-edit-ar" rows="2">${question.questionAr}</textarea>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <h6 class="fw-bold mb-3">${globalResources.EditAnswerOptions}:</h6>
+                ${Categories.BulkImport.createEditableAnswerOptions(question)}
+            </div>
+        </div>
+        <div class="text-end mt-3">
+            <button class="btn btn-success me-2 save-question-btn" data-question-id="${question.id}">
+                <i class="fas fa-save me-1"></i>${globalResources.Save}
+            </button>
+            <button class="btn btn-secondary cancel-edit-btn" data-question-id="${question.id}">
+                <i class="fas fa-times me-1"></i>${globalResources.Cancel}
+            </button>
+        </div>
+        `;
+        },
+        createAnswerOptions: function (question) {
+            if (!question.answers || question.answers.length === 0) {
+                return `<p class="text-muted">${globalResources.NoAnswerOptions}</p>`;
+            }
+
+            const options = [];
+            question.answers.forEach((answer, index) => {
+                const isCorrect = answer.isAnswer;
+                options.push(`
+            <div class="answer-option ${isCorrect ? 'correct' : ''}">
+                <div class="row">
+                    <div class="col-md-6">
+                        <strong>${globalResources.Option} ${index + 1} (EN):</strong> 
+                        ${answer.textEn || '<em class="text-muted">' + globalResources.NotProvided + '</em>'}
+                    </div>
+                    <div class="col-md-6">
+                        <strong>${globalResources.Option} ${index + 1} (AR):</strong> 
+                        ${answer.textAr || '<em class="text-muted">' + globalResources.NotProvided + '</em>'}
+                    </div>
+                </div>
+            </div>
+        `);
+            });
+            return options.join('');
+        },
+        createEditableAnswerOptions: function (question) {
+            const options = [];
+            const maxOptions = Math.max(4, question.answers ? question.answers.length : 0);
+
+            for (let i = 0; i < maxOptions; i++) {
+                const answer = question.answers && question.answers[i] ? question.answers[i] : { textEn: '', textAr: '', isAnswer: false };
+                const isCorrect = answer.isAnswer;
+
+                options.push(`
+            <div class="col-md-6 mb-3">
+                <div class="answer-edit-container">
+                    <div class="d-flex align-items-center mb-2">
+                        <input type="radio" name="correct-answer-${question.id}" value="${i + 1}" 
+                               class="form-check-input me-2" ${isCorrect ? 'checked' : ''}>
+                        <label class="form-label fw-bold mb-0">${globalResources.Option} ${i + 1}</label>
+                    </div>
+                    <input type="text" class="form-control mb-2 option-edit-en" 
+                           placeholder="${globalResources.InEnglish}" 
+                           value="${answer.textEn || ''}" data-option="${i + 1}">
+                    <input type="text" class="form-control option-edit-ar" 
+                           placeholder="${globalResources.InArabic}" 
+                           value="${answer.textAr || ''}" data-option="${i + 1}">
+                </div>
+            </div>
+        `);
+            }
+            return options.join('');
+        },
+        editQuestion: function (questionId) {
+            const question = Categories.BulkImport.importedQuestions.find(q => q.id === questionId);
+            if (!question) return;
+
+            question.isEditing = true;
+
+            // Hide content and show edit form
+            $(`#content-${questionId}`).addClass('d-none');
+            $(`#edit-${questionId}`).removeClass('d-none');
+
+            // Add event handlers for the edit form buttons
+            $(`#edit-${questionId}`).find('.save-question-btn').off('click').on('click', function () {
+                Categories.BulkImport.saveQuestionEdit(questionId);
+            });
+
+            $(`#edit-${questionId}`).find('.cancel-edit-btn').off('click').on('click', function () {
+                Categories.BulkImport.cancelQuestionEdit(questionId);
+            });
+        },
+        saveQuestionEdit: function (questionId) {
+            const question = Categories.BulkImport.importedQuestions.find(q => q.id === questionId);
+            if (!question) return;
+
+            const editContainer = $(`#edit-${questionId}`);
+
+            // Update question text
+            question.questionEn = editContainer.find('.question-edit-en').val();
+            question.questionAr = editContainer.find('.question-edit-ar').val();
+
+            // Update options
+            question.answers = [];
+            for (let i = 1; i <= 4; i++) {
+                const optionEn = editContainer.find(`.option-edit-en[data-option="${i}"]`).val();
+                const optionAr = editContainer.find(`.option-edit-ar[data-option="${i}"]`).val();
+
+                if (optionEn || optionAr) {
+                    question.answers.push({
+                        textEn: optionEn,
+                        textAr: optionAr,
+                        isAnswer: false
+                    });
+                }
+            }
+
+            // Update correct answer
+            const correctAnswer = parseInt(editContainer.find(`input[name="correct-answer-${questionId}"]:checked`).val()) || 1;
+            if (question.answers[correctAnswer - 1]) {
+                question.answers[correctAnswer - 1].isAnswer = true;
+            }
+
+            question.isEditing = false;
+
+            // Re-validate and re-render
+            Categories.BulkImport.validateQuestions();
+            Categories.BulkImport.updateStatistics();
+
+            // Update the specific question card
+            const questionCard = $(`.question-card-clean[data-question-id="${questionId}"]`);
+            const index = Categories.BulkImport.importedQuestions.findIndex(q => q.id === questionId);
+            const newCard = Categories.BulkImport.createQuestionCard(question, index);
+            questionCard.replaceWith(newCard);
+        },
+        cancelQuestionEdit: function (questionId) {
+            const question = Categories.BulkImport.importedQuestions.find(q => q.id === questionId);
+            if (!question) return;
+
+            question.isEditing = false;
+
+            // Show content and hide edit form
+            $(`#content-${questionId}`).removeClass('d-none');
+            $(`#edit-${questionId}`).addClass('d-none');
+        },
+        removeQuestion: function (questionId) {
+            Swal.fire({
+                title: globalResources.Alert_DeleteQuestion,
+                text: globalResources.Alert_DeleteQuestion_Text || 'Are you sure you want to remove this question?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: globalResources.Delete,
+                cancelButtonText: globalResources.Cancel
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Categories.BulkImport.importedQuestions = Categories.BulkImport.importedQuestions.filter(q => q.id !== questionId);
+                    Categories.BulkImport.updateStatistics();
+                    Categories.BulkImport.renderQuestions();
+
+                    Swal.fire({
+                        title: '',
+                        text: globalResources.QuestionRemovedSuccessfully,
+                        icon: 'success',
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+                }
+            });
+        },
+        saveSelectedQuestions: function () {
+            const selectedQuestions = Categories.BulkImport.importedQuestions.filter(q => q.selected && q.isValid);
+
+            if (selectedQuestions.length === 0) {
+                GeneralClass.ShowErrorAlert(globalResources.NoValidQuestionsSelected);
+                return;
+            }
+
+            // Show loading
+            GeneralClass.showLoading();
+
+            // Convert to format expected by your backend
+            const questionsData = {
+                questions: selectedQuestions.map(q => ({
+                    CategoryId: q.categoryId || $('#ddlBulkCategories').val(),
+                    TextEn: q.questionEn,
+                    TextAr: q.questionAr,
+                    AnswertType: 1, // Text answers
+                    Answers: q.answers.map(answer => ({
+                        TextEn: answer.textEn,
+                        TextAr: answer.textAr,
+                        IsAnswer: answer.isAnswer
+                    }))
+                }))
+            };
+
+            // AJAX call to backend AddBulkQuestions method
+            $.ajax({
+                type: 'POST',
+                url: publicURls.AddBulkQuestions,
+                data: JSON.stringify(questionsData),
+                contentType: 'application/json',
+                success: function (response) {
+                    GeneralClass.hideLoading();
+
+                    if (response.isSuccess) {
+                        Swal.fire({
+                            title: '',
+                            text: globalResources.QuestionsImportedSuccessfully || `Successfully imported ${selectedQuestions.length} questions!`,
+                            icon: 'success',
+                            showConfirmButton: false,
+                            timer: 3000
+                        }).then(() => {
+                            // Redirect back to categories or refresh page
+                            if ($('#ddlBulkCategories').val()) {
+                                window.location.href = publicURls.AddCategory + '/' + $('#ddlBulkCategories').val();
+                            } else {
+                                window.location.href = publicURls.Categories;
+                            }
+                        });
+                    } else {
+                        if (response.resultCode === 422 && response.brokenRoles) {
+                            let errorMessages = response.brokenRoles.map(rule => rule.message).join('<br>');
+                            Swal.fire({
+                                title: globalResources.ValidationErrors,
+                                html: errorMessages,
+                                icon: 'error'
+                            });
+                        } else {
+                            GeneralClass.ShowErrorAlert(response.msg || globalResources.ErrorOccurred);
+                        }
+                    }
+                },
+                error: function (xhr, status, error) {
+                    GeneralClass.hideLoading();
+                    console.error('Save questions error:', error);
+                    GeneralClass.ShowErrorAlert(globalResources.ErrorOccurred);
+                }
+            });
+        },
+        showQuestionsContainer: function () {
+            $('#statsRow').removeClass('d-none');
+            $('#questionsContainer').removeClass('d-none');
+        },
+        showLoading: function (show) {
+            const spinner = $('.loading-spinner');
+            if (show) {
+                spinner.show();
+            } else {
+                spinner.hide();
+            }
+        },
+        updateSelectedQuestions: function () {
+            $('.question-checkbox').each(function () {
+                const questionId = parseInt($(this).data('question-id'));
+                const question = Categories.BulkImport.importedQuestions.find(q => q.id === questionId);
+                if (question) {
+                    question.selected = $(this).is(':checked');
+                }
+            });
+        },
+        CloseBulkModal: function () {
+            $('#excelTemplateModal').modal('hide');
+        }
+    }
 }
 
 var AllCategories = {
@@ -491,7 +1100,7 @@ var Questions = {
                     if (extt != "png" && extt != "jpg" && extt != "jpeg") {
                         $("#answer-Img-invalid-" + currentAnswerNum).text(globalResources.InvalidAttachmentImg);
                         $("#answer-Img-invalid-" + currentAnswerNum).css("display", "block");
-                        Questions.ClearAnswerAttachment($(this), globalResources.ChooseImg, currentAnswerNum,false); // false = answer ... true = question
+                        Questions.ClearAnswerAttachment($(this), globalResources.ChooseImg, currentAnswerNum, false); // false = answer ... true = question
                         return false;
                     }
 
@@ -515,11 +1124,74 @@ var Questions = {
                 }
             }
         });
+
+        //$('button[data-bs-toggle="tab"]').off('shown.bs.tab').on('shown.bs.tab', function (e) {
+        //    const target = $(e.target).attr('data-bs-target');
+        //    console.log('BS5 Tab switched to:', target);
+
+        //    if (target === '#bulk-import') {
+        //        console.log('Initializing bulk import...');
+        //        // Only initialize if not already done
+        //        if (!Categories.BulkImport.isInitialized) {
+        //            Categories.BulkImport.OnLoad();
+        //        }
+        //    }
+        //});
+
+        //// Bootstrap 4 syntax (fallback)
+        $('a[data-toggle="tab"], button[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+            const target = $(e.target).attr('data-bs-target') || $(e.target).attr('href');
+
+            if (target === '#bulk-import' && !Categories.BulkImport.isInitialized) {
+                console.log('Bulk import tab shown, initializing...');
+                Categories.BulkImport.OnLoad();
+            }
+        });
+
+        //// ALTERNATIVE: Direct click event (more reliable)
+        //$('#bulk-tab').on('click', function () {
+        //    setTimeout(function () {
+        //        Categories.BulkImport.OnLoad();
+        //    }, 200); // Small delay to ensure tab content is visible
+        //});
+
+        $('#bulk-tab').one('click', function () {
+            console.log('Bulk tab clicked for first time');
+            setTimeout(function () {
+                Categories.BulkImport.OnLoad();
+            }, 300);
+        });
+
+        // For subsequent clicks, just check if it's active
+        $('#bulk-tab').on('click', function () {
+            if ($(this).hasClass('active') && !Categories.BulkImport.isInitialized) {
+                setTimeout(function () {
+                    Categories.BulkImport.OnLoad();
+                }, 300);
+            }
+        });
+
+        $('#single-tab').on('click', function () {
+            console.log('Single tab clicked'); // Debug log
+            // Any single tab initialization if needed
+        });
+
+        // Synchronize category selection between tabs
+        $('#ddlCategories').on('change', function () {
+            $('#ddlBulkCategories').val($(this).val());
+        });
+
+        $('#ddlBulkCategories').on('change', function () {
+            $('#ddlCategories').val($(this).val());
+        });
+
+        //Categories.BulkImport.OnLoad();
     },
     SelectAnswerByImage: function (id) {
         $('#chk-option-img-' + id).prop('checked', 'checked');
     },
-    ClearAnswerAttachment(fileInput, defaultMessage,num,isQuestion) {
+
+    ClearAnswerAttachment(fileInput, defaultMessage, num, isQuestion) {
         $(fileInput).val('');
         if (isQuestion) {
             //Question
@@ -529,7 +1201,7 @@ var Questions = {
             $('#lblQuestionImgStatus').removeClass('fa-check-circle');
             $('#lblQuestionImgStatus').addClass('fa-upload');
         }
-        
+
         else {
             //Answer
             if (defaultMessage != '') {
@@ -540,6 +1212,13 @@ var Questions = {
         }
     },
     AddNewQuestion: function () {
+
+        if ($('#bulk-import').hasClass('show') && $('#bulk-import').hasClass('active')) {
+            Categories.BulkImport.saveSelectedQuestions();
+            return;
+        }
+
+
         $('.field-validation-valid').html('').hide();
         var data = new FormData();
         data.append("Id", $('#Id').val());
@@ -681,7 +1360,7 @@ var Questions = {
                         data.append('Answers[' + 2 + '].IsAnswer', checkOption3);
                         data.append('Answers[' + 2 + '].Id', option3Id.val());
                     }
-                  
+
 
                     //Add Option 4 to Data
                     if (option4En.val() != '' || option4Ar.val() != '') {
@@ -690,7 +1369,7 @@ var Questions = {
                         data.append('Answers[' + 3 + '].IsAnswer', checkOption4);
                         data.append('Answers[' + 3 + '].Id', option4Id.val());
                     }
-                   
+
                 }
                 else {
 
@@ -705,7 +1384,7 @@ var Questions = {
                             $('#lbl-generic-error').html('').hide();
                         }
                     }
-                    
+
 
                     // Option 1
                     var option1ImgId = $('#hdn-option-img-id-1');
@@ -772,7 +1451,7 @@ var Questions = {
                         data.append('Answers[' + 2 + '].IsAnswer', checkOptionImg3);
                         data.append('Answers[' + 2 + '].Id', option3ImgId.val());
                     }
-                    
+
 
                     //Add Option 4 to Data
                     if ($(option4Img).val() != '' || option4ImgId.val() != '') {
@@ -909,4 +1588,38 @@ var Questions = {
             }
         })
     },
+    AddBulkQuestions: function (questionsData) {
+        $.ajax({
+            type: 'POST',
+            url: publicURls.AddBulkQuestions,
+            data: JSON.stringify(questionsData),
+            contentType: 'application/json',
+            processData: false,
+            success: function (response) {
+                if (response.isSuccess) {
+                    Swal.fire({
+                        title: '',
+                        text: globalResources.QuestionsAddedSuccessfully || 'Questions added successfully!',
+                        icon: 'success',
+                        showConfirmButton: false,
+                        timer: 2000
+                    }).then(() => {
+                        window.location.href = publicURls.Categories;
+                    });
+                } else {
+                    if (response.resultCode === 422 && response.brokenRoles) {
+                        for (var i = 0; i < response.brokenRoles.length; i++) {
+                            var propertyName = response.brokenRoles[i]["propertyName"];
+                            var message = response.brokenRoles[i]["message"];
+                            console.error(`Validation error for ${propertyName}: ${message}`);
+                        }
+                    }
+                    GeneralClass.ShowErrorAlert(response.message || globalResources.ErrorOccurred);
+                }
+            },
+            error: function (xhr, status, error) {
+                GeneralClass.ShowErrorAlert(globalResources.ErrorOccurred);
+            }
+        });
+    }
 }

@@ -10,12 +10,14 @@ using CMC.Presentation.Application.Services.Questions;
 using CMC.Presentation.Application.Services.Settings;
 using CMC.Presentation.Domain.Entities;
 using iTextSharp.text;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Localization;
 using Org.BouncyCastle.Crypto;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -214,13 +216,13 @@ namespace CMC.Presentation.Web.Controllers
                         questionVM = question.Data;
                     else
                     {
-                        questionVM.Points = await _settingService.GetValue<int>(SystemSettings.QuestionDefaultPoint);
+                        //questionVM.Points = await _settingService.GetValue<int>(SystemSettings.QuestionDefaultPoint);
                         questionVM.Time = await _settingService.GetValue<int>(SystemSettings.QuestionDefaultTime);
                     }
                 }
                 else
                 {
-                    questionVM.Points = await _settingService.GetValue<int>(SystemSettings.QuestionDefaultPoint);
+                   //questionVM.Points = await _settingService.GetValue<int>(SystemSettings.QuestionDefaultPoint);
                     questionVM.Time = await _settingService.GetValue<int>(SystemSettings.QuestionDefaultTime);
                 }
                 questionVM.Categories = await _questionsService.GetCategories();
@@ -270,7 +272,180 @@ namespace CMC.Presentation.Web.Controllers
                 await _logger.LogError(ex, "DeleteQuestion", id, null, false);
                 return Json(new { isSuccess = false });
             }
-        } 
+        }
+
+        /// <summary>
+        /// Add multiple questions in bulk
+        /// </summary>
+        /// <param name="bulkQuestionsDTO"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [RolePermission(PermissionCodes.WebQuestionsCreate)]
+        public async Task<IActionResult> AddBulkQuestions([FromBody] BulkQuestionsDTO bulkQuestionsDTO)
+        {
+            try
+            {
+                var result = await _questionsService.AddBulkQuestions(bulkQuestionsDTO);
+
+                return Json(new
+                {
+                    isSuccess = result.Succeeded,
+                    resultCode = result.StatusCode,
+                    brokenRoles = result.BrokenRules,
+                    msg = result.Message
+                });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogError(ex, "AddBulkQuestions", bulkQuestionsDTO, null, false);
+                return Json(new { isSuccess = false, msg = _localizer["ErrorOccurred"].Value });
+            }
+        }
+
+        /// <summary>
+        /// Validate Excel file for bulk import
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [RolePermission(PermissionCodes.WebQuestionsCreate)]
+        public async Task<IActionResult> ValidateExcelFile(IFormFile file)
+        {
+            try
+            {
+                if (file == null || file.Length == 0)
+                {
+                    return Json(new { isSuccess = false, msg = _localizer["NoFileSelected"].Value });
+                }
+
+                if (!file.FileName.EndsWith(".xlsx") && !file.FileName.EndsWith(".xls"))
+                {
+                    return Json(new { isSuccess = false, msg = _localizer["InvalidExcelFile"].Value });
+                }
+
+                // Read Excel file
+                var excelData = new List<Dictionary<string, object>>();
+
+                using (var stream = file.OpenReadStream())
+                {
+                    // Use your preferred Excel reading library (e.g., EPPlus, NPOI, etc.)
+                    // This is a simplified example - implement based on your chosen library
+
+                    // For demonstration, returning a mock response
+                    // Replace this with actual Excel reading logic
+                }
+
+                var validationResult = await _questionsService.ValidateExcelQuestions(excelData);
+
+                return Json(new
+                {
+                    isSuccess = validationResult.Succeeded,
+                    questions = validationResult.Data,
+                    msg = validationResult.Message
+                });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogError(ex, "ValidateExcelFile", file?.FileName, null, false);
+                return Json(new { isSuccess = false, msg = _localizer["ErrorOccurred"].Value });
+            }
+        }
+
+        /// <summary>
+        /// Download Excel template for bulk question import
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [RolePermission(PermissionCodes.WebQuestionsView)]
+        public async Task<IActionResult> DownloadExcelTemplate()
+        {
+            try
+            {
+                var templateBytes = await _questionsService.GenerateExcelTemplate();
+                var fileName = $"questions_template_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
+
+                return File(templateBytes,
+                           "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                           fileName);
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogError(ex, "DownloadExcelTemplate", null, null, false);
+                TempData["ErrorMessage"] = _localizer["ErrorGeneratingTemplate"].Value;
+                return RedirectToAction("AddQuestion");
+            }
+        }
+
+        /// <summary>
+        /// Process uploaded Excel file and return questions data
+        /// </summary>
+        /// <param name="excelFile"></param>
+        /// <param name="categoryId"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [RolePermission(PermissionCodes.WebQuestionsCreate)]
+        public async Task<IActionResult> ProcessExcelFile(IFormFile excelFile, int? categoryId)
+        {
+            try
+            {
+                if (excelFile == null || excelFile.Length == 0)
+                {
+                    return Json(new
+                    {
+                        isSuccess = false,
+                        message = _localizer["NoFileSelected"].Value
+                    });
+                }
+
+                // Validate file extension
+                var extension = Path.GetExtension(excelFile.FileName).ToLowerInvariant();
+                if (extension != ".xlsx" && extension != ".xls")
+                {
+                    return Json(new
+                    {
+                        isSuccess = false,
+                        message = _localizer["InvalidExcelFile"].Value
+                    });
+                }
+
+                // Read Excel file
+                var result = await _questionsService.ReadExcelFile(excelFile);
+
+                if (!result.Succeeded)
+                {
+                    return Json(new
+                    {
+                        isSuccess = false,
+                        message = result.Message
+                    });
+                }
+
+                // Set category for all questions if provided
+                if (categoryId.HasValue)
+                {
+                    foreach (var question in result.Data)
+                    {
+                        question.CategoryId = categoryId.Value;
+                    }
+                }
+
+                return Json(new
+                {
+                    isSuccess = true,
+                    questions = result.Data,
+                    message = result.Message
+                });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogError(ex, "ProcessExcelFile", excelFile?.FileName, null, false);
+                return Json(new
+                {
+                    isSuccess = false,
+                    message = _localizer["ErrorProcessingExcelFile"].Value
+                });
+            }
+        }
         #endregion
     }
 }

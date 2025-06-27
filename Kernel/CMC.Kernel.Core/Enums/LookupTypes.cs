@@ -8,6 +8,7 @@ namespace CMC.Kernel.Core.Enums
     {
         ActionTypes = 1,
         ErrorTypes = 2,
-        QuestionsCategory = 3
+        QuestionsCategory = 3,
+        QuestionArchiveType = 4
     }
 }

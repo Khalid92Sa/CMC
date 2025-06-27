@@ -1,8 +1,8 @@
 ﻿using CMC.Kernel.Core.Enums;
 using CMC.Presentation.Application.DTOs.Competitions;
 using FluentValidation;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Localization;
+using System;
 using System.Linq;
 
 namespace CMC.Presentation.Application.Validators.Competitions
@@ -46,13 +46,11 @@ namespace CMC.Presentation.Application.Validators.Competitions
                 }
             });
 
-
             When(a => a.CompettionQuestionType == (int)CompetitionQuestionType.QuestionsPerPlayer, () =>
             {
                 RuleFor(a => a.QuestionForEachPlayer)
                  .NotNull().WithMessage(localizer["FieldRequired"]);
             });
-
 
             RuleFor(a => a.Team1Name).NotNull().WithMessage(localizer["FieldRequired"]);
             RuleFor(a => a.Team2Name).NotNull().WithMessage(localizer["FieldRequired"]);
@@ -67,7 +65,65 @@ namespace CMC.Presentation.Application.Validators.Competitions
             .WithMessage(localizer["PleaseSelectAtLeastOnePlayerFromSecondTeam"])
             .WithName("Team2.Player1");
 
-            // Custom validation
+            // ARCHIVE VALIDATION RULES
+            // Archive Type validation - TimeBased requires ArchiveMonths
+            When(a => a.ArchiveType == (int)QuestionArchiveTypeEnum.TimeBased, () =>
+            {
+                RuleFor(a => a.ArchiveMonths)
+                    .NotNull()
+                    .WithMessage(localizer["FieldRequired"])
+                    .GreaterThan(0)
+                    .WithMessage(localizer["ArchiveMonthsMustBeGreaterThanZero"]);
+            });
+
+            // Archive Type validation - CompetitionBased requires ExcludedCompetitionIds
+            When(a => a.ArchiveType == (int)QuestionArchiveTypeEnum.CompetitionBased, () =>
+            {
+                RuleFor(a => a.ExcludedCompetitionIds)
+                    .NotNull()
+                    .WithMessage(localizer["FieldRequired"])
+                    .Must(list => list != null && list.Count > 0)
+                    .WithMessage(localizer["PleaseSelectAtLeastOneCompetitionToExclude"]);
+            });
+
+            // Archive Type validation - DateRange requires both dates
+            When(a => a.ArchiveType == (int)QuestionArchiveTypeEnum.DateRange, () =>
+            {
+                RuleFor(a => a.ArchiveFromDate)
+                    .NotNull()
+                    .WithMessage(localizer["FieldRequired"]);
+
+                RuleFor(a => a.ArchiveToDate)
+                    .NotNull()
+                    .WithMessage(localizer["FieldRequired"]);
+
+                // Custom validation for date range
+                RuleFor(a => a)
+                    .Custom((dto, context) =>
+                    {
+                        if (dto.ArchiveFromDate.HasValue && dto.ArchiveToDate.HasValue)
+                        {
+                            if (dto.ArchiveFromDate.Value >= dto.ArchiveToDate.Value)
+                            {
+                                context.AddFailure("ArchiveFromDate", localizer["ArchiveFromDateMustBeBeforeToDate"]);
+                                context.AddFailure("ArchiveToDate", localizer["ArchiveFromDateMustBeBeforeToDate"]);
+                            }
+
+                            // Ensure archive dates are not in the future
+                            if (dto.ArchiveFromDate.Value > DateTime.Now)
+                            {
+                                context.AddFailure("ArchiveFromDate", localizer["ArchiveDateCannotBeInFuture"]);
+                            }
+
+                            if (dto.ArchiveToDate.Value > DateTime.Now)
+                            {
+                                context.AddFailure("ArchiveToDate", localizer["ArchiveDateCannotBeInFuture"]);
+                            }
+                        }
+                    });
+            });
+
+            // Custom validation for teams
             RuleFor(a => a)
                 .Custom((dto, context) =>
                 {

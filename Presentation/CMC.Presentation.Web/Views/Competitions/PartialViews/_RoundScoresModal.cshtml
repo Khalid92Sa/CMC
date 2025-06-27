@@ -1,0 +1,648 @@
+﻿@model CMC.Presentation.Application.DTOs.Competitions.RoundScoresModalViewModel
+
+@{
+    ViewData["Title"] = "";
+    bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
+}
+
+<style>
+    .round-scores-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        backdrop-filter: blur(5px);
+    }
+
+    .round-scores-content {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 20px;
+        padding: 2.5rem;
+        max-width: 98%;
+        max-height: 95%;
+        overflow-y: auto;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        position: relative;
+        animation: modalSlideIn 0.4s ease-out;
+        min-width: 1200px;
+        min-height: 700px;
+    }
+
+        /* Hide scrollbar */
+        .round-scores-content::-webkit-scrollbar {
+            display: none;
+        }
+
+    .round-scores-content {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    @@keyframes modalSlideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-50px) scale(0.9);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    .round-scores-header {
+        text-align: center;
+        margin-bottom: 2rem;
+        color: white;
+        animation: fadeInDown 0.6s ease-out;
+    }
+
+        .round-scores-header h2 {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .round-scores-header p {
+            font-size: 1.5rem;
+            opacity: 0.9;
+            margin: 0;
+        }
+
+    .round-info {
+        text-align: center;
+        margin-bottom: 2rem;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        animation: fadeInUp 0.6s ease-out 0.2s both;
+    }
+
+        .round-info h3 {
+            color: #FFD700;
+            font-size: 1.6rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .round-info p {
+            color: white;
+            opacity: 0.9;
+            margin: 0;
+            font-size: 1.2rem;
+        }
+
+    .teams-hierarchy-container {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        gap: 2rem;
+        align-items: flex-start;
+        margin-bottom: 2rem;
+        animation: fadeInUp 0.6s ease-out 0.4s both;
+    }
+
+    /* Team Hierarchy Section */
+    .team-hierarchy {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 15px;
+        padding: 1.5rem;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        position: relative;
+    }
+
+    .team-hierarchy-header {
+        text-align: center;
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+
+    .team-name-header {
+        font-size: 2.2rem;
+        font-weight: bold;
+        color: white;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        margin-bottom: 0.5rem;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .team-total-points {
+        font-size: 3rem;
+        font-weight: 900;
+        color: #FFD700;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        background: linear-gradient(45deg, #FFD700, #FFA500);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    }
+
+    .crown-icon {
+        font-size: 1.5rem;
+        animation: bounce 2s infinite;
+    }
+
+    /* Player Hierarchy Items */
+    .player-hierarchy-list {
+        position: relative;
+    }
+
+    .player-hierarchy-item {
+        display: flex;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        position: relative;
+        opacity: 0;
+        animation: slideInFromLeft 0.5s ease-out forwards;
+        transition: all 0.3s ease;
+    }
+
+        .player-hierarchy-item:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .player-hierarchy-item:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .player-hierarchy-item:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .player-hierarchy-item:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        .player-hierarchy-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .player-hierarchy-item::before {
+            display: none;
+        }
+
+    .player-avatar-hierarchy {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        overflow: hidden;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        flex-shrink: 0;
+        margin-right: 1rem;
+        position: relative;
+        transition: all 0.3s ease;
+    }
+
+        .player-avatar-hierarchy:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .player-avatar-hierarchy img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .player-avatar-hierarchy .initials {
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+    .player-details {
+        flex: 1;
+        color: white;
+    }
+
+    .player-name-hierarchy {
+        font-size: 1.1rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        color: white;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    .player-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .stat-item {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 0.3rem 0.6rem;
+        border-radius: 8px;
+        text-align: center;
+        backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+    }
+
+        .stat-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+    .stat-label {
+        display: block;
+        font-size: 0.75rem;
+        opacity: 0.8;
+        margin-bottom: 0.2rem;
+    }
+
+    .stat-value {
+        display: block;
+        font-weight: bold;
+        color: #FFD700;
+    }
+
+    /* Divider Line */
+    .teams-divider {
+        width: 4px;
+        background: linear-gradient(to bottom, transparent 0%, rgba(255, 255, 255, 0.3) 10%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0.3) 90%, transparent 100%);
+        border-radius: 2px;
+        position: relative;
+        animation: pulse 3s infinite;
+        align-self: center;
+        justify-self: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .teams-divider::before {
+            content: 'VS';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            color: white;
+            padding: 0.8rem;
+            border-radius: 50%;
+            font-size: 1rem;
+            font-weight: bold;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            animation: spin 6s linear infinite;
+        }
+
+    /* Right team - slide from right */
+    .team-hierarchy:last-child .player-hierarchy-item {
+        animation: slideInFromRight 0.5s ease-out forwards;
+    }
+
+    .modal-actions {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 2rem;
+        animation: fadeInUp 0.6s ease-out 0.6s both;
+    }
+
+    .modal-btn {
+        padding: 1rem 2.5rem;
+        border: none;
+        border-radius: 25px;
+        font-weight: bold;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-back {
+        background: linear-gradient(45deg, #ff6b6b, #feca57);
+        color: white;
+    }
+
+        .btn-back:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+    /* Animations */
+    @@keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes slideInFromLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-50px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @@keyframes slideInFromRight {
+        from {
+            opacity: 0;
+            transform: translateX(50px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @@keyframes bounce {
+        0%, 20%, 50%, 80%, 100% {
+            transform: translateY(0);
+        }
+
+        40% {
+            transform: translateY(-8px);
+        }
+
+        60% {
+            transform: translateY(-4px);
+        }
+    }
+
+    @@keyframes pulse {
+        0%, 100% {
+            opacity: 0.6;
+            transform: scaleY(1);
+        }
+
+        50% {
+            opacity: 1;
+            transform: scaleY(1.05);
+        }
+    }
+
+    @@keyframes spin {
+        from {
+            transform: translate(-50%, -50%) rotate(0deg);
+        }
+
+        to {
+            transform: translate(-50%, -50%) rotate(360deg);
+        }
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 1024px) {
+        .round-scores-content {
+            min-width: 700px;
+            padding: 1.5rem;
+        }
+
+        .team-name-header {
+            font-size: 1.5rem;
+        }
+
+        .team-total-points {
+            font-size: 2rem;
+        }
+
+        .player-stats {
+            grid-template-columns: 1fr 1fr;
+            gap: 0.3rem;
+        }
+
+        .stat-item:nth-child(3) {
+            grid-column: 1 / -1;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .round-scores-content {
+            min-width: auto;
+            margin: 1rem;
+            padding: 1rem;
+        }
+
+        .teams-hierarchy-container {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .teams-divider {
+            width: 100%;
+            height: 3px;
+            margin: 1rem 0;
+        }
+
+            .teams-divider::before {
+                top: 50%;
+                left: 50%;
+            }
+
+        .round-scores-header h2 {
+            font-size: 2rem;
+        }
+
+        .team-total-points {
+            font-size: 1.8rem;
+        }
+
+        .player-hierarchy-item::before {
+            left: -10px;
+        }
+    }
+</style>
+
+<div class="round-scores-modal" id="roundScoresModal">
+    <div class="round-scores-content">
+        <!-- Header -->
+        <div class="round-scores-header">
+            <h2>@Localizer["RoundScores"]</h2>
+            <p>@Localizer["Round"] @Model.CurrentRound @Localizer["Results"]</p>
+        </div>
+
+        <!-- Round Information -->
+        <div class="round-info">
+            <h3>@Localizer["RoundSummary"]</h3>
+            <p>@Localizer["CompletedQuestions"]: @Model.TotalCompletedQuestions</p>
+        </div>
+
+        <!-- Teams Hierarchy -->
+        <div class="teams-hierarchy-container">
+            @{
+                int CityMallPoints = Model.TeamCityMall.Sum(a => a.Points);
+                int OtherTeamPoints = Model.OtherTeam.Sum(a => a.Points);
+                bool cityMallWinning = CityMallPoints > OtherTeamPoints;
+                bool otherTeamWinning = OtherTeamPoints > CityMallPoints;
+            }
+
+            <!-- City Mall Team Hierarchy -->
+            <div class="team-hierarchy">
+                <div class="team-hierarchy-header">
+                    <div class="team-name-header">
+                        @if (cityMallWinning)
+                        {
+                            <span class="crown-icon">👑</span>
+                        }
+                        @Model.Team1Name
+                    </div>
+                    <div class="team-total-points">@CityMallPoints</div>
+                </div>
+
+                <div class="player-hierarchy-list">
+                    @foreach (var player in Model.TeamCityMall.OrderByDescending(p => p.Points).ThenBy(p => p.Time))
+                    {
+                        string initials = player.Name.Split(' ').Take(2).Select(n => n.Substring(0, 1)).Aggregate((a, b) => a + b);
+                        string firstName = player.Name.Split(' ').FirstOrDefault();
+                        int totalQuestions = player.TotalQuestions;
+                        int correctAnswers = player.CorrectAnswers;
+                        string points = player.Points == 0 || player.Points > 2 && player.Points < 11 ? Localizer["Points"].Value :
+                        player.Points == 2 ? Localizer["TwoPoint"].Value : Localizer["Point"].Value;
+
+                        <div class="player-hierarchy-item">
+                            <div class="player-avatar-hierarchy">
+                                @if (!string.IsNullOrEmpty(player.ProfilePicture))
+                                {
+                                    <img src="data:image/jpeg;base64,@player.ProfilePicture" alt="@player.Name" />
+                                }
+                                else
+                                {
+                                    <span class="initials">@initials</span>
+                                }
+                            </div>
+
+                            <div class="player-details">
+                                <div class="player-name-hierarchy">@firstName</div>
+                                <div class="player-stats">
+                                    <div class="stat-item">
+                                        <span class="stat-label">@Localizer["TotalQuestions"]</span>
+                                        <span class="stat-value">@totalQuestions</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">@Localizer["CorrectAnswers"]</span>
+                                        <span class="stat-value">@correctAnswers</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">@Localizer["Points"]</span>
+                                        <span class="stat-value">@player.Points</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Divider -->
+            <div class="teams-divider"></div>
+
+            <!-- Other Team Hierarchy -->
+            <div class="team-hierarchy">
+                <div class="team-hierarchy-header">
+                    <div class="team-name-header">
+                        @if (otherTeamWinning)
+                        {
+                            <span class="crown-icon">👑</span>
+                        }
+                        @Model.Team2Name
+                    </div>
+                    <div class="team-total-points">@OtherTeamPoints</div>
+                </div>
+
+                <div class="player-hierarchy-list">
+                    @foreach (var player in Model.OtherTeam.OrderByDescending(p => p.Points).ThenBy(p => p.Time))
+                    {
+                        string initials = player.Name.Split(' ').Take(2).Select(n => n.Substring(0, 1)).Aggregate((a, b) => a + b);
+                        string firstName = player.Name.Split(' ').FirstOrDefault();
+                        int totalQuestions = player.TotalQuestions;
+                        int correctAnswers = player.CorrectAnswers;
+                        string points = player.Points == 0 || player.Points > 2 && player.Points < 11 ? Localizer["Points"].Value :
+                        player.Points == 2 ? Localizer["TwoPoint"].Value : Localizer["Point"].Value;
+
+                        <div class="player-hierarchy-item">
+                            <div class="player-avatar-hierarchy">
+                                @if (!string.IsNullOrEmpty(player.ProfilePicture))
+                                {
+                                    <img src="data:image/jpeg;base64,@player.ProfilePicture" alt="@player.Name" />
+                                }
+                                else
+                                {
+                                    <span class="initials">@initials</span>
+                                }
+                            </div>
+
+                            <div class="player-details">
+                                <div class="player-name-hierarchy">@firstName</div>
+                                <div class="player-stats">
+                                    <div class="stat-item">
+                                        <span class="stat-label">@Localizer["TotalQuestions"]</span>
+                                        <span class="stat-value">@totalQuestions</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">@Localizer["CorrectAnswers"]</span>
+                                        <span class="stat-value">@correctAnswers</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">@Localizer["Points"]</span>
+                                        <span class="stat-value">@player.Points</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="modal-actions">
+            <button class="modal-btn btn-back" onclick="StartCompetition.CloseRoundScoresModal()">
+                @Localizer["Back"]
+            </button>
+        </div>
+    </div>
+</div>

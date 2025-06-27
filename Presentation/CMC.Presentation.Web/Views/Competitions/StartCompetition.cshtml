@@ -6,6 +6,7 @@
     bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
     string baseURL = configuration.GetValue<string>("BaseURL");
     Layout = "~/Views/Shared/_CompetitionLayout.cshtml";
+    bool IsTest = configuration.GetValue<bool>("IsTest");
 }
 
 <div class="container-fluid py-3 main-padding d-flex flex-grow-1 position-relative  align-items-start">
@@ -20,5 +21,6 @@
 
 <script src="~/assets/js/Application/Competition.js"></script>
 <script>
+    var _isTest = '@IsTest.ToString().ToLower()' == 'true';
     StartCompetition.OnLoad();
 </script>

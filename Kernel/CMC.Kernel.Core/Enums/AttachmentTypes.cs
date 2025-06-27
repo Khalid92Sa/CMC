@@ -9,6 +9,7 @@ namespace CMC.Kernel.Core.Enums
         Categories = 1,
         Questions = 2,
         Answers = 3,
-        BackgroundImg = 4
+        BackgroundImg = 4,
+        PlayerProfilePicture = 5
     }
 }

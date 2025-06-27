@@ -66,6 +66,7 @@
                             </div>
                         </div>
                     </div>
+                    
                     <div class="mb-2">
                         <div class="form-group">
                             <div class="form-row">
@@ -107,6 +108,73 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="mb-5">
+                        <h6 class="mb-3">@Localizer["QuestionArchiveSettings"]</h6>
+                        <div class="form-group">
+                            <div class="form-row">
+                                <div class="form-group col-md-4">
+                                    <label class="">@Localizer["ArchiveType"]</label>
+                                    <select class="form-control animated fadeIn js-example-basic-single" asp-for="ArchiveType">
+                                        <option value="">@Localizer["Select"]</option>
+                                        @foreach (var archiveType in Model.QuestionArchiveType)
+                                        {
+                                            <option value="@archiveType.Id" data-code="@archiveType.Code">@(IsAr ? archiveType.NameAr : archiveType.NameEn)</option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="ArchiveType" class="text-danger"></span>
+                                </div>
+
+                                <!-- Time-based archive fields -->
+                                <div class="form-group col-md-4 archive-field time-based d-none">
+                                    <label class="requiredLabel">@Localizer["ArchiveMonths"]</label>
+                                    <select class="form-control" asp-for="ArchiveMonths">
+                                        <option value="">@Localizer["Select"]</option>
+                                        <option value="3">3 @Localizer["Months"]</option>
+                                        <option value="6">6 @Localizer["Months"]</option>
+                                        <option value="12">12 @Localizer["Months"] (1 @Localizer["Year"])</option>
+                                        <option value="24">24 @Localizer["Months"] (2 @Localizer["Years"])</option>
+                                        <option value="36">36 @Localizer["Months"] (3 @Localizer["Years"])</option>
+                                    </select>
+                                    <span asp-validation-for="ArchiveMonths" class="text-danger"></span>
+                                </div>
+
+                                <!-- Competition-based archive fields -->
+                                <div class="form-group col-md-4 archive-field competition-based d-none">
+                                    <label class="requiredLabel">@Localizer["SelectCompetitionsToExclude"]</label>
+                                    <select class="form-control animated fadeIn js-example-basic-single" multiple asp-for="ExcludedCompetitionIds" asp-items="@(new SelectList(Model.AvailableCompetitions, "Id", IsAr ? "NameAr" : "NameEn"))">
+                                    </select>
+                                    <span asp-validation-for="ExcludedCompetitionIds" class="text-danger"></span>
+                                    <small class="form-text text-muted">@Localizer["HoldCtrlToSelectMultiple"]</small>
+                                </div>
+                            </div>
+
+                            <!-- Date range archive fields -->
+                            <div class="form-row archive-field date-range d-none">
+                                <div class="form-group col-md-4">
+                                    <label class="requiredLabel">@Localizer["ArchiveFromDate"]</label>
+                                    <input class="form-control" type="text" asp-for="ArchiveFromDate" autocomplete="off" />
+                                    <span asp-validation-for="ArchiveFromDate" class="text-danger"></span>
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label class="requiredLabel">@Localizer["ArchiveToDate"]</label>
+                                    <input class="form-control" type="text" asp-for="ArchiveToDate" autocomplete="off" />
+                                    <span asp-validation-for="ArchiveToDate" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <!-- Archive preview -->
+                            <div class="form-row">
+                                <div class="form-group col-4">
+                                    <div class="alert alert-info d-none" id="archivePreview">
+                                        <i class="fas fa-info-circle"></i>
+                                        <span id="archivePreviewText"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="mb-2 dvRoundCount">
                         <h6 class="mb-3">@Localizer["CalculatingRounds"]</h6>
                     </div>

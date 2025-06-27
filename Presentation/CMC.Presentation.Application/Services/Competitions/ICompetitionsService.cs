@@ -3,6 +3,7 @@ using CMC.Kernel.Core.Wrappers;
 using CMC.Kernel.Infrastructure.Caching.Model;
 using CMC.Presentation.Application.DTOs.Competitions;
 using CMC.Presentation.Application.DTOs.Players;
+using CMC.Presentation.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Text;

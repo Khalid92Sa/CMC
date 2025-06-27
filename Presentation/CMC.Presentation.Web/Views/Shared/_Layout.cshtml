@@ -16,6 +16,7 @@
     string direction = IsAr ? "dir=rtl" : "";
     string baseURL = configuration.GetValue<string>("BaseURL");
     string Title = ViewBag.Title != null ? ViewBag.Title : Localizer["LayoutTitle"].Value;
+    string systemFontSize = await SettingService.GetValue<string>(SystemSettings.SystemFontSize);
     UserDTO userInfoDTO = HttpContextAccessor.HttpContext.Session.GetString("UserInfoDTO") != null ?
         JsonConvert.DeserializeObject<UserDTO>(HttpContextAccessor.HttpContext.Session.GetString("UserInfoDTO")) : null;
 }
@@ -112,6 +113,25 @@
 
         .alert {
             z-index: 2000 !important;
+        }
+
+        :root {
+            --system-font-size: @systemFontSize;
+        }
+
+        body,
+        .form-control,
+        table tr td,
+        table tr th,
+        .btn,
+        .nav a,
+        .card-body,
+        .alert,
+        input,
+        select,
+        textarea,
+        label {
+            font-size: var(--system-font-size) !important;
         }
     </style>
 </head>
@@ -346,12 +366,15 @@
             AddNewQuestion: '@Url.Action("AddQuestion","Questions")',
             GetQuestions: '@Url.Action("GetAllQuestions","Questions")',
             DeleteQuestion: '@Url.Action("DeleteQuestion","Questions")',
-
+            DownloadExcelTemplate: '@Url.Action("DownloadExcelTemplate", "Questions")',
+            ProcessExcelFile: '@Url.Action("ProcessExcelFile", "Questions")',
+            AddBulkQuestions: '@Url.Action("AddBulkQuestions", "Questions")',
 
             //Players
             PlayerList: '@Url.Action("Index","Players")',
             AddNewPlayer: '@Url.Action("CreatePlayer","Players")',
             DeletePlayer: '@Url.Action("DeletePlayer","Players")',
+            DeletePlayerProfilePicture: '@Url.Action("DeletePlayerProfilePicture", "Players")',
 
             //Competitions
             CompetitionList: '@Url.Action("Index","Competitions")',
@@ -365,9 +388,9 @@
 
             //Settings
             UpdateSettings:'@Url.Action("UpdateSetting","Settings")',
+            // GetFontSizes: '@Url.Action("GetFontSizes", "Settings")',
             HomePage:'@Url.Action("Index","Home")',
         };
-
         var globalResources = {
             EnglishFieldValidation: '@Localizer["EnglishFieldValidation"]',
             ArabicFieldValidation: '@Localizer["ArabicFieldValidation"]',
@@ -378,15 +401,13 @@
             Actions: '@Localizer["Actions"]',
             Yes: '@Localizer["Common_Yes"]',
             No: '@Localizer["Common_No"]',
-
-
-
             //Buttons
             Delete: '@Localizer["Delete"]',
             Edit: '@Localizer["Edit"]',
             Cancel: '@Localizer["Cancel"]',
-
-
+            Save: '@Localizer["Save"]',
+            Close: '@Localizer["Close"]',
+            Success: '@Localizer["Success"]',
             //DataTable
             Page: '@Localizer["Page"]',
             Of: '@Localizer["Of"]',
@@ -395,24 +416,20 @@
             Previous: '@Localizer["Previous"]',
             Next: '@Localizer["Next"]',
             Last: '@Localizer["Last"]',
-
             //Users
             Alert_DeleteUser: '@Localizer["Alert_DeleteUser"]',
             Active: '@Localizer["Active"]',
             InActive: '@Localizer["InActive"]',
             ActivationCancel: '@Localizer["Message_ActivationCancel"]',
             ActivationConfirm: '@Localizer["Message_ActivationConfirm"]',
-
-
-
             //Category
             Alert_DeleteCategory: '@Localizer["Alert_DeleteCategory"]',
             Alert_DeleteCategory_Text: '@Localizer["Alert_DeleteCategory_Text"]',
             Alert_Btn_DeleteOnlyCategory: '@Localizer["Alert_Btn_DeleteOnlyCategory"]',
             Alert_Btn_DeleteCategoryWithQuestion: '@Localizer["Alert_Btn_DeleteCategoryWithQuestion"]',
             Alert_DeleteQuestion: '@Localizer["Alert_DeleteQuestion"]',
-
-
+            DeleteExistingImage: '@Localizer["DeleteExistingImage"]',
+            DeleteImage: '@Localizer["DeleteImage"]',
             //Questions
             OptionAr: '@Localizer["OptionAr"]',
             OptionEn: '@Localizer["OptionEn"]',
@@ -424,19 +441,79 @@
             PleaseAddTwoImagesAtLeast: '@Localizer["PleaseAddTwoImagesAtLeast"]',
             OptionRequired: '@Localizer["OptionRequired"]',
             Message_PleaseCheckDuplicatedAnsweresImage: '@Localizer["Message_PleaseCheckDuplicatedAnsweresImage"]',
-
+            QuestionsAddedSuccessfully: '@Localizer["QuestionsAddedSuccessfully"]',
             //Players
             Alert_DeletePlayer: '@Localizer["Alert_DeletePlayer"]',
             Blocked: '@Localizer["Blocked"]',
             NonBlocked: '@Localizer["NonBlocked"]',
-
             //Competitons
             Alert_DeleteCompetition: '@Localizer["Alert_DeleteCompetition"]',
             StartCompetition: '@Localizer["StartCompetition"]',
             ViewCompetitionScores: '@Localizer["ViewCompetitionScores"]',
+            AllQuestionsFromPreviousCompetitionsWillBeExcluded:'@Localizer["AllQuestionsFromPreviousCompetitionsWillBeExcluded"]',
+            OnlyQuestionsFromParentCompetitionsWillBeExcluded :'@Localizer["OnlyQuestionsFromParentCompetitionsWillBeExcluded"]',
 
             //Settings
             SystemSettingsUpdated: '@Localizer["SystemSettingsUpdatedSuccessfully"]',
+
+            // ===== BULK IMPORT ADDITIONS =====
+            // General
+            Arabic: '@Localizer["Arabic"]',
+            English: '@Localizer["English"]',
+            Options: '@Localizer["Options"]',
+            Option: '@Localizer["Option"]',
+            NotProvided: '@Localizer["NotProvided"]',
+            NoAnswerOptions: '@Localizer["NoAnswerOptions"]',
+            Question: '@Localizer["Question"]',
+            SelectAll: '@Localizer["SelectAll"]',
+            SaveSelected: '@Localizer["SaveSelected"]',
+            Select: '@Localizer["Select"]',
+
+            // Bulk Import Statistics
+            TotalQuestions: '@Localizer["TotalQuestions"]',
+            ValidQuestions: '@Localizer["ValidQuestions"]',
+            WithWarnings: '@Localizer["WithWarnings"]',
+            InvalidQuestions: '@Localizer["InvalidQuestions"]',
+            ImportedQuestions: '@Localizer["ImportedQuestions"]',
+
+            // Options
+            Option1: '@Localizer["Option1"]',
+            Option2: '@Localizer["Option2"]',
+            Option3: '@Localizer["Option3"]',
+            Option4: '@Localizer["Option4"]',
+            InEnglish: '@Localizer["InEnglish"]',
+            InArabic: '@Localizer["InArabic"]',
+
+            // Questions
+            QuestionEnglish: '@Localizer["QuestionEnglish"]',
+            QuestionArabic: '@Localizer["QuestionArabic"]',
+            EditAnswerOptions: '@Localizer["EditAnswerOptions"]',
+
+            // Validation Messages
+            QuestionTextRequired: '@Localizer["QuestionTextRequired"]',
+            MinimumTwoAnswers: '@Localizer["MinimumTwoAnswers"]',
+            NoCorrectAnswer: '@Localizer["NoCorrectAnswer"]',
+            ArabicTranslationMissing: '@Localizer["ArabicTranslationMissing"]',
+            EnglishTranslationMissing: '@Localizer["EnglishTranslationMissing"]',
+
+            // Excel Import
+            ExcelImportHint: '@Localizer["ExcelImportHint"]',
+            ViewInstructions: '@Localizer["ViewInstructions"]',
+            DownloadTemplateText: '@Localizer["DownloadTemplateText"]',
+            DownloadExcelTemplate: '@Localizer["DownloadExcelTemplate"]',
+            SelectCategoryForImport: '@Localizer["SelectCategoryForImport"]',
+            DragDropFile: '@Localizer["DragDropFile"]',
+            OrClickToSelect: '@Localizer["OrClickToSelect"]',
+            ProcessingFile: '@Localizer["ProcessingFile"]',
+
+            // Error Messages
+            InvalidExcelFile: '@Localizer["InvalidExcelFile"]',
+            NoFileSelected: '@Localizer["NoFileSelected"]',
+            ExcelProcessingError: '@Localizer["ExcelProcessingError"]',
+            NoValidQuestionsSelected: '@Localizer["NoValidQuestionsSelected"]',
+            QuestionsImportedSuccessfully: '@Localizer["QuestionsImportedSuccessfully"]',
+            ValidationErrors: '@Localizer["ValidationErrors"]',
+            QuestionRemovedSuccessfully: '@Localizer["QuestionRemovedSuccessfully"]'
         };
     </script>
 </body>

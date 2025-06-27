@@ -3,6 +3,7 @@ using CMC.Kernel.Core.Services;
 using CMC.Kernel.Core.Wrappers;
 using CMC.Kernel.Infrastructure.Caching.Model;
 using CMC.Presentation.Application.DTOs.Questions;
+using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -79,6 +80,32 @@ namespace CMC.Presentation.Application.Services.Questions
         /// <param name="questions"></param>
         /// <returns></returns>
         Task<Response<QuestionVM>> GetRandomQuestionPerCategory(int categoryId, List<int> questions);
+        /// <summary>
+        /// Add multiple questions in bulk
+        /// </summary>
+        /// <param name="bulkQuestionsDTO"></param>
+        /// <returns></returns>
+        Task<Response> AddBulkQuestions(BulkQuestionsDTO bulkQuestionsDTO);
+
+        /// <summary>
+        /// Validate Excel questions
+        /// </summary>
+        /// <param name="excelData"></param>
+        /// <returns></returns>
+        Task<Response<List<QuestionVM>>> ValidateExcelQuestions(List<Dictionary<string, object>> excelData);
+
+        /// <summary>
+        /// Generate Excel template for questions
+        /// </summary>
+        /// <returns></returns>
+        Task<byte[]> GenerateExcelTemplate();
+
+        /// <summary>
+        /// Read Excel file and convert to questions
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        Task<Response<List<QuestionVM>>> ReadExcelFile(IFormFile file);
 
     }
 }

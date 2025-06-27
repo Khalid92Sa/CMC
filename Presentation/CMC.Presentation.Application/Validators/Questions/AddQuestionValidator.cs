@@ -77,45 +77,6 @@ namespace CMC.Presentation.Application.Validators.Questions
                 });
                 When(a => a.AnswertType == (int)AnswersTypes.Image, () =>
                 {
-                    //Images
-                    //RuleFor(a => a.Answers)
-                    //        .Must(answers =>
-                    //            (answers.Count(a => a.Img !=null) == 2 &&
-                    //             answers.Any(a => a.IsAnswer)) ||
-                    //            answers.Count(a => a.Img != null) >= 3)
-                    //        .WithMessage(localizer["PleaseAddTwoImagesAtLeast"]);
-
-                    // RuleForEach(a => a.Answers)
-                    //.Custom((answer, context) =>
-                    //{
-                    //    if (answer.IsAnswer && answer.Img == null)
-                    //    {
-                    //        context.AddFailure(localizer["PleaseCheckTheCorrectAnswerValues"]);
-                    //    }
-                    //});
-
-                    //RuleFor(a => a.Answers)
-                    //       .Must(answers =>
-                    //            (answers.Count(a => a.Id != null) >= 2 ||
-                    //             answers.Count(a => a.Img != null) >= 2) &&
-                    //             answers.Any(a => a.IsAnswer))
-                    //        .WithMessage(localizer["PleaseAddTwoImagesAtLeast"]);
-
-
-                    //RuleForEach(a => a.Answers)
-                    //     .Custom((answer, context) =>
-                    //     {
-                    //         if (answer.Id == null && answer.Img == null)
-                    //         {
-                    //             context.AddFailure(localizer["PleaseAddTwoImagesAtLeast"]);
-                    //         }
-
-                    //         if (answer.IsAnswer && answer.Id == null && answer.Img == null)
-                    //         {
-                    //             context.AddFailure(localizer["PleaseCheckTheCorrectAnswerValues"]);
-                    //         }
-                    //     });
-
                     RuleFor(a => a.Answers)
                     .Custom((answers, context) =>
                     {

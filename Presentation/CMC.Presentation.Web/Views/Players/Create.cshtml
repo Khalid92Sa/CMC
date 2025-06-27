@@ -13,6 +13,39 @@
        JsonConvert.DeserializeObject<UserDTO>(HttpContextAccessor.HttpContext.Session.GetString("UserInfoDTO")) : null;
 }
 
+<style>
+    .profile-picture-box {
+        border: 1px solid #ddd;
+        padding: 20px;
+        text-align: center;
+        margin-bottom: 20px;
+        width: 200px;
+        height: 200px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+    }
+
+        .profile-picture-box .image-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+            .profile-picture-box .image-container img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                border-radius: 8px;
+            }
+</style>
+
 <form method="post" id="form-player" enctype="multipart/form-data" asp-controller="Players" asp-action="CreatePlayer">
     <div class="flex flex-column justify-content-center align-items-center">
         <div class="row justify-content-between">
@@ -31,6 +64,66 @@
             <div class="card-body">
                 <div class="register py-3 p-md-4 h-100" style="overflow-y: auto">
                     <input type="hidden" asp-for="Id" />
+
+                    <!-- Profile Picture Section -->
+                    <div class="mb-4">
+                        <div class="form-group">
+                            <label class="">@Localizer["ProfilePicture"]</label>
+                            <div class="form-row">
+                                <!-- Profile Picture Preview -->
+                                <div class="col-md-3">
+                                    @{
+                                        string imgProfilePath = !string.IsNullOrEmpty(Model.ProfilePicturePath) ? $"data:image/jpeg;base64,{Model.ProfilePicturePath}" : "";
+                                        string displayedProfileImg = !string.IsNullOrEmpty(Model.ProfilePicturePath) ? "" : "display:none";
+                                        string IdOfImg = !string.IsNullOrEmpty(Model.ProfilePicturePath) ? Model.Id.Value.ToString() : "";
+                                    }
+                                    <input type="hidden" id="hdn-curr-profile-img-id" value="@IdOfImg" />
+
+                                    <div class="profile-picture-box" style="cursor:pointer">
+                                        <div class="image-container p-3" id="dv-img-profile">
+                                            <img src="@imgProfilePath" class="w-50" alt="Profile Picture" style="@displayedProfileImg">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- File upload for profile picture -->
+                            <div class="form-row">
+                                <div class="form-group col-md-4 d-flex flex-column d-flex">
+                                    <div class="custom-file">
+                                        <input type="file" name="ProfilePicture" class="custom-file-input" id="profile-picture"
+                                               style="cursor:pointer" data-answer="profile" data-hide="btnDeleteProfileImg"
+                                               placeholder="@Localizer["ChooseImg"].Value" accept=".jpg, .jpeg, .png">
+                                        <label class="custom-file-label upload-btn" for="file">
+                                            <span id="lblProfileImgName">@Localizer["ChooseImg"]</span>
+                                            <span class="danger"></span> <i id="lblProfileImgStatus" class="fas fa-upload"></i>
+                                        </label>
+                                    </div>
+                                    <span id="profile-picture-invalid" class="text-danger field-validation-error"></span>
+                                </div>
+
+                                <!-- Button to delete existing profile picture -->
+                                <div class="form-group col-md-4 px-3 m-0" id="dv-btn-delete-profile-image" style="@displayedProfileImg">
+                                    <button type="button" id="btnDeleteProfileImg" onclick="Players.DeleteExistingProfileImg(4,'dv-img-profile',this)" class="btn btn-danger btn-md m-0">
+                                        <i class="fas fa-trash"></i>@Localizer["DeleteExistingImage"]
+                                    </button>
+                                </div>
+
+                                <div class="form-group col-md-12" id="dv-delete-profile-status" style="display:none">
+                                    <div>
+                                        <span class="h6 h6-responsive mr-2 ml-0 float-left">
+                                            <i style="display:none" class="fas fa-check-circle text-success i-success-delete-img"></i>
+                                            <i style="display:none" class="fas fa-exclamation-circle text-danger i-error-delete-img"></i>
+                                        </span>
+                                        <span class="spn-delete-img-status"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
                     <div class="mb-2">
                         <div class="form-group">
                             <div class="form-row">
@@ -95,6 +188,7 @@
 <script src="~/assets/js/Application/Players.js"></script>
 
 <script>
+    Players.HandleProfilePictureUpload();
     GeneralClass.ActivationSubMenuItem('#lnkPlayers', '#lnkPlayers');
     GeneralClass.ActivationSubMenuItem('#lnkPlayers2', '#lnkPlayers2');
 </script>

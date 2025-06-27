@@ -46,6 +46,13 @@ namespace CMC.Presentation.Domain.Entities
         public virtual int? ParentId { get; set; }
         public virtual Competition Parent { get; set; }
 
+
+        public int? ArchiveType { get; set; } // QuestionArchiveType enum
+        public int? ArchiveMonths { get; set; } // For time-based archive
+        public string ExcludedCompetitionIds { get; set; } // CSV of competition IDs to exclude
+        public DateTime? ArchiveFromDate { get; set; } // For date range archive
+        public DateTime? ArchiveToDate { get; set; } // For date range archive
+
         public virtual ICollection<CompetitionQuestion> CompetitionQuestions { get; set; }
     }
 }

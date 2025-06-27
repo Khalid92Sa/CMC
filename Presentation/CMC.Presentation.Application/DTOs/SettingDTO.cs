@@ -9,5 +9,8 @@ namespace CMC.Presentation.Application.DTOs
     {
         public IFormFile BackgroundImg { get; set; }
         public string BackgroundImgPath { get; set; }
+
+        public string SystemFontSize { get; set; }
+        public string CompetitionFontSize { get; set; }
     }
 }

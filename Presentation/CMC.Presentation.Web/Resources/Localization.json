@@ -635,6 +635,125 @@
       "ar-JO": "حسابي"
     }
   },
+  {
+    "Key": "SettingSystemFontSizeRequired",
+    "LocalizedValue": {
+      "en-US": "System font size is required",
+      "ar-JO": "حجم خط النظام مطلوب"
+    }
+  },
+  {
+    "Key": "SettingCompetitionFontSizeRequired",
+    "LocalizedValue": {
+      "en-US": "Competition font size is required",
+      "ar-JO": "حجم خط المسابقة مطلوب"
+    }
+  },
+  {
+    "Key": "SettingInvalidFontSize",
+    "LocalizedValue": {
+      "en-US": "Invalid font size format. Font size must be between 10px and 30px",
+      "ar-JO": "تنسيق حجم الخط غير صالح. يجب أن يكون حجم الخط بين 10px و 30px"
+    }
+  },
+  {
+    "Key": "SettingInvalidImageFile",
+    "LocalizedValue": {
+      "en-US": "Invalid image file. Only JPG, JPEG, and PNG files are allowed",
+      "ar-JO": "ملف الصورة غير صالح. يُسمح فقط بملفات JPG و JPEG و PNG"
+    }
+  },
+  {
+    "Key": "SettingFileSizeExceeded",
+    "LocalizedValue": {
+      "en-US": "File size exceeded. Maximum file size is 5MB",
+      "ar-JO": "تم تجاوز حجم الملف. الحد الأقصى لحجم الملف هو 5 ميجابايت"
+    }
+  },
+  {
+    "Key": "SystemFontSize",
+    "LocalizedValue": {
+      "en-US": "System Font Size",
+      "ar-JO": "حجم خط النظام"
+    }
+  },
+  {
+    "Key": "CompetitionFontSize",
+    "LocalizedValue": {
+      "en-US": "Competition Font Size",
+      "ar-JO": "حجم خط المسابقة"
+    }
+  },
+  {
+    "Key": "FontSizeSettings",
+    "LocalizedValue": {
+      "en-US": "Font Size Settings",
+      "ar-JO": "إعدادات حجم الخط"
+    }
+  },
+  {
+    "Key": "Small",
+    "LocalizedValue": {
+      "en-US": "Small",
+      "ar-JO": "صغير"
+    }
+  },
+  {
+    "Key": "Default",
+    "LocalizedValue": {
+      "en-US": "Default",
+      "ar-JO": "افتراضي"
+    }
+  },
+  {
+    "Key": "Medium",
+    "LocalizedValue": {
+      "en-US": "Medium",
+      "ar-JO": "متوسط"
+    }
+  },
+  {
+    "Key": "Large",
+    "LocalizedValue": {
+      "en-US": "Large",
+      "ar-JO": "كبير"
+    }
+  },
+  {
+    "Key": "ExtraLarge",
+    "LocalizedValue": {
+      "en-US": "Extra Large",
+      "ar-JO": "كبير جداً"
+    }
+  },
+  {
+    "Key": "Preview",
+    "LocalizedValue": {
+      "en-US": "Preview",
+      "ar-JO": "معاينة"
+    }
+  },
+  {
+    "Key": "SystemFontPreview",
+    "LocalizedValue": {
+      "en-US": "This is a sample of system font - it will be applied to all admin pages",
+      "ar-JO": "هذا نموذج لخط النظام - سيتم تطبيقه على جميع صفحات الإدارة"
+    }
+  },
+  {
+    "Key": "CompetitionFontPreview",
+    "LocalizedValue": {
+      "en-US": "This is a sample of competition font - it will be applied to competition pages",
+      "ar-JO": "هذا نموذج لخط المسابقة - سيتم تطبيقه على صفحات المسابقة"
+    }
+  },
+  {
+    "Key": "CompetitionStartImg",
+    "LocalizedValue": {
+      "en-US": "Competition Start Background Image",
+      "ar-JO": "صورة خلفية بداية المسابقة"
+    }
+  },
 
 
 
@@ -1078,8 +1197,517 @@
       "ar-JO": "هل أنت متأكد من حذف هذا السؤال؟"
     }
   },
-
-
+  {
+    "Key": "SingleQuestion",
+    "LocalizedValue": {
+      "en-US": "Single Question",
+      "ar-JO": "سؤال واحد"
+    }
+  },
+  {
+    "Key": "BulkImport",
+    "LocalizedValue": {
+      "en-US": "Bulk Import",
+      "ar-JO": "استيراد مجمع"
+    }
+  },
+  {
+    "Key": "QuestionsDescription",
+    "LocalizedValue": {
+      "en-US": "Create questions individually or import multiple questions from Excel",
+      "ar-JO": "أنشئ أسئلة فردية أو استورد أسئلة متعددة من Excel"
+    }
+  },
+  {
+    "Key": "ImportQuestions",
+    "LocalizedValue": {
+      "en-US": "Import Questions from Excel",
+      "ar-JO": "استيراد الأسئلة من Excel"
+    }
+  },
+  {
+    "Key": "SelectCategoryForImport",
+    "LocalizedValue": {
+      "en-US": "Select Category for Import",
+      "ar-JO": "اختر الفئة للاستيراد"
+    }
+  },
+  {
+    "Key": "DownloadTemplate",
+    "LocalizedValue": {
+      "en-US": "Don't have a template?",
+      "ar-JO": "ليس لديك قالب؟"
+    }
+  },
+  {
+    "Key": "DownloadExcelTemplate",
+    "LocalizedValue": {
+      "en-US": "Download Excel Template",
+      "ar-JO": "تحميل قالب Excel"
+    }
+  },
+  {
+    "Key": "DragDropFile",
+    "LocalizedValue": {
+      "en-US": "Drag & Drop your Excel file here",
+      "ar-JO": "اسحب وأفلت ملف Excel هنا"
+    }
+  },
+  {
+    "Key": "OrClickToSelect",
+    "LocalizedValue": {
+      "en-US": "or click to select file",
+      "ar-JO": "أو انقر لتحديد الملف"
+    }
+  },
+  {
+    "Key": "Processing",
+    "LocalizedValue": {
+      "en-US": "Processing file...",
+      "ar-JO": "جاري معالجة الملف..."
+    }
+  },
+  {
+    "Key": "UploadingFile",
+    "LocalizedValue": {
+      "en-US": "Uploading file...",
+      "ar-JO": "جاري رفع الملف..."
+    }
+  },
+  {
+    "Key": "TotalQuestions",
+    "LocalizedValue": {
+      "en-US": "Total Questions",
+      "ar-JO": "إجمالي الأسئلة"
+    }
+  },
+  {
+    "Key": "ValidQuestions",
+    "LocalizedValue": {
+      "en-US": "Valid Questions",
+      "ar-JO": "أسئلة صحيحة"
+    }
+  },
+  {
+    "Key": "WithWarnings",
+    "LocalizedValue": {
+      "en-US": "With Warnings",
+      "ar-JO": "مع تحذيرات"
+    }
+  },
+  {
+    "Key": "InvalidQuestions",
+    "LocalizedValue": {
+      "en-US": "Invalid Questions",
+      "ar-JO": "أسئلة غير صحيحة"
+    }
+  },
+  {
+    "Key": "ImportedQuestions",
+    "LocalizedValue": {
+      "en-US": "Imported Questions",
+      "ar-JO": "الأسئلة المستوردة"
+    }
+  },
+  {
+    "Key": "SelectAll",
+    "LocalizedValue": {
+      "en-US": "Select All",
+      "ar-JO": "تحديد الكل"
+    }
+  },
+  {
+    "Key": "SaveSelected",
+    "LocalizedValue": {
+      "en-US": "Save Selected",
+      "ar-JO": "حفظ المحدد"
+    }
+  },
+  {
+    "Key": "Question",
+    "LocalizedValue": {
+      "en-US": "Question",
+      "ar-JO": "السؤال"
+    }
+  },
+  {
+    "Key": "Option",
+    "LocalizedValue": {
+      "en-US": "Option",
+      "ar-JO": "خيار"
+    }
+  },
+  {
+    "Key": "Remove",
+    "LocalizedValue": {
+      "en-US": "Remove",
+      "ar-JO": "إزالة"
+    }
+  },
+  {
+    "Key": "NotProvided",
+    "LocalizedValue": {
+      "en-US": "Not provided",
+      "ar-JO": "غير متوفر"
+    }
+  },
+  {
+    "Key": "English",
+    "LocalizedValue": {
+      "en-US": "English",
+      "ar-JO": "الإنجليزية"
+    }
+  },
+  {
+    "Key": "Arabic",
+    "LocalizedValue": {
+      "en-US": "Arabic",
+      "ar-JO": "العربية"
+    }
+  },
+  {
+    "Key": "QuestionTextRequired",
+    "LocalizedValue": {
+      "en-US": "Question text is required",
+      "ar-JO": "نص السؤال مطلوب"
+    }
+  },
+  {
+    "Key": "Option1Required",
+    "LocalizedValue": {
+      "en-US": "Option 1 is required",
+      "ar-JO": "الخيار 1 مطلوب"
+    }
+  },
+  {
+    "Key": "Option2Required",
+    "LocalizedValue": {
+      "en-US": "Option 2 is required",
+      "ar-JO": "الخيار 2 مطلوب"
+    }
+  },
+  {
+    "Key": "InvalidCorrectAnswer",
+    "LocalizedValue": {
+      "en-US": "Correct answer must be between 1-4",
+      "ar-JO": "الإجابة الصحيحة يجب أن تكون بين 1-4"
+    }
+  },
+  {
+    "Key": "CorrectAnswerEmpty",
+    "LocalizedValue": {
+      "en-US": "Correct answer option is empty",
+      "ar-JO": "خيار الإجابة الصحيحة فارغ"
+    }
+  },
+  {
+    "Key": "ArabicTranslationMissing",
+    "LocalizedValue": {
+      "en-US": "Arabic translation missing",
+      "ar-JO": "الترجمة العربية مفقودة"
+    }
+  },
+  {
+    "Key": "EnglishTranslationMissing",
+    "LocalizedValue": {
+      "en-US": "English translation missing",
+      "ar-JO": "الترجمة الإنجليزية مفقودة"
+    }
+  },
+  {
+    "Key": "NoValidQuestionsSelected",
+    "LocalizedValue": {
+      "en-US": "Please select at least one valid question to save.",
+      "ar-JO": "يرجى تحديد سؤال صحيح واحد على الأقل للحفظ."
+    }
+  },
+  {
+    "Key": "QuestionsImportedSuccessfully",
+    "LocalizedValue": {
+      "en-US": "Questions imported successfully!",
+      "ar-JO": "تم استيراد الأسئلة بنجاح!"
+    }
+  },
+  {
+    "Key": "QuestionRemovedSuccessfully",
+    "LocalizedValue": {
+      "en-US": "Question removed successfully",
+      "ar-JO": "تم حذف السؤال بنجاح"
+    }
+  },
+  {
+    "Key": "InvalidExcelFile",
+    "LocalizedValue": {
+      "en-US": "Please select a valid Excel file",
+      "ar-JO": "يرجى تحديد ملف Excel صحيح"
+    }
+  },
+  {
+    "Key": "ExcelProcessingError",
+    "LocalizedValue": {
+      "en-US": "Error processing Excel file. Please check the format.",
+      "ar-JO": "خطأ في معالجة ملف Excel. يرجى التحقق من التنسيق."
+    }
+  },
+  {
+    "Key": "ValidationErrors",
+    "LocalizedValue": {
+      "en-US": "Validation Errors",
+      "ar-JO": "أخطاء التحقق"
+    }
+  },
+  {
+    "Key": "NoFileSelected",
+    "LocalizedValue": {
+      "en-US": "No file selected",
+      "ar-JO": "لم يتم تحديد ملف"
+    }
+  },
+  {
+    "Key": "QuestionEnglish",
+    "LocalizedValue": {
+      "en-US": "Question (English)",
+      "ar-JO": "السؤال (بالإنجليزية)"
+    }
+  },
+  {
+    "Key": "QuestionArabic",
+    "LocalizedValue": {
+      "en-US": "Question (Arabic)",
+      "ar-JO": "السؤال (بالعربية)"
+    }
+  },
+  {
+    "Key": "DownloadTemplateText",
+    "LocalizedValue": {
+      "en-US": "Don't have a template?",
+      "ar-JO": "ليس لديك قالب؟"
+    }
+  },
+  {
+    "Key": "ExcelFormatHelp",
+    "LocalizedValue": {
+      "en-US": "Need Help with Excel Format?",
+      "ar-JO": "تحتاج مساعدة في تنسيق Excel؟"
+    }
+  },
+  {
+    "Key": "ExcelImportHint",
+    "LocalizedValue": {
+      "en-US": "💡 New to Excel import? Click here to learn the correct format and download sample files.",
+      "ar-JO": "💡 جديد على استيراد Excel؟ انقر هنا لتعلم التنسيق الصحيح وتحميل ملفات نموذجية."
+    }
+  },
+  {
+    "Key": "ViewInstructions",
+    "LocalizedValue": {
+      "en-US": "View Instructions",
+      "ar-JO": "عرض التعليمات"
+    }
+  },
+  {
+    "Key": "ExcelImportGuide",
+    "LocalizedValue": {
+      "en-US": "Excel Import Guide & Template Generator",
+      "ar-JO": "دليل استيراد Excel ومولد القوالب"
+    }
+  },
+  {
+    "Key": "DownloadSampleFiles",
+    "LocalizedValue": {
+      "en-US": "Download Sample Files",
+      "ar-JO": "تحميل الملفات النموذجية"
+    }
+  },
+  {
+    "Key": "DownloadSmallSample",
+    "LocalizedValue": {
+      "en-US": "Small Sample (5 Questions)",
+      "ar-JO": "عينة صغيرة (5 أسئلة)"
+    }
+  },
+  {
+    "Key": "DownloadLargeSample",
+    "LocalizedValue": {
+      "en-US": "Large Sample (20 Questions)",
+      "ar-JO": "عينة كبيرة (20 سؤال)"
+    }
+  },
+  {
+    "Key": "RequiredExcelColumns",
+    "LocalizedValue": {
+      "en-US": "Required Excel Columns",
+      "ar-JO": "أعمدة Excel المطلوبة"
+    }
+  },
+  {
+    "Key": "QuestionEnglishDesc",
+    "LocalizedValue": {
+      "en-US": "Question text in English (required if no Arabic)",
+      "ar-JO": "نص السؤال بالإنجليزية (مطلوب إذا لم توجد عربية)"
+    }
+  },
+  {
+    "Key": "QuestionArabicDesc",
+    "LocalizedValue": {
+      "en-US": "Question text in Arabic (required if no English)",
+      "ar-JO": "نص السؤال بالعربية (مطلوب إذا لم توجد إنجليزية)"
+    }
+  },
+  {
+    "Key": "Option1Desc",
+    "LocalizedValue": {
+      "en-US": "First answer option (required)",
+      "ar-JO": "خيار الإجابة الأول (مطلوب)"
+    }
+  },
+  {
+    "Key": "Option2Desc",
+    "LocalizedValue": {
+      "en-US": "Second answer option (required)",
+      "ar-JO": "خيار الإجابة الثاني (مطلوب)"
+    }
+  },
+  {
+    "Key": "Option3Desc",
+    "LocalizedValue": {
+      "en-US": "Third answer option (optional)",
+      "ar-JO": "خيار الإجابة الثالث (اختياري)"
+    }
+  },
+  {
+    "Key": "Option4Desc",
+    "LocalizedValue": {
+      "en-US": "Fourth answer option (optional)",
+      "ar-JO": "خيار الإجابة الرابع (اختياري)"
+    }
+  },
+  {
+    "Key": "CorrectAnswerDesc",
+    "LocalizedValue": {
+      "en-US": "Number (1-4) indicating which option is correct",
+      "ar-JO": "رقم (1-4) يشير إلى الخيار الصحيح"
+    }
+  },
+  {
+    "Key": "SampleDataPreview",
+    "LocalizedValue": {
+      "en-US": "Sample Data Preview",
+      "ar-JO": "معاينة البيانات النموذجية"
+    }
+  },
+  {
+    "Key": "ImportantRules",
+    "LocalizedValue": {
+      "en-US": "Important Rules",
+      "ar-JO": "قواعد مهمة"
+    }
+  },
+  {
+    "Key": "RuleQuestionRequired",
+    "LocalizedValue": {
+      "en-US": "At least Question EN or Question AR must be provided",
+      "ar-JO": "يجب توفير السؤال بالإنجليزية أو العربية على الأقل"
+    }
+  },
+  {
+    "Key": "RuleMinimumOptions",
+    "LocalizedValue": {
+      "en-US": "At least 2 answer options are required (Option1 and Option2)",
+      "ar-JO": "مطلوب على الأقل خياران للإجابة (Option1 و Option2)"
+    }
+  },
+  {
+    "Key": "RuleCorrectAnswerRange",
+    "LocalizedValue": {
+      "en-US": "Correct_Answer must be a number between 1-4",
+      "ar-JO": "الاجابة الصحيحة يجب أن تكون رقماً بين 1-4"
+    }
+  },
+  {
+    "Key": "RuleCorrectAnswerNotEmpty",
+    "LocalizedValue": {
+      "en-US": "The correct answer option must have content (not empty)",
+      "ar-JO": "خيار الإجابة الصحيحة يجب أن يحتوي على محتوى (ليس فارغاً)"
+    }
+  },
+  {
+    "Key": "RuleColumnCaseSensitive",
+    "LocalizedValue": {
+      "en-US": "Column names are case-sensitive",
+      "ar-JO": "أسماء الأعمدة حساسة لحالة الأحرف"
+    }
+  },
+  {
+    "Key": "TipsForSuccess",
+    "LocalizedValue": {
+      "en-US": "Tips for Success",
+      "ar-JO": "نصائح للنجاح"
+    }
+  },
+  {
+    "Key": "TipUseTemplate",
+    "LocalizedValue": {
+      "en-US": "Use the downloaded template as a starting point",
+      "ar-JO": "استخدم القالب المحمل كنقطة بداية"
+    }
+  },
+  {
+    "Key": "TipFillRowByRow",
+    "LocalizedValue": {
+      "en-US": "Fill in your questions row by row",
+      "ar-JO": "املأ أسئلتك صفاً بصف"
+    }
+  },
+  {
+    "Key": "TipCorrectAnswerMatch",
+    "LocalizedValue": {
+      "en-US": "Make sure the Correct_Answer number matches an option that has content",
+      "ar-JO": "تأكد من أن رقم الاجابة الصحيحة يطابق خياراً يحتوي على محتوى"
+    }
+  },
+  {
+    "Key": "TipOptionalOptions",
+    "LocalizedValue": {
+      "en-US": "You can have questions with only 2 or 3 options (leave Option3/Option4 empty)",
+      "ar-JO": "يمكن أن تكون لديك أسئلة بخيارين أو ثلاثة فقط (اترك Option3/Option4 فارغين)"
+    }
+  },
+  {
+    "Key": "TipSaveFormat",
+    "LocalizedValue": {
+      "en-US": "Save your file as .xlsx or .xls format",
+      "ar-JO": "احفظ ملفك بتنسيق .xlsx أو .xls"
+    }
+  },
+  {
+    "Key": "DownloadAdvancedTemplate",
+    "LocalizedValue": {
+      "en-US": "Download template",
+      "ar-JO": "تنزيل القالب"
+    }
+  },
+  {
+    "Key": "QuestionsCollectionRequired",
+    "LocalizedValue": {
+      "en-US": "Questions collection is required",
+      "ar-JO": "مجموعة الأسئلة مطلوبة"
+    }
+  },
+  {
+    "Key": "AtLeastOneCorrectAnswerRequired",
+    "LocalizedValue": {
+      "en-US": "At least one correct answer is required",
+      "ar-JO": "مطلوب إجابة صحيحة واحدة على الأقل"
+    }
+  },
+  {
+    "Key": "PointsMustBeGreaterThanZero",
+    "LocalizedValue": {
+      "en-US": "Points must be greater than zero",
+      "ar-JO": "النقاط يجب أن تكون أكبر من الصفر"
+    }
+  },
 
 
   //Players
@@ -1116,6 +1744,20 @@
     "LocalizedValue": {
       "en-US": "City mall employees",
       "ar-JO": "موظفين سيتي مول"
+    }
+  },
+  {
+    "Key": "ProfilePicture",
+    "LocalizedValue": {
+      "en-US": "Profile Picture",
+      "ar-JO": "الصورة الشخصية"
+    }
+  },
+  {
+    "Key": "NoProfilePicture",
+    "LocalizedValue": {
+      "en-US": "No profile picture",
+      "ar-JO": "لا يوجد صورة شخصية"
     }
   },
   {
@@ -1186,6 +1828,13 @@
     "LocalizedValue": {
       "en-US": "Player deleted successfully!",
       "ar-JO": "تم حذف اللاعب"
+    }
+  },
+  {
+    "Key": "Alert_ProfilePictureDeletedSuccessfully",
+    "LocalizedValue": {
+      "en-US": "Player profile picture deleted successfully!",
+      "ar-JO": "تم حذف صورة اللاعب"
     }
   },
 
@@ -1668,6 +2317,13 @@
     }
   },
   {
+    "Key": "ChangeQuestion",
+    "LocalizedValue": {
+      "en-US": "Change the question",
+      "ar-JO": "تغيير السؤال"
+    }
+  },
+  {
     "Key": "Time",
     "LocalizedValue": {
       "en-US": "Time",
@@ -1702,6 +2358,176 @@
       "ar-JO": "نتائح اللاعب"
     }
   },
+  {
+    "Key": "ArchiveMonthsMustBeGreaterThanZero",
+    "LocalizedValue": {
+      "en-US": "Archive months must be greater than zero",
+      "ar-JO": "يجب أن تكون أشهر الأرشيف أكبر من صفر"
+    }
+  },
+  {
+    "Key": "PleaseSelectAtLeastOneCompetitionToExclude",
+    "LocalizedValue": {
+      "en-US": "Please select at least one competition to exclude",
+      "ar-JO": "يرجى اختيار مسابقة واحدة على الأقل لاستبعادها"
+    }
+  },
+  {
+    "Key": "ArchiveFromDateMustBeBeforeToDate",
+    "LocalizedValue": {
+      "en-US": "Archive from date must be before to date",
+      "ar-JO": "يجب أن يكون تاريخ بداية الأرشيف قبل تاريخ النهاية"
+    }
+  },
+  {
+    "Key": "ArchiveDateCannotBeInFuture",
+    "LocalizedValue": {
+      "en-US": "Archive date cannot be in the future",
+      "ar-JO": "لا يمكن أن يكون تاريخ الأرشيف في المستقبل"
+    }
+  },
+  {
+    "Key": "QuestionArchiveSettings",
+    "LocalizedValue": {
+      "en-US": "Question Archive Settings",
+      "ar-JO": "إعدادات أرشيف الأسئلة"
+    }
+  },
+  {
+    "Key": "ArchiveType",
+    "LocalizedValue": {
+      "en-US": "Archive Type",
+      "ar-JO": "نوع الأرشيف"
+    }
+  },
+  {
+    "Key": "OnlyParentCompetitions",
+    "LocalizedValue": {
+      "en-US": "Only Parent Competitions",
+      "ar-JO": "المسابقات الأصلية فقط"
+    }
+  },
+  {
+    "Key": "ExcludeFromLastPeriod",
+    "LocalizedValue": {
+      "en-US": "Exclude From Last Period",
+      "ar-JO": "استبعاد من الفترة الأخيرة"
+    }
+  },
+  {
+    "Key": "ExcludeSpecificCompetitions",
+    "LocalizedValue": {
+      "en-US": "Exclude Specific Competitions",
+      "ar-JO": "استبعاد مسابقات محددة"
+    }
+  },
+  {
+    "Key": "ExcludeAllPreviousCompetitions",
+    "LocalizedValue": {
+      "en-US": "Exclude All Previous Competitions",
+      "ar-JO": "استبعاد جميع المسابقات السابقة"
+    }
+  },
+  {
+    "Key": "ExcludeFromDateRange",
+    "LocalizedValue": {
+      "en-US": "Exclude From Date Range",
+      "ar-JO": "استبعاد من نطاق زمني محدد"
+    }
+  },
+  {
+    "Key": "ArchiveMonths",
+    "LocalizedValue": {
+      "en-US": "Archive Months",
+      "ar-JO": "أشهر الأرشيف"
+    }
+  },
+  {
+    "Key": "SelectCompetitionsToExclude",
+    "LocalizedValue": {
+      "en-US": "Select Competitions to Exclude",
+      "ar-JO": "اختر المسابقات المراد استبعادها"
+    }
+  },
+  {
+    "Key": "HoldCtrlToSelectMultiple",
+    "LocalizedValue": {
+      "en-US": "Hold Ctrl to select multiple",
+      "ar-JO": "اضغط Ctrl لاختيار متعدد"
+    }
+  },
+  {
+    "Key": "ArchiveFromDate",
+    "LocalizedValue": {
+      "en-US": "Archive From Date",
+      "ar-JO": "تاريخ بداية الأرشيف"
+    }
+  },
+  {
+    "Key": "ArchiveToDate",
+    "LocalizedValue": {
+      "en-US": "Archive To Date",
+      "ar-JO": "تاريخ نهاية الأرشيف"
+    }
+  },
+  {
+    "Key": "Months",
+    "LocalizedValue": {
+      "en-US": "Months",
+      "ar-JO": "أشهر"
+    }
+  },
+  {
+    "Key": "Year",
+    "LocalizedValue": {
+      "en-US": "Year",
+      "ar-JO": "سنة"
+    }
+  },
+  {
+    "Key": "Years",
+    "LocalizedValue": {
+      "en-US": "Years",
+      "ar-JO": "سنوات"
+    }
+  },
+  {
+    "Key": "TimeBased",
+    "LocalizedValue": {
+      "en-US": "Time Based",
+      "ar-JO": "على أساس الوقت"
+    }
+  },
+  {
+    "Key": "CompetitionBased",
+    "LocalizedValue": {
+      "en-US": "Competition Based",
+      "ar-JO": "على أساس المسابقة"
+    }
+  },
+  {
+    "Key": "Global",
+    "LocalizedValue": {
+      "en-US": "Global",
+      "ar-JO": "شامل"
+    }
+  },
+  {
+    "Key": "DateRange",
+    "LocalizedValue": {
+      "en-US": "Date Range",
+      "ar-JO": "نطاق زمني"
+    }
+  },
+
+
+
+
+
+
+
+
+
 
   // Settings
   {
@@ -1723,6 +2549,69 @@
     "LocalizedValue": {
       "en-US": "System Settings Updated Successfully",
       "ar-JO": "تم حفظ معلومات النظام بنجاح"
+    }
+  },
+  {
+    "Key": "TotalQuestions",
+    "LocalizedValue": {
+      "en-US": "Total Questions",
+      "ar-JO": "إجمالي الأسئلة"
+    }
+  },
+  {
+    "Key": "CorrectAnswers",
+    "LocalizedValue": {
+      "en-US": "Correct Answers",
+      "ar-JO": "الإجابات الصحيحة"
+    }
+  },
+  {
+    "Key": "RoundScores",
+    "LocalizedValue": {
+      "en-US": "Round Scores",
+      "ar-JO": "نتائج الجولة"
+    }
+  },
+  {
+    "Key": "RoundSummary",
+    "LocalizedValue": {
+      "en-US": "Round Summary",
+      "ar-JO": "ملخص الجولة"
+    }
+  },
+  {
+    "Key": "Results",
+    "LocalizedValue": {
+      "en-US": "Results",
+      "ar-JO": "النتائج"
+    }
+  },
+  {
+    "Key": "CompletedQuestions",
+    "LocalizedValue": {
+      "en-US": "Completed Questions",
+      "ar-JO": "الأسئلة المكتملة"
+    }
+  },
+  {
+    "Key": "Round",
+    "LocalizedValue": {
+      "en-US": "Round",
+      "ar-JO": "الجولة"
+    }
+  },
+  {
+    "Key": "AllQuestionsFromPreviousCompetitionsWillBeExcluded",
+    "LocalizedValue": {
+      "en-US": "All questions from previous competitions will be excluded.",
+      "ar-JO": "سيتم استبعاد جميع الأسئلة من المسابقات السابقة."
+    }
+  },
+  {
+    "Key": "OnlyQuestionsFromParentCompetitionsWillBeExcluded",
+    "LocalizedValue": {
+      "en-US": "Only questions from parent competitions will be excluded.",
+      "ar-JO": "سيتم استبعاد فقط الأسئلة من المسابقات التابعة لهذه المسابقة."
     }
   }
 ]

@@ -7,113 +7,115 @@
 
 <!-- Modal -->
 <div class="modal-xl">
-    <div class="modal-content">
-        <div class="modal-header">
+    <div class="modal-content competition-modal-content">
+        <div class="modal-header competition-modal-header">
             <h5 class="modal-title" id="staticBackdropLabel">@Model.Name</h5>
         </div>
-        <div class="modal-body">
-            <p>@Localizer["Points"]: @Model.Points</p>
-            <p>@Localizer["Questions"] : @Model.competitonQuestions.Count</p>
+        <div class="modal-body competition-modal-body">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="answer-panel">
+                        <strong>@Localizer["Points"]:</strong> @Model.Points
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="answer-panel">
+                        <strong>@Localizer["Questions"]:</strong> @Model.competitonQuestions.Count
+                    </div>
+                </div>
+            </div>
+
             @if (Model.competitonQuestions.Count == 0)
             {
-                <p>@Localizer["PlayerDIdntAnswerOnQuestions"]</p>
+                <div class="answer-panel text-center">
+                    <p>@Localizer["PlayerDIdntAnswerOnQuestions"]</p>
+                </div>
             }
             else
             {
-                foreach (var question in Model.competitonQuestions)
+                @foreach (var question in Model.competitonQuestions)
                 {
-                    <div class="h4 h4-responsive mt-3">
-                        @Localizer["TheQuestion"]: @question.QuestionText
-                    </div>
-                    <div class="row mt-4">
+                    <div class="question-card">
+                        <div class="question-title">
+                            @Localizer["TheQuestion"]: @question.QuestionText
+                        </div>
+
                         @if (question.IsQuestionImg)
                         {
                             string ImgSrc = $"data:image/jpeg;base64,{question.QuestionImg}";
-                            <div class="col-md-12 d-flex justify-content-center w-100 mb-3">
-                                <img height="200" style="background-repeat: no-repeat; background-size: cover;" src="@ImgSrc" />
+                            <div class="text-center mb-3">
+                                <img src="@ImgSrc" class="answer-image" alt="Question Image" />
                             </div>
                         }
-                        @if (question.IsAnswerImg)
-                        {
-                            string ImgSrc = $"data:image/jpeg;base64,{question.AnswerImg}";
-                            <div class="col-3 mb-3">
-                                <label class="w-100">
-                                    <div class="px-5 panel panel-default card-input-image p-3 d-flex align-items-center justify-content-between">
-                                        <div class="d-flex justify-content-center w-100">
-                                            <img style="background-repeat: no-repeat; background-size: cover;height: 100px !important" src="@ImgSrc" />
-                                        </div>
-                                    </div>
-                                </label>
-                            </div>
-                        }
-                        else
-                        {
-                            <div class="col-3">
-                                <label class="w-100">
-                                    <div class="px-5 panel panel-default card-input-payment p-3 d-flex align-items-center justify-content-between">
-                                        <div class="d-flex justify-content-center w-100">
-                                            @Localizer["PlayerAnswer"]: @question.AnswerText
-                                        </div>
-                                    </div>
-                                </label>
-                            </div>
-                        }
-                        <div class="col-3">
-                            <label class="w-100">
-                                <div class="px-5 panel panel-default card-input-payment p-3 d-flex align-items-center justify-content-between">
-                                    <div class="d-flex justify-content-center w-100">
-                                        @{
-                                            string answerStatus = "";
-                                            string answerClass = "";
-                                            if (question.IsCorrectAnswer == true)
-                                            {
-                                                answerStatus = Localizer["CorrectAnswer"].Value;
-                                                answerClass = "text-success";
-                                            }
-                                            else
-                                            {
-                                                answerStatus = Localizer["InCorrectAnswer"].Value;
-                                                answerClass = "text-danger";
-                                            }
-                                        }
-                                        <label class="@answerClass">@answerStatus</label>
-                                    </div>
-                                </div>
-                            </label>
-                        </div>
 
-                        <div class="col-3">
-                            <label class="w-100">
-                                <div class="px-5 panel panel-default card-input-payment p-3 d-flex align-items-center justify-content-between">
-                                    <div class="d-flex justify-content-center w-100">
-                                        @{
-                                            string Points = question.Points.HasValue ? question.Points.Value.ToString() : "0";
+                        <div class="row">
+                            <!-- Player Answer -->
+                            <div class="col-md-3">
+                                <div class="answer-panel">
+                                    @if (question.IsAnswerImg)
+                                    {
+                                        string ImgSrc = $"data:image/jpeg;base64,{question.AnswerImg}";
+                                        <img src="@ImgSrc" class="answer-image" alt="Answer Image" style="max-height: 100px;" />
+                                    }
+                                    else
+                                    {
+                                        <div>
+                                            <strong>@Localizer["PlayerAnswer"]:</strong><br />
+                                            @question.AnswerText
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+
+                            <!-- Answer Status -->
+                            <div class="col-md-3">
+                                <div class="answer-panel">
+                                    @{
+                                        string answerStatus = "";
+                                        string answerClass = "";
+                                        if (question.IsCorrectAnswer == true)
+                                        {
+                                            answerStatus = Localizer["CorrectAnswer"].Value;
+                                            answerClass = "answer-status-correct";
                                         }
-                                        <label>@Localizer["Points"]: @Points</label>
+                                        else
+                                        {
+                                            answerStatus = Localizer["InCorrectAnswer"].Value;
+                                            answerClass = "answer-status-incorrect";
+                                        }
+                                    }
+                                    <div class="@answerClass">@answerStatus</div>
+                                </div>
+                            </div>
+
+                            <!-- Points -->
+                            <div class="col-md-3">
+                                <div class="answer-panel">
+                                    @{
+                                        string Points = question.Points.HasValue ? question.Points.Value.ToString() : "0";
+                                    }
+                                    <strong>@Localizer["Points"]:</strong> @Points
+                                </div>
+                            </div>
+
+                            <!-- Time -->
+                            @if (question.Points.HasValue)
+                            {
+                                <div class="col-md-3">
+                                    <div class="answer-panel">
+                                        @{
+                                            string Time = question.Time.HasValue ? Math.Round(question.Time.Value, 2).ToString() : "0";
+                                        }
+                                        <strong>@Localizer["Time"]:</strong> @Time @Localizer["Seconds"]
                                     </div>
                                 </div>
-                            </label>
+                            }
                         </div>
-                        @if (question.Points.HasValue)
-                        {
-                            <div class="col-3">
-                                <label class="w-100">
-                                    <div class="px-5 panel panel-default card-input-payment p-3 d-flex align-items-center justify-content-between">
-                                        <div class="d-flex justify-content-center w-100">
-                                            @{
-                                                string Time = question.Time.HasValue ? Math.Round(question.Time.Value, 2).ToString() : "0";
-                                            }
-                                            <label>@Localizer["Time"]: @Time @Localizer["Seconds"]</label>
-                                        </div>
-                                    </div>
-                                </label>
-                            </div>
-                        }
                     </div>
                 }
             }
         </div>
-        <div class="modal-footer">
+        <div class="modal-footer competition-modal-footer">
             <button type="button" class="btn btn-secondary" onclick="CompetitionForm.ClosePlayerScoreModal()">@Localizer["Close"]</button>
         </div>
     </div>

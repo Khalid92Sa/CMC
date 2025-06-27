@@ -45,5 +45,12 @@ namespace CMC.Presentation.Application.Services.Players
         /// <param name="id"></param>
         /// <returns></returns>
         Task<Response> DeletePlayer(int id);
+
+        /// <summary>
+        /// Delete player profile picture
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<Response> DeletePlayerProfilePicture(int id);
     }
 }

@@ -12,6 +12,8 @@ using CMC.Kernel.Core.Enums;
 using CMC.Presentation.Application.DTOs.Questions;
 using System.IO;
 using Microsoft.AspNetCore.Http;
+using CMC.Kernel.Domain.Entities.Administration;
+using CMC.Kernel.Core.Constants;
 
 namespace CMC.Presentation.Application.Services.Settings
 {
@@ -106,6 +108,18 @@ namespace CMC.Presentation.Application.Services.Settings
                         await _attachmentRepository.UnitOfWork.SaveChangesAsync();
                     }
                 }
+
+                if (!string.IsNullOrEmpty(settingDTO.SystemFontSize))
+                {
+                    await UpdateSettings(SystemSettings.SystemFontSize, settingDTO.SystemFontSize);
+                }
+
+                // Handle Competition Font Size  
+                if (!string.IsNullOrEmpty(settingDTO.CompetitionFontSize))
+                {
+                    await UpdateSettings(SystemSettings.CompetitionFontSize, settingDTO.CompetitionFontSize);
+                }
+
                 return new Response() { Succeeded = true, StatusCode = (int)HttpStatusCode.Ok };
             }
             catch (Exception ex)
@@ -118,6 +132,16 @@ namespace CMC.Presentation.Application.Services.Settings
                     StatusCode = (int)HttpStatusCode.BadRequest
                 };
             }
+        }
+
+        private async Task UpdateSettings(string key, string value)
+        {
+            var setting = await _settingRepository.GetAll(s => s.Key.ToLower() == key.ToLower()).FirstOrDefaultAsync();
+
+            setting.Value = value;
+            _settingRepository.Update(setting);
+
+            await _settingRepository.UnitOfWork.SaveChangesAsync();
         }
     }
 }

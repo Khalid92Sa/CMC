@@ -1,0 +1,89 @@
+﻿@using CMC.Kernel.Core.Enums;
+@model CMC.Presentation.Application.DTOs.Competitions.CompetitionStartDTO
+
+@{
+    bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
+}
+
+<!-- Question Content Section -->
+<div class="bilingual-question" id="dv-question-text" style="display:none">
+    <input type="hidden" id="hdnQuestionId" value="@Model.CurrentQuestion.Id" />
+    <input type="hidden" id="hdnQuestionPoint" value="@Model.RoundPoints" />
+    <input type="hidden" id="hdnIsFinalCompetition" value="@Model.IsFinalCompetition" />
+    <input type="hidden" id="hdnQuestionTimer" value="@Model.RoundTime" />
+
+    <!-- Question Image (if exists) -->
+    @if (!string.IsNullOrEmpty(Model.CurrentQuestion.ImgPath))
+    {
+        string ImgSrc = $"data:image/jpeg;base64,{Model.CurrentQuestion.ImgPath}";
+        <div class="question-image">
+            <img src="@ImgSrc" alt="Question Image">
+        </div>
+    }
+
+    <div class="question-container">
+        <!-- English Question -->
+        @if (!string.IsNullOrEmpty(Model.CurrentQuestion.TextEn))
+        {
+            <div class="language-section english">
+                <div class="question-text english">
+                    @Model.CurrentQuestion.TextEn
+                </div>
+            </div>
+        }
+
+        <!-- Arabic Question -->
+        @if (!string.IsNullOrEmpty(Model.CurrentQuestion.TextAr))
+        {
+            <div class="language-section arabic">
+                <div class="question-text arabic">
+                    @Model.CurrentQuestion.TextAr
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Answer Options -->
+<div class="answers-grid" id="dv-answers-options">
+    @if (Model.CurrentQuestion.AnswertType == (int)AnswersTypes.Image)
+    {
+        // Images Options
+        foreach (var answer in Model.CurrentQuestion.Answers)
+        {
+            string ImgSrc = $"data:image/jpeg;base64,{answer.ImgPath}";
+            <div class="answer-option" style="visibility:hidden">
+                <input type="radio" data-id="@answer.Id" name="investmentExp" data-iscorrect="@answer.IsAnswer" style="display:none;" />
+                <div class="answer-card img-answer-options" data-answer-id="@answer.Id" data-iscorrect="@answer.IsAnswer">
+                    <div class="answer-image">
+                        <img src="@ImgSrc" alt="Answer Option" />
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        // Text Options - Bilingual
+        foreach (var answer in Model.CurrentQuestion.Answers)
+        {
+            <div class="answer-option" style="visibility:hidden">
+                <input type="radio" data-id="@answer.Id" name="investmentExp" data-iscorrect="@answer.IsAnswer" style="display:none;" />
+                <div class="answer-card" data-answer-id="@answer.Id" data-iscorrect="@answer.IsAnswer">
+                    @if (!string.IsNullOrEmpty(answer.TextEn))
+                    {
+                        <div class="answer-text-section english">
+                            <div class="answer-text">@answer.TextEn</div>
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(answer.TextAr))
+                    {
+                        <div class="answer-text-section arabic">
+                            <div class="answer-text">@answer.TextAr</div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    }
+</div>

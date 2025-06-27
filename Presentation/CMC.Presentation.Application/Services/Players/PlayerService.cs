@@ -5,6 +5,7 @@ using CMC.Kernel.Core.Infrastructure;
 using CMC.Kernel.Core.Persistence;
 using CMC.Kernel.Core.Services;
 using CMC.Kernel.Core.Wrappers;
+using CMC.Kernel.Domain.Entities;
 using CMC.Kernel.Infrastructure.Caching.Model;
 using CMC.Presentation.Application.DTOs.Players;
 using CMC.Presentation.Application.DTOs.Questions;
@@ -15,6 +16,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,6 +28,7 @@ namespace CMC.Presentation.Application.Services.Players
         readonly IMapper _mapper;
         readonly IApplicationLogger _logger;
         readonly IRepository<Player> _playerRepository;
+        readonly IRepository<Attachment> _attachmentRepository;
         readonly IStringLocalizer<PlayerService> _localizer;
         public static IHttpContextAccessor _httpContextAccessor { get { return new HttpContextAccessor(); } }
 
@@ -33,12 +36,14 @@ namespace CMC.Presentation.Application.Services.Players
             IApplicationLogger logger,
             IRepository<Player> playerRepository,
             IStringLocalizer<PlayerService> localizer,
+            IRepository<Attachment> attachmentRepository,
             IUnitOfWork unitOfWork,
             IValidatorFactory validatorFactory) : base(validatorFactory, unitOfWork)
         {
             _mapper = mapper;
             _logger = logger;
             _playerRepository = playerRepository;
+            _attachmentRepository = attachmentRepository;
             _localizer = localizer;
             _unitOfWork = unitOfWork;
         }
@@ -107,6 +112,50 @@ namespace CMC.Presentation.Application.Services.Players
                     await _playerRepository.InsertAsync(player);
 
                 await _playerRepository.UnitOfWork.SaveChangesAsync();
+
+
+                if (playerDTO.ProfilePicture != null)
+                {
+                    var currentAttachment = await _attachmentRepository.GetAll(a =>
+                        a.EntityId == player.Id &&
+                        a.EntityType == (int)AttachmentTypes.PlayerProfilePicture &&
+                        a.IsDeleted != true).SingleOrDefaultAsync();
+
+                    bool isUpdateAttachment = currentAttachment != null;
+
+                    if (currentAttachment == null)
+                        currentAttachment = new Attachment()
+                        {
+                            CreatedBy = int.Parse(_httpContextAccessor.HttpContext.Session.GetString("UserId")),
+                            CreatedOn = DateTime.Now
+                        };
+                    else
+                    {
+                        currentAttachment.ModifiedOn = DateTime.Now;
+                        currentAttachment.ModifiedBy = int.Parse(_httpContextAccessor.HttpContext.Session.GetString("UserId"));
+                    }
+
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await playerDTO.ProfilePicture.CopyToAsync(memoryStream);
+                        currentAttachment.FileName = playerDTO.ProfilePicture.FileName;
+                        currentAttachment.FileData = memoryStream.ToArray();
+                        currentAttachment.EntityId = player.Id;
+                        currentAttachment.EntityType = (int)AttachmentTypes.PlayerProfilePicture;
+
+                        if (isUpdateAttachment)
+                            _attachmentRepository.Update(currentAttachment);
+                        else
+                            await _attachmentRepository.InsertAsync(currentAttachment);
+
+                        // Update player to indicate it has a profile picture
+                        player.HasProfilePicture = true;
+                        _playerRepository.Update(player);
+                        await _playerRepository.UnitOfWork.SaveChangesAsync();
+
+                        await _attachmentRepository.UnitOfWork.SaveChangesAsync();
+                    }
+                }
 
                 return new Response()
                 {
@@ -186,19 +235,33 @@ namespace CMC.Presentation.Application.Services.Players
                 var player = await _playerRepository.FindAsync(id);
                 if (player != null && player.IsDeleted != true)
                 {
+                    var playerDTO = new PlayerDTO()
+                    {
+                        Name = player.Name,
+                        Id = player.Id,
+                        EmailAddress = player.EmailAddress,
+                        IsEmployee = player.IsEmployee,
+                        PhoneNumber = player.PhoneNumber,
+                        IsBlocked = player.IsBlocked ?? false,
+                        Comment = player.Comment
+                    };
+
+                    // Get profile picture if it exists
+                    if (player.HasProfilePicture == true)
+                    {
+                        var attachmentImg = await _attachmentRepository.GetAll(a =>
+                            a.EntityId == player.Id &&
+                            a.EntityType == (int)AttachmentTypes.PlayerProfilePicture &&
+                            a.IsDeleted != true).SingleOrDefaultAsync();
+
+                        if (attachmentImg != null)
+                            playerDTO.ProfilePicturePath = Convert.ToBase64String(attachmentImg.FileData);
+                    }
+
                     return new Response<PlayerDTO>()
                     {
                         Succeeded = true,
-                        Data = new PlayerDTO()
-                        {
-                            Name = player.Name,
-                            Id = player.Id,
-                            EmailAddress = player.EmailAddress,
-                            IsEmployee = player.IsEmployee,
-                            PhoneNumber = player.PhoneNumber,
-                            IsBlocked = player.IsBlocked ?? false,
-                            Comment = player.Comment
-                        }
+                        Data = playerDTO
                     };
                 }
                 else
@@ -247,6 +310,59 @@ namespace CMC.Presentation.Application.Services.Players
             catch (Exception ex)
             {
                 await _logger.LogError(ex, "DeletePlayer", id, null, false);
+                return new Response()
+                {
+                    Message = ex.InnerException != null ? ex.InnerException.Message : ex.Message
+                };
+            }
+        }
+
+        /// <summary>
+        /// Delete Player Profile Picture
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<Response> DeletePlayerProfilePicture(int id)
+        {
+            try
+            {
+                var player = await _playerRepository.FindAsync(id);
+                if (player != null)
+                {
+                    // Find and mark attachment as deleted
+                    var attachment = await _attachmentRepository.GetAll(a =>
+                        a.EntityId == id &&
+                        a.EntityType == (int)AttachmentTypes.PlayerProfilePicture &&
+                        a.IsDeleted != true).SingleOrDefaultAsync();
+
+                    if (attachment != null)
+                    {
+                        attachment.IsDeleted = true;
+                        attachment.DeletedOn = DateTime.Now;
+                        attachment.DeletedBy = int.Parse(_httpContextAccessor.HttpContext.Session.GetString("UserId"));
+                        _attachmentRepository.Update(attachment);
+
+                        // Update player to indicate it no longer has a profile picture
+                        player.HasProfilePicture = false;
+                        player.ModifiedBy = int.Parse(_httpContextAccessor.HttpContext.Session.GetString("UserId"));
+                        player.ModifiedOn = DateTime.Now;
+                        _playerRepository.Update(player);
+
+                        await _attachmentRepository.UnitOfWork.SaveChangesAsync();
+                        await _playerRepository.UnitOfWork.SaveChangesAsync();
+                    }
+
+                    return new Response { StatusCode = (int)HttpStatusCode.Ok, Succeeded = true };
+                }
+                else
+                    return new Response()
+                    {
+                        StatusCode = (int)HttpStatusCode.NotFound
+                    };
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogError(ex, "DeletePlayerProfilePicture", id, null, false);
                 return new Response()
                 {
                     Message = ex.InnerException != null ? ex.InnerException.Message : ex.Message

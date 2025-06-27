@@ -37,7 +37,19 @@ namespace CMC.Presentation.Application.DTOs.Competitions
 
         public int? ParentId { get; set; }
         public List<int> CategoriesIds { get; set; }
+
+
+        // NEW ARCHIVE PROPERTIES
+        public int? ArchiveType { get; set; }
+        public int? ArchiveMonths { get; set; }
+        public List<int> ExcludedCompetitionIds { get; set; } = new List<int>();
+        public DateTime? ArchiveFromDate { get; set; }
+        public DateTime? ArchiveToDate { get; set; }
+
+
         public List<LookupModel> Categories { get; set; } = new List<LookupModel>();
+        public List<LookupModel> QuestionArchiveType { get; set; } = new List<LookupModel>();
+        public List<LookupModel> AvailableCompetitions { get; set; } = new List<LookupModel>();
         public List<LookupModel> ParentCompetition { get; set; } = new List<LookupModel>();
         public List<LookupModel> CityMallTeam { get; set; } = new List<LookupModel>();
         public List<LookupModel> OtherTeam { get; set; } = new List<LookupModel>();

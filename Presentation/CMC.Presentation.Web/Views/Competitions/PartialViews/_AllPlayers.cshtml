@@ -5,83 +5,91 @@
     bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
 }
 
-<div style="z-index:-1000; background-repeat:repeat-y;">
-    <img class="min-vh-100" src="~/assets/competition/images/Home-Background.png" style="width:100%; position:absolute; top:0; left:0;" />
-   
-</div>
-<div class="row m-0 w-100">
-    <div class="col-md-12 text-center">
-        <img src="~/assets/competition/images/Citymall.svg" />
+<div class="competition-home-container">
+    <div class="logo-section">
+        <img src="~/assets/competition/images/Citymall.svg" alt="City Mall Logo" />
     </div>
-    <div class="col-md-10 offset-md-1 mt-5">
-        <div class="row">
-            <div class="animated fadeInDownBig col-md-4">
-                <span class="h2 h2-responsive d-flex justify-content-center text-center">@Model.Team1Name</span>
-                <div class="row mt-5 animated fadeInUpBig">
-                    @foreach (var player in Model.TeamCityMall)
-                    {
-                        string points = player.Points == 0 || player.Points > 2 && player.Points < 11 ? Localizer["Points"].Value :
-                        player.Points == 2 ? Localizer["TwoPoint"].Value : Localizer["Point"].Value;
 
-                        string classNameCity = Model.TeamCityMall.Count == 1 ? "col-md-12" : "col-md-6";
+    <div class="teams-container">
+        <!-- Team 1 - City Mall -->
+        <div class="team-section">
+            <div class="team-title">@Model.Team1Name</div>
+            <div class="players-grid">
+                @foreach (var player in Model.TeamCityMall)
+                {
+                    string points = player.Points == 0 || player.Points > 2 && player.Points < 11 ? Localizer["Points"].Value :
+                    player.Points == 2 ? Localizer["TwoPoint"].Value : Localizer["Point"].Value;
 
-                        <div class="@classNameCity cityMallPlayers" data-player-Id="@player.Id" style="cursor:pointer">
-                            <div class="d-flex justify-content-center">
-                                <img src="~/assets/competition/images/player.svg" style="width:100%" />
-                            </div>
-                            <div class="h4 h4-responsive text-center mt-3 player-name">
-                                @player.Name
-                            </div>
-                            @if (Model.IsFinalCompetition)
+                    string initials = player.Name.Split(' ').Take(2).Select(n => n.Substring(0, 1)).Aggregate((a, b) => a + b);
+
+                    <div class="player-card cityMallPlayers" data-player-Id="@player.Id">
+                        <div class="player-avatar">
+                            @if (!string.IsNullOrEmpty(player.ProfilePicture))
                             {
-                                <div class=" d-flex justify-content-center mt-2">
-                                    <div class="py-2 px-3 text-center rounded-pill background-accent-color h6 h6-responsive" style="width:fit-content; direction:rtl;">
-                                        @player.Points @points
-                                    </div>
-                                </div>
+                                <img src="data:image/jpeg;base64,@player.ProfilePicture" alt="@player.Name" />
+                            }
+                            else
+                            {
+                                <span class="initials">@initials</span>
                             }
                         </div>
-                    }
-                </div>
-            </div>
-            <div class="animated fadeInDownBig col-md-4 d-flex align-items-center justify-content-center">
-                <img src="~/assets/competition/images/VS.svg" id="img-vs" style="cursor:pointer" />
-            </div>
-            <div class="animated fadeInDownBig col-md-4">
-                <div>
-                    <span class="h2 h2-responsive d-flex justify-content-center text-center white-color">@Model.Team2Name</span>
-                    <div class="row mt-5 animated fadeInUpBig">
-                        @foreach (var player in Model.OtherTeam)
+                        <div class="player-name">@player.Name</div>
+                        @if(Model.IsFinalCompetition)
                         {
-                            string points = player.Points == 0 || player.Points > 2 && player.Points < 11 ? Localizer["Points"].Value :
-                            player.Points == 2 ? Localizer["TwoPoint"].Value : Localizer["Point"].Value;
-
-                            string classNameOther = Model.OtherTeam.Count == 1 ? "col-md-12" : "col-md-6";
-
-                            <div class="@classNameOther OtherPlayers" data-player-Id="@player.Id" style="cursor:pointer">
-                                <div class="d-flex justify-content-center">
-                                    <img src="~/assets/competition/images/player.svg" style="width:100%" />
-                                </div>
-                                <div class="h4 h4-responsive text-center mt-3 white-color player-name">
-                                    @player.Name
-                                </div>
-                                @if (Model.IsFinalCompetition)
-                                {
-                                    <div class=" d-flex justify-content-center mt-2">
-                                        <div class="py-2 px-3 text-center rounded-pill background-accent-color h6 h6-responsive" style="width: fit-content; direction: rtl;">
-                                            @player.Points @points
-                                        </div>
-                                    </div>
-                                }
-                            </div>
+                            <div class="player-score">@player.Points @points</div>
                         }
                     </div>
-                </div>
+                }
+            </div>
+        </div>
+
+        <!-- VS Section -->
+        <div class="vs-section">
+            <div class="vs-circle" id="img-vs">
+                VS
+            </div>
+            <button class="battle-back-btn" id="battle-back-btn">
+                <i class="fas fa-exchange-alt"></i>
+                <span class="tooltip-text">Change Players</span>
+            </button>
+        </div>
+
+        <!-- Team 2 - Other Team -->
+        <div class="team-section">
+            <div class="team-title">@Model.Team2Name</div>
+            <div class="players-grid">
+                @foreach (var player in Model.OtherTeam)
+                {
+                    string points = player.Points == 0 || player.Points > 2 && player.Points < 11 ? Localizer["Points"].Value :
+                    player.Points == 2 ? Localizer["TwoPoint"].Value : Localizer["Point"].Value;
+
+                    string initials = player.Name.Split(' ').Take(2).Select(n => n.Substring(0, 1)).Aggregate((a, b) => a + b);
+
+                    <div class="player-card OtherPlayers" data-player-Id="@player.Id">
+                        <div class="player-avatar">
+                            @if (!string.IsNullOrEmpty(player.ProfilePicture))
+                            {
+                                <img src="data:image/jpeg;base64,@player.ProfilePicture" alt="@player.Name" />
+                            }
+                            else
+                            {
+                                <span class="initials">@initials</span>
+                            }
+                        </div>
+                        <div class="player-name">@player.Name</div>
+                        @if(Model.IsFinalCompetition)
+                        {
+                            <div class="player-score">@player.Points @points</div>
+                        }
+                    </div>
+                }
             </div>
         </div>
     </div>
 </div>
+
 <script>
     var isFinalCompetition = '@Model.IsFinalCompetition.ToString().ToLower()' == 'true';
     var isRoundCompetition = '@Model.IsQuestionsTypeIsRound.ToString().ToLower()' == 'true';
+    var isBattleMode = false;
 </script>

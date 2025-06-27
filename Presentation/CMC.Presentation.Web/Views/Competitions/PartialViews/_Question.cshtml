@@ -7,168 +7,168 @@
 }
 
 <style>
-    .bg-answer-border{
-        border: 2px solid #9C59FE;
-        background-color: rgba(156, 89, 254, 0.1);
+    .action-buttons-container {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .secondary-btn {
+        background-color: #6c757d;
+        border-color: #6c757d;
+    }
+
+    .secondary-btn:hover {
+        background-color: #5a6268;
+        border-color: #545b62;
+    }
+
+    .confirm-section {
+        flex: 1;
+        min-width: 200px;
+    }
+
+    @@media (max-width: 768px) {
+        .action-buttons-container {
+            flex-direction: column;
+        }
+        
+        .confirm-section {
+            width: 100%;
+        }
     }
 </style>
-<div class="" style="z-index:-1000;">
-    <img class="min-vh-100" src="~/assets/competition/images/Questions-Background.png" style="width:100%; position:absolute; top:0; left:0;" />
-</div>
-<div class="col-md-10 offset-md-1 mt-5">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="row mt-5 h-100">
-                <div class="animated fadeInUp col-md-3" id="dv-cityMall-player" style="cursor:pointer">
-                    <div class="d-flex justify-content-center position-relative" id="dv-citymall-player-timer">
-                        <img class="player image" src="~/assets/competition/images/player.svg" style="width:100%" />
-                    </div>
-                    <div class="h4 h4-responsive text-center mt-3 white-color">
-                        @{
-                            var playerCityMall = Model.TeamCityMall.Where(a => a.IsVSPlayer).SingleOrDefault();
-                            string points = playerCityMall.Points == 0 || playerCityMall.Points > 2 && playerCityMall.Points < 11 ? Localizer["Points"].Value :
-                            playerCityMall.Points == 2 ? Localizer["TwoPoint"].Value : Localizer["Point"].Value;
-                        }
-                        @playerCityMall.Name
-                        <input type="hidden" value="@playerCityMall.Id" class="hdn-cPlayer" />
-                    </div>
-                    <div class=" d-flex justify-content-center mt-3">
-                        @if (Model.IsFinalCompetition)
-                        {
-                            <div class="py-2 px-3 text-center rounded-pill background-accent-color h6 h6-responsive" style="width: fit-content; direction: rtl;">
-                                @playerCityMall.Points @points
-                            </div>
-                        }
-                    </div>
-                </div>
-                <div class="animated fadeInUpBig col-md-6" id="card-main" style="visibility:hidden">
-                    <div class="card rounded">
-                        <div class="card-body">
-                            <div class="h4 h4-responsive mt-3 d-none" id="dv-question-text">
-                                @{
-                                    string QuestionText = IsAr ? Model.CurrentQuestion.TextAr : Model.CurrentQuestion.TextEn;
-                                }
-                                @QuestionText
-                                <input type="hidden" id="hdnQuestionId" value="@Model.CurrentQuestion.Id" />
-                                <input type="hidden" id="hdnQuestionPoint" value="@Model.RoundPoints" />
-                                <input type="hidden" id="hdnIsFinalCompetition" value="@Model.IsFinalCompetition" />
-                            </div>
-                            <div class="row mt-4" id="dv-answers-options">
-                                @if (!string.IsNullOrEmpty(Model.CurrentQuestion.ImgPath))
-                                {
-                                    string ImgSrc = $"data:image/jpeg;base64,{Model.CurrentQuestion.ImgPath}";
-                                    <div class="col-md-12 d-flex justify-content-center w-100 mb-3">
-                                        <img height="200" style="background-repeat: no-repeat; background-size: cover;" src="@ImgSrc" />
-                                    </div>
-                                }
 
-                                @if(Model.CurrentQuestion.AnswertType == (int)AnswersTypes.Image)
-                                {
-                                    // Images Options
-                                    foreach (var answer in Model.CurrentQuestion.Answers)
-                                    {
-                                        string ImgSrc = $"data:image/jpeg;base64,{answer.ImgPath}";
-                                        <div class="col-6 mb-3" style="visibility:hidden">
-                                            <label class="w-100">
-                                                <input type="radio" data-id="@answer.Id" name="investmentExp" class="card-input-element-payment" data-iscorrect="@answer.IsAnswer" onclick="StartCompetition.SelectAnAnswer(this)" />
-                                                <div class="px-5 panel panel-default card-input-image p-3 d-flex align-items-center justify-content-between">
-                                                    <div class="d-flex justify-content-center w-100">
-                                                        <img style="background-repeat: no-repeat; background-size: cover;height: 100px !important" src="@ImgSrc" />
-                                                    </div>
-                                                </div>
-                                            </label>
-                                        </div>
-                                    }
-                                }
-                                else
-                                {
-                                    // Text Options
-                                    foreach (var answer in Model.CurrentQuestion.Answers)
-                                    {
-                                        string answerText = IsAr ? answer.TextAr : answer.TextEn;
-                                        <div class="col-6" style="visibility:hidden">
-                                            <label class="w-100">
-                                                <input type="radio" data-id="@answer.Id" name="investmentExp" class="card-input-element-payment" data-iscorrect="@answer.IsAnswer" onclick="StartCompetition.SelectAnAnswer(this)" />
-                                                <div class="px-5 panel panel-default card-input-payment p-3 d-flex align-items-center justify-content-between">
-                                                    <div class="d-flex justify-content-center w-100">
-                                                        @answerText
-                                                    </div>
-                                                </div>
-                                            </label>
-                                        </div>
-                                    }
-                                }
-                                
-                                <div class="col-md-12 mt-3 d-none" id="dv-confirmPlayer">
-                                    <div class=" d-flex justify-content-center mt-2 mb-4">
-                                        <button class="button" type="button" id="btn-confirmPlayer" onclick="">
-                                            <span class="button-text">@Localizer["Continue"]</span>
-                                            <div class="fill-container"></div>
-                                        </button>
-                                    </div>
-                                </div>
+<div class="competition-body">
+    <div class="competition-container">
+        <!-- Left Player Section -->
+        <div class="player-section left" id="dv-Other-player" style="cursor:pointer">
+            @{
+                var otherPlayer = Model.OtherTeam.Where(a => a.IsVSPlayer).SingleOrDefault();
+                string otherPoints = otherPlayer.Points == 0 || otherPlayer.Points > 2 && otherPlayer.Points < 11 ? Localizer["Points"].Value :
+                otherPlayer.Points == 2 ? Localizer["TwoPoint"].Value : Localizer["Point"].Value;
 
-                                <div class="col-md-12 mt-3" id="dv-confirm" style="visibility:hidden">
-                                    <div class=" d-flex justify-content-center mt-2 mb-4">
-                                        <button class="button" type="button" id="btn-answer">
-                                            <span class="button-text">@Localizer["Confirmed"]</span>
-                                            <div class="fill-container"></div>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="col-md-12 mt-3 d-none" id="dv-p-timer">
-                                    <div class=" d-flex justify-content-center mt-2 mb-4">
-                                        <input type="hidden" id="hdnQuestionTimer" value="@Model.RoundTime" />
-                                        <p style="font-size:xx-large;" id="p-timer"></p>
-                                    </div>
-                                </div>
-                                <div class="col-md-12 mt-3" id="dv-homePage" style="visibility:hidden">
-                                    <div class=" d-flex justify-content-center mt-2 mb-4">
-                                        <a class="button" id="btn-goHomePage">
-                                            <span class="button-text" id="spn-lbl-goTo">@Localizer["Back"]</span>
-                                            <div class="fill-container"></div>
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="col-md-12 mt-3" id="dv-viewScore" style="visibility:hidden">
-                                    <div class=" d-flex justify-content-center mt-2 mb-4">
-                                        <a class="button" id="btn-goToScore">
-                                            <span class="button-text" id="spn-lbl-goToScore">@Localizer["Back"]</span>
-                                            <div class="fill-container"></div>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                string otherInitials = otherPlayer.Name.Split(' ').Take(2).Select(n => n.Substring(0, 1)).Aggregate((a, b) => a + b);
+                string otherFirstName = otherPlayer.Name.Split(' ').FirstOrDefault();
+            }
+
+            @if (!string.IsNullOrEmpty(otherPlayer.ProfilePicture))
+            {
+                <div class="player-name">@otherFirstName</div>
+                <div class="d-flex justify-content-center position-relative" id="dv-other-player-timer">
+                    <div class="player-avatar">
+                        <img src="data:image/jpeg;base64,@otherPlayer.ProfilePicture" alt="@otherPlayer.Name" />
                     </div>
                 </div>
-                <div class="animated fadeInUp col-md-3" id="dv-Other-player" style="cursor:pointer">
-                    <div class="d-flex justify-content-center position-relative" id="dv-other-player-timer">
-                        <img class="player image" src="~/assets/competition/images/player.svg" style="width:100%" />
-                    </div>
-                    <div class="h4 h4-responsive text-center mt-3 white-color">
-                        @{
-                            var otherPlayer = Model.OtherTeam.Where(a => a.IsVSPlayer).SingleOrDefault();
-                            string otherPoints = otherPlayer.Points == 0 || otherPlayer.Points > 2 && otherPlayer.Points < 11 ? Localizer["Points"].Value :
-                            otherPlayer.Points == 2 ? Localizer["TwoPoint"].Value : Localizer["Point"].Value;
-                        }
-                        @otherPlayer.Name
-                        <input type="hidden" value="@otherPlayer.Id" class="hdn-oPlayer" />
-                    </div>
-                    <div class=" d-flex justify-content-center mt-3">
-                        @if (Model.IsFinalCompetition)
-                        {
-                            <div class="py-2 px-3 text-center rounded-pill background-accent-color h6 h6-responsive" style="width: fit-content; direction: rtl;">
-                                @otherPlayer.Points @otherPoints
-                            </div>
-                        }
+            }
+            else
+            {
+                <div class="d-flex justify-content-center position-relative" id="dv-other-player-timer">
+                    <div class="player-avatar">
+                        <span class="initials">@otherInitials</span>
                     </div>
                 </div>
+                <div class="player-name">@otherPlayer.Name</div>
+            }
+
+            @if (Model.IsFinalCompetition)
+            {
+                <div class="player-score">@otherPlayer.Points @otherPoints</div>
+            }
+            <input type="hidden" value="@otherPlayer.Id" class="hdn-oPlayer" />
+        </div>
+
+        <!-- Right Player Section -->
+        <div class="player-section right" id="dv-cityMall-player" style="cursor:pointer">
+            @{
+                var playerCityMall = Model.TeamCityMall.Where(a => a.IsVSPlayer).SingleOrDefault();
+                string points = playerCityMall.Points == 0 || playerCityMall.Points > 2 && playerCityMall.Points < 11 ? Localizer["Points"].Value :
+                playerCityMall.Points == 2 ? Localizer["TwoPoint"].Value : Localizer["Point"].Value;
+
+                string initials = playerCityMall.Name.Split(' ').Take(2).Select(n => n.Substring(0, 1)).Aggregate((a, b) => a + b);
+                string firstName = playerCityMall.Name.Split(' ').FirstOrDefault();
+            }
+
+            @if (!string.IsNullOrEmpty(playerCityMall.ProfilePicture))
+            {
+                <div class="player-name">@firstName</div>
+                <div class="d-flex justify-content-center position-relative" id="dv-citymall-player-timer">
+                    <div class="player-avatar">
+                        <img src="data:image/jpeg;base64,@playerCityMall.ProfilePicture" alt="@playerCityMall.Name" />
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="d-flex justify-content-center position-relative" id="dv-citymall-player-timer">
+                    <div class="player-avatar">
+                        <span class="initials">@initials</span>
+                    </div>
+                </div>
+                <div class="player-name">@playerCityMall.Name</div>
+            }
+
+            @if (Model.IsFinalCompetition)
+            {
+                <div class="player-score">@playerCityMall.Points @points</div>
+            }
+            <input type="hidden" value="@playerCityMall.Id" class="hdn-cPlayer" />
+        </div>
+
+        <!-- Question Section -->
+        <div class="question-section" id="card-main" style="visibility:hidden">
+            <div class="question-header">
+                <h2 class="question-title">@Localizer["TheQuestion"]</h2>
+            </div>
+
+            <!-- Question Content Container (for partial view replacement) -->
+            <div id="question-content-container">
+                <partial name="_QuestionContent.cshtml" model="Model" />
+            </div>
+           
+            <!-- Timer Display -->
+            <div class="timer-display d-none" id="dv-p-timer">
+                <span id="p-timer"></span>
+            </div>
+
+            <div class="action-buttons-container">
+                <!-- Confirm Button -->
+                <div class="confirm-section" id="dv-confirm" style="visibility:hidden">
+                    <button class="confirm-btn" type="button" id="btn-answer">
+                        <span class="button-text">@Localizer["Continue"]</span>
+                        <div class="fill-container"></div>
+                    </button>
+                </div>
+
+                <!-- Change Question Button -->
+                <div class="confirm-section" id="dv-change-question" style="visibility:hidden">
+                    <button class="confirm-btn secondary-btn" type="button" id="btn-change-question" data-val-categoryId="">
+                        <span class="button-text">@Localizer["ChangeQuestion"]</span>
+                        <div class="fill-container"></div>
+                    </button>
+                </div>
+            </div>
+            
+
+            <!-- Navigation Buttons -->
+            <div class="confirm-section" id="dv-homePage" style="visibility:hidden">
+                <button class="confirm-btn" id="btn-goHomePage">
+                    <span class="button-text" id="spn-lbl-goTo">@Localizer["Back"]</span>
+                    <div class="fill-container"></div>
+                </button>
+            </div>
+
+            <!-- Show scrore Buttons -->
+            <div class="confirm-section" id="dv-viewScore" style="visibility:hidden">
+                <button class="confirm-btn" id="btn-goToScore">
+                    <span class="button-text" id="spn-lbl-goToScore">@Localizer["Back"]</span>
+                    <div class="fill-container"></div>
+                </button>
             </div>
         </div>
     </div>
 </div>
-
 
 <script>
     playersInCompetition.CityMallPlayer = '';

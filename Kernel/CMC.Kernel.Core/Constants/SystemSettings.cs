@@ -11,5 +11,8 @@ namespace CMC.Kernel.Core.Constants
         public static string DefaultCategoryImgPath = "DefaultCategoryImgPath";
         public static string QuestionDefaultTime = "QuestionDefaultTime";
         public static string QuestionDefaultPoint = "QuestionDefaultPoint";
+
+        public const string SystemFontSize = "SystemFontSize";
+        public const string CompetitionFontSize = "CompetitionFontSize";
     }
 }

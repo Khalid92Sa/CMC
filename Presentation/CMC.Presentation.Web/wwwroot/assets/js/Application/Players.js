@@ -105,12 +105,30 @@ var Players = {
         Grid.fillGrid('#tblPlayers', data.data, columns, true, [], '#pagination', data.totalCount, GeneralClass.pageSize, 'Players');
     },
     CreateOrUpdate: function () {
+
         $('.field-validation-valid').html('').hide();
+
+        var data = new FormData();
+        data.append("Id", $("#Id").val());
+        data.append("Name", $("#Name").val());
+        data.append("PhoneNumber", $("#PhoneNumber").val());
+        data.append("EmailAddress", $("#EmailAddress").val());
+        data.append("IsEmployee", $("#IsEmployee").is(':checked'));
+        data.append("IsBlocked", $("#IsBlocked").is(':checked'));
+        data.append("Comment", $("#Comment").val());
+
+        // Add profile picture if selected
+        const fileInput = document.getElementById('profile-picture');
+        if (fileInput.files.length > 0) {
+            data.append("ProfilePicture", fileInput.files[0]);
+        }
+
         $.ajax({
             type: 'POST',
             url: $('#form-player').attr('action'),
-            data: $('#form-player').serialize(),
-            dataType: 'json',
+            data: data,
+            contentType: false,
+            processData: false,
             success: function (data) {
                 if (data.resultCode == 422) {
                     for (var i = 0; i < data.brokenRoles.length; i++) {
@@ -134,7 +152,7 @@ var Players = {
                         showConfirmButton: false,
                         timer: 2000
                     }).then(function (result) {
-                        
+                        window.location = publicURls.PlayerList;
                     });
                 }
                 else {
@@ -201,5 +219,109 @@ var Players = {
                 });
             }
         })
-    }
+    },
+    HandleProfilePictureUpload: function () {
+        $('.custom-file-input').change(function (e) {
+            if ($(this).attr('id') == 'profile-picture') {
+                //Profile Picture
+                $('#profile-picture-invalid').text('');
+                if ($(this).get(0).files.length > 0) {
+                    var currentFile = $(this).get(0).files;
+                    var ext = currentFile[0].name;
+                    var extt = ext.split('.').pop().toLowerCase();
+                    if (extt != "png" && extt != "jpg" && extt != "jpeg") {
+                        $("#profile-picture-invalid").text(globalResources.InvalidAttachmentImg);
+                        $("#profile-picture-invalid").css("display", "block");
+                        Players.ClearProfilePictureAttachment($(this), globalResources.ChooseImg, '', true);
+                        return false;
+                    }
+
+                    //Render the image
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        $('#dv-img-profile').find('img').removeAttr('style');
+                        $('#dv-img-profile').find('img').attr('src', e.target.result); // Update the img src
+                        $('#dv-btn-delete-profile-image').removeAttr('style');
+                    }
+                    reader.readAsDataURL($(this).get(0).files[0]);
+
+                    var fileName = currentFile[0].name;
+                    if (fileName.length > 30) {
+                        fileName = fileName.substring(0, 30);
+                    }
+                    $('#lblProfileImgName').text(fileName);
+                    $('#lblProfileImgStatus').removeClass('fa-upload');
+                    $('#lblProfileImgStatus').addClass('fa-check-circle');
+                }
+            }
+        });
+    },
+    ClearProfilePictureAttachment: function (fileInput, defaultMessage, num, isProfilePicture) {
+        $(fileInput).val('');
+        if (isProfilePicture) {
+            //Profile Picture
+            if (defaultMessage != '') {
+                $('#lblProfileImgName').text(defaultMessage);
+            }
+            $('#lblProfileImgStatus').removeClass('fa-check-circle');
+            $('#lblProfileImgStatus').addClass('fa-upload');
+        }
+    },
+    DeleteExistingProfileImg: function (type, idImg, e) {
+        var idOfImg = $('#hdn-curr-profile-img-id').val();
+
+        if (idOfImg == '') {
+            // New player or no existing image, just clear the current selection
+            $('#profile-picture').val('');
+            $('#lblProfileImgName').text(globalResources.ChooseImg);
+            $('#lblProfileImgStatus').removeClass('fa-check-circle');
+            $('#lblProfileImgStatus').addClass('fa-upload');
+            $('#dv-btn-delete-profile-image').attr('style', 'display:none');
+            $('#dv-img-profile').find('img').attr('src', '');
+            $('#dv-img-profile').find('img').attr('style', 'display:none');
+            return;
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: publicURls.DeletePlayerProfilePicture,
+            data: {
+                id: idOfImg
+            },
+            success: function (data) {
+                if (data.isSuccess) {
+                    $(e).hide(); // hide the delete button
+                    $('#hdn-curr-profile-img-id').val(''); // clear the original Id
+
+                    var statusDiv = 'dv-delete-profile-status';
+                    $('#profile-picture').val('');
+                    $('#lblProfileImgName').text(globalResources.ChooseImg);
+                    $('#lblProfileImgStatus').removeClass('fa-check-circle');
+                    $('#lblProfileImgStatus').addClass('fa-upload');
+                    $('#dv-btn-delete-profile-image').attr('style', 'display:none');
+
+                    $('#' + statusDiv).find('.i-success-delete-img').show();
+                    $('#' + statusDiv).find('.i-error-delete-img').hide();
+                    $('#' + idImg).find('img').attr('src', '');
+                    $('#' + idImg).find('img').attr('style', 'display:none');
+                }
+                else {
+                    $('#dv-delete-profile-status').find('.i-error-delete-img').show();
+                    $('#dv-delete-profile-status').find('.i-success-delete-img').hide();
+                }
+
+                $('#dv-delete-profile-status').find('.spn-delete-img-status').html(data.msg);
+                $('#dv-delete-profile-status').show();
+
+                if (data.isSuccess) {
+                    setTimeout(function () {
+                        $('#dv-delete-profile-status').hide();
+                    }, 2000);
+                }
+            },
+            error: function (error) {
+                GeneralClass.ShowErrorAlert();
+            }
+        });
+    },
 }

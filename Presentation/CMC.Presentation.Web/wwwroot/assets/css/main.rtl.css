@@ -300,6 +300,12 @@ all {
   width: 100%;
 }
 
+#archivePreview.alert {
+    position: relative !important;
+    z-index: auto !important;
+    width: auto !important;
+}
+
 .modal-content.alert-success {
   color: #155724;
   background-color: #d4edda;
@@ -2951,4 +2957,408 @@ body {
 }
 .EmptyRow {
     background-color: unset !important;
+}
+
+
+/* Competition Specific Styles - Add to main.rtl.css */
+
+/* Competition Base Styles */
+.competition-body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+.competition-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    position: relative;
+}
+
+.competition-logo-section {
+    text-align: center;
+    margin-bottom: 50px;
+    animation: fadeInDown 1s ease-out;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+    .competition-logo-section:hover {
+        transform: scale(1.05);
+    }
+
+/* Score Display Styles */
+.teams-score-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 1200px;
+    gap: 80px;
+    animation: fadeInUp 1s ease-out 0.3s both;
+}
+
+.team-score-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(20px);
+    border-radius: 30px;
+    padding: 60px 40px;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.4s ease;
+    min-width: 350px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+    .team-score-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        transition: left 0.8s;
+    }
+
+    .team-score-section:hover::before {
+        left: 100%;
+    }
+
+    .team-score-section:hover {
+        transform: translateY(-15px) scale(1.05);
+        box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5);
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+.competition-team-name {
+    font-size: 42px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 0 6px 12px rgba(0, 0, 0, 0.6);
+    margin-bottom: 30px;
+    text-align: center;
+    letter-spacing: 2px;
+}
+
+.competition-team-score {
+    font-size: 72px;
+    font-weight: 900;
+    color: white;
+    text-shadow: 0 8px 16px rgba(0, 0, 0, 0.7);
+    text-align: center;
+    background: linear-gradient(45deg, #FFD700, #FFA500);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+    animation: scoreGlow 2s ease-in-out infinite alternate;
+}
+
+.competition-vs-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: zoomIn 1s ease-out 0.6s both;
+}
+
+.competition-vs-circle {
+    width: 150px;
+    height: 150px;
+    background: linear-gradient(45deg, #FF6B6B, #FF8E53);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 56px;
+    font-weight: bold;
+    color: white;
+    transition: all 0.3s ease;
+    box-shadow: 0 20px 60px rgba(255, 107, 107, 0.5);
+    text-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+    animation: float 3s ease-in-out infinite;
+}
+
+.winner-crown {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 48px;
+    color: #FFD700;
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    animation: bounce 2s infinite;
+}
+
+.score-points-text {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 18px;
+    margin-top: 10px;
+}
+
+/* Player Details Styles */
+.competition-background-overlay {
+    z-index: -1000;
+    background-repeat: repeat-y;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 100vh;
+}
+
+.player-details-container {
+    position: relative;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    margin: 20px;
+    padding: 30px;
+}
+
+.team-title-header {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: white;
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 40px;
+}
+
+    .team-title-header:hover {
+        transform: scale(1.05);
+        color: #FFD700;
+    }
+
+.player-card-competition {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(15px);
+    border-radius: 25px;
+    padding: 30px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+    margin-bottom: 30px;
+    position: relative;
+    overflow: hidden;
+}
+
+    .player-card-competition::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        transition: left 0.6s;
+    }
+
+    .player-card-competition:hover::before {
+        left: 100%;
+    }
+
+    .player-card-competition:hover {
+        transform: translateY(-10px) scale(1.05);
+        background: rgba(255, 255, 255, 0.25);
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+    }
+
+.player-avatar-competition {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    transition: all 0.3s ease;
+    filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.3));
+}
+
+    .player-avatar-competition:hover {
+        transform: scale(1.1);
+    }
+
+.player-name-competition {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    margin-bottom: 15px;
+}
+
+.player-score-badge {
+    background: linear-gradient(45deg, #5456A1, #007DB6);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: bold;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+    display: inline-block;
+    box-shadow: 0 8px 25px rgba(84, 86, 161, 0.4);
+    transition: all 0.3s ease;
+}
+
+    .player-score-badge:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 35px rgba(84, 86, 161, 0.6);
+    }
+
+/* Modal Styles */
+.competition-modal-content {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(20px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    color: white;
+}
+
+.competition-modal-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px 20px 0 0;
+}
+
+.competition-modal-body {
+    padding: 30px;
+}
+
+.competition-modal-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 0 0 20px 20px;
+}
+
+.question-card {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 20px;
+    margin: 15px 0;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.question-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #FFD700;
+    margin-bottom: 20px;
+}
+
+.answer-panel {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    padding: 15px;
+    margin: 10px 0;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+    .answer-panel:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+    }
+
+.answer-image {
+    max-height: 200px;
+    border-radius: 10px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.answer-status-correct {
+    color: #4CAF50 !important;
+    font-weight: bold;
+}
+
+.answer-status-incorrect {
+    color: #F44336 !important;
+    font-weight: bold;
+}
+
+/* Animations */
+@keyframes scoreGlow {
+    from {
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+    }
+
+    to {
+        filter: drop-shadow(0 8px 20px rgba(255, 215, 0, 0.6));
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateX(-50%) translateY(0);
+    }
+
+    40% {
+        transform: translateX(-50%) translateY(-10px);
+    }
+
+    60% {
+        transform: translateX(-50%) translateY(-5px);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .teams-score-container {
+        flex-direction: column;
+        gap: 40px;
+    }
+
+    .team-score-section {
+        min-width: auto;
+        width: 100%;
+        max-width: 400px;
+        padding: 40px 30px;
+    }
+
+    .competition-team-name {
+        font-size: 28px;
+    }
+
+    .competition-team-score {
+        font-size: 48px;
+    }
+
+    .competition-vs-circle {
+        width: 100px;
+        height: 100px;
+        font-size: 36px;
+    }
+
+    .team-title-header {
+        font-size: 2rem;
+    }
+
+    .player-name-competition {
+        font-size: 1.25rem;
+    }
 }

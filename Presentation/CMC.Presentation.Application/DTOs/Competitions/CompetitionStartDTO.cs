@@ -36,6 +36,7 @@ namespace CMC.Presentation.Application.DTOs.Competitions
         public double Time { get; set; }
         public bool IsVSPlayer { get; set; }
         public bool IsStarting { get; set; }
+        public string ProfilePicture { get; set; }
         public List<CompetitonQuestions> competitonQuestions { get; set; } = new List<CompetitonQuestions>();
     }
 

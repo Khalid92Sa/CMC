@@ -6,8 +6,6 @@
 @using Newtonsoft.Json
 @inject IHttpContextAccessor HttpContextAccessor
 
-
-
 <form method="post" id="form-settings" enctype="multipart/form-data" asp-controller="Settings" asp-action="UpdateSetting">
     <div class="flex flex-column justify-content-center align-items-center">
         <div class="row justify-content-between">
@@ -18,7 +16,9 @@
         <div class="card">
             <div class="card-body">
                 <div class="register py-3 p-md-4 h-100" style="overflow-y: auto">
-                    <div class="mb-2">
+
+                    <!-- Background Image Setting -->
+                    <div class="mb-4">
                         <div class="form-group">
                             <div class="form-row">
                                 <label class="requiredLabel">@Localizer["CompetitionStartImg"]</label>
@@ -34,20 +34,68 @@
                             <!--File upload for background image -->
                             <div class="form-row">
                                 <div class="form-group col-md-4 d-flex flex-column d-flex">
-
                                     <div class="custom-file mt-3">
-                                        <input type="file" name="Img" class="custom-file-input" id="background-img" style="cursor:pointer" data-answer="2"
+                                        <input type="file" asp-for="BackgroundImg" class="custom-file-input" id="background-img" style="cursor:pointer" data-answer="2"
                                                placeholder="@Localizer["ChooseImg"].Value" accept=".jpg, .jpeg, .png">
-                                        <label class="custom-file-label upload-btn" for="file">
+                                        <label class="custom-file-label upload-btn" for="background-img">
                                             <span id="lblBackgroundImgName">@Localizer["ChooseImg"]</span>
                                             <span class="danger"></span> <i id="lblBackgroundImgStatus" class="fas fa-upload"></i>
                                         </label>
                                     </div>
-                                    <span id="background-Img-invalid" class="text-danger field-validation-error"></span>
+                                    <span asp-validation-for="BackgroundImg" class="text-danger"></span>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Font Size Settings -->
+                    <div class="mb-4">
+                        <h6 class="mb-3">@Localizer["FontSizeSettings"]</h6>
+
+                        <div class="form-row">
+                            <!-- System Font Size -->
+                            <div class="form-group col-md-6">
+                                <label class="requiredLabel" for="SystemFontSize">@Localizer["SystemFontSize"]</label>
+                                <select asp-for="SystemFontSize" id="SystemFontSize" class="form-control">
+                                    <option value="12px">@Localizer["Small"] (12px)</option>
+                                    <option value="13px">@Localizer["Default"] (13px)</option>
+                                    <option value="14px">@Localizer["Medium"] (14px)</option>
+                                    <option value="15px">@Localizer["Large"] (15px)</option>
+                                    <option value="16px">@Localizer["ExtraLarge"] (16px)</option>
+                                </select>
+                                <span asp-validation-for="SystemFontSize" class="text-danger"></span>
+                            </div>
+
+                            <!-- Competition Font Size -->
+                            <div class="form-group col-md-6">
+                                <label class="requiredLabel" for="CompetitionFontSize">@Localizer["CompetitionFontSize"]</label>
+                                <select asp-for="CompetitionFontSize" id="CompetitionFontSize" class="form-control">
+                                    <option value="16px">@Localizer["Small"] (16px)</option>
+                                    <option value="18px">@Localizer["Default"] (18px)</option>
+                                    <option value="20px">@Localizer["Medium"] (20px)</option>
+                                    <option value="22px">@Localizer["Large"] (22px)</option>
+                                    <option value="24px">@Localizer["ExtraLarge"] (24px)</option>
+                                </select>
+                                <span asp-validation-for="CompetitionFontSize" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <!-- Font Size Preview -->
+                        <div class="form-group">
+                            <div class="form-row">
+                                <div class="col-md-12">
+                                    <div class="card bg-light">
+                                        <div class="card-body">
+                                            <h6>@Localizer["Preview"]</h6>
+                                            <p id="system-preview" style="font-size: 13px;">@Localizer["SystemFontPreview"]</p>
+                                            <p id="competition-preview" style="font-size: 20px; font-weight: bold;">@Localizer["CompetitionFontPreview"]</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="col-12 text-center">
                         <button type="button" class="btn btn-primary" onclick="Settings.Save()">@Localizer["Save"]</button>
                     </div>

@@ -5,54 +5,310 @@
     bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
 }
 
-<div class="" style="z-index:-1000;">
-    <img class="min-vh-100" src="~/assets/competition/images/Home-Background.png" style="width:100%; position:absolute; top:0; left:0;" />
-</div>
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        margin: 0;
+        padding: 0;
+    }
 
-<div class="row m-0 w-100">
-    <div class="col-md-12 text-center">
-        <img src="~/assets/competition/images/Citymall.svg" />
+    html {
+        margin: 0;
+        padding: 0;
+    }
+
+    .player-vs-container {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        position: relative;
+    }
+
+    .logo-section {
+        text-align: center;
+        margin-bottom: 60px;
+        animation: fadeInDown 1s ease-out;
+    }
+
+    .players-battle-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        max-width: 1000px;
+        gap: 100px;
+        animation: fadeInUp 1s ease-out 0.3s both;
+    }
+
+    .player-battle-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(20px);
+        border-radius: 30px;
+        padding: 50px 40px;
+        box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        transition: all 0.4s ease;
+        min-width: 280px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .player-battle-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        transition: left 0.8s;
+    }
+
+    .player-battle-section:hover::before {
+        left: 100%;
+    }
+
+    .player-battle-section:hover {
+        transform: translateY(-15px) scale(1.05);
+        box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5);
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    .team-title {
+        font-size: 28px;
+        font-weight: bold;
+        color: white;
+        text-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+        margin-bottom: 40px;
+        text-align: center;
+        letter-spacing: 1px;
+    }
+
+    .battle-player-avatar {
+        width: 140px;
+        height: 140px;
+        background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 25px;
+        font-size: 48px;
+        color: white;
+        font-weight: bold;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        animation: battlePulse 3s ease-in-out infinite;
+        position: relative;
+    }
+
+    .battle-player-avatar::after {
+        content: '';
+        position: absolute;
+        width: 160px;
+        height: 160px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        animation: ripple 2s infinite;
+    }
+
+    .battle-player-name {
+        color: white;
+        font-size: 24px;
+        font-weight: 700;
+        text-shadow: 0 3px 6px rgba(0, 0, 0, 0.6);
+        text-align: center;
+        letter-spacing: 1px;
+    }
+
+    .vs-battle-section {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: zoomIn 1s ease-out 0.6s both;
+    }
+
+    .vs-battle-circle {
+        width: 180px;
+        height: 180px;
+        background: linear-gradient(45deg, #FF6B6B, #FF8E53);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 64px;
+        font-weight: bold;
+        color: white;
+        cursor: pointer;
+        transition: all 0.4s ease;
+        box-shadow: 0 25px 80px rgba(255, 107, 107, 0.5);
+        text-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+        animation: battleFloat 4s ease-in-out infinite;
+        position: relative;
+    }
+
+    .vs-battle-circle::before {
+        content: '';
+        position: absolute;
+        width: 200px;
+        height: 200px;
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        animation: rotateRing 6s linear infinite;
+    }
+
+    .vs-battle-circle:hover {
+        transform: scale(1.15) rotate(15deg);
+        box-shadow: 0 35px 100px rgba(255, 107, 107, 0.7);
+    }
+
+    @@keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-40px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes zoomIn {
+        from {
+            opacity: 0;
+            transform: scale(0.3);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    @@keyframes battlePulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.08); }
+    }
+
+    @@keyframes battleFloat {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-15px); }
+    }
+
+    @@keyframes ripple {
+        0% {
+            transform: scale(1);
+            opacity: 1;
+        }
+        100% {
+            transform: scale(1.3);
+            opacity: 0;
+        }
+    }
+
+    @@keyframes rotateRing {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    @@media (max-width: 768px) {
+        .players-battle-container {
+            flex-direction: column;
+            gap: 50px;
+        }
+        
+        .player-battle-section {
+            min-width: auto;
+            width: 100%;
+            max-width: 350px;
+            padding: 40px 30px;
+        }
+        
+        .team-title {
+            font-size: 22px;
+        }
+        
+        .battle-player-avatar {
+            width: 100px;
+            height: 100px;
+            font-size: 36px;
+        }
+        
+        .battle-player-avatar::after {
+            width: 120px;
+            height: 120px;
+        }
+        
+        .battle-player-name {
+            font-size: 20px;
+        }
+        
+        .vs-battle-circle {
+            width: 120px;
+            height: 120px;
+            font-size: 42px;
+        }
+        
+        .vs-battle-circle::before {
+            width: 140px;
+            height: 140px;
+        }
+    }
+</style>
+
+<div class="player-vs-container">
+    <div class="logo-section">
+        <img src="~/assets/competition/images/Citymall.svg" alt="City Mall Logo" />
     </div>
-    <div class="col-md-10 offset-md-1 mt-5">
-        <div class="row">
-            <div class="col-md-4 animated zoomIn">
-                <span class="h2 h2-responsive d-flex justify-content-center text-center">@Model.Team1Name</span>
-                <div class="row mt-5">
-                    @{
-                        var CityMallplayer = Model.TeamCityMall.Where(a => a.IsVSPlayer).SingleOrDefault();
-                    }
-                    <div class="col-md-12 cityMallPlayers" data-player-Id="@CityMallplayer.Id">
-                        <div class="d-flex justify-content-center">
-                            <img src="~/assets/competition/images/player.svg" style="width:100%" />
-                        </div>
-                        <div class="h4 h4-responsive text-center mt-3 player-name">
-                            @CityMallplayer.Name
-                        </div>
-                    </div>
-                </div>
+    
+    <div class="players-battle-container">
+        <!-- Team 1 Player -->
+        <div class="player-battle-section">
+            <div class="team-title">@Model.Team1Name</div>
+            @{
+                var CityMallplayer = Model.TeamCityMall.Where(a => a.IsVSPlayer).SingleOrDefault();
+                string initials = CityMallplayer.Name.Split(' ').Take(2).Select(n => n.Substring(0, 1)).Aggregate((a, b) => a + b);
+            }
+            <div class="cityMallPlayers" data-player-Id="@CityMallplayer.Id">
+                <div class="battle-player-avatar">@initials</div>
+                <div class="battle-player-name">@CityMallplayer.Name</div>
             </div>
-            <div class="col-md-4 d-flex align-items-center justify-content-center">
-                <img src="~/assets/competition/images/VS.svg" id="img-goTo-category" style="cursor:pointer" />
+        </div>
+
+        <!-- VS Section -->
+        <div class="vs-battle-section">
+            <div class="vs-battle-circle" id="img-goTo-category">
+                VS
             </div>
-            <div class="animated zoomIn col-md-4">
-                <div>
-                    <span class="h2 h2-responsive d-flex justify-content-center text-center white-color">@Model.Team2Name</span>
-                    <div class="row mt-5">
-                        @{
-                            var Otherplayer = Model.OtherTeam.Where(a => a.IsVSPlayer).SingleOrDefault();
-                        }
-                        <div class="col-md-12 OtherPlayers" data-player-Id="@Otherplayer.Id">
-                            <div class="d-flex justify-content-center">
-                                <img src="~/assets/competition/images/player.svg" style="width:100%" />
-                            </div>
-                            <div class="h4 h4-responsive text-center mt-3 white-color player-name">
-                                @Otherplayer.Name
-                            </div>
-                            <div class=" d-flex justify-content-center mt-2">
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        </div>
+
+        <!-- Team 2 Player -->
+        <div class="player-battle-section">
+            <div class="team-title">@Model.Team2Name</div>
+            @{
+                var Otherplayer = Model.OtherTeam.Where(a => a.IsVSPlayer).SingleOrDefault();
+                string otherInitials = Otherplayer.Name.Split(' ').Take(2).Select(n => n.Substring(0, 1)).Aggregate((a, b) => a + b);
+            }
+            <div class="OtherPlayers" data-player-Id="@Otherplayer.Id">
+                <div class="battle-player-avatar">@otherInitials</div>
+                <div class="battle-player-name">@Otherplayer.Name</div>
             </div>
         </div>
     </div>

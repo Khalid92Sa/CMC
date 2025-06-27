@@ -5,40 +5,73 @@
     bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
 }
 
-<div style="z-index:-1000; background-repeat:repeat-y;">
-    <img class="min-vh-100" src="~/assets/competition/images/Home-Background.png" style="width:100%; position:absolute; top:0; left:0;" />
-</div>
-<div class="row m-0 w-100">
-    <div class="col-md-12 text-center" id="go-home-page-bg" style="cursor:pointer">
-        <img src="~/assets/competition/images/Citymall.svg" />
-    </div>
-    <div class="col-md-10 offset-md-1 mt-5">
-        <div class="row">
+<div class="competition-body">
+    <div class="competition-container score-container">
+        <!-- Logo Section -->
+        <div class="competition-logo-section" id="go-home-page-bg">
+            <img src="~/assets/competition/images/Citymall.svg" alt="City Mall Logo" />
+        </div>
+
+        <!-- Teams Score Container -->
+        <div class="teams-score-container">
             @{
                 int CityMallPoints = Model.TeamCityMall.Sum(a => a.Points);
                 string points = CityMallPoints == 0 || CityMallPoints > 2 && CityMallPoints < 11 ? Localizer["Points"].Value :
                 CityMallPoints == 2 ? Localizer["TwoPoint"].Value : Localizer["Point"].Value;
-            }
-            <div class="animated fadeInDownBig col-md-4 full-team-score-name" style="padding-top:10%;cursor:pointer" data-score="city-mall">
-                <span class="h1 h1-responsive d-flex justify-content-center text-center" style="">@Model.Team1Name</span>
-                <span class="h1 h1-responsive d-flex justify-content-center text-center pt-5">@CityMallPoints @points</span>
-            </div>
-            <div class="animated fadeInDownBig col-md-4 d-flex align-items-center justify-content-center">
-                <img src="~/assets/competition/images/VS.svg" />
-            </div>
-            @{
+
                 int OtherTeamPoints = Model.OtherTeam.Sum(a => a.Points);
                 string Otherpoints = OtherTeamPoints == 0 || OtherTeamPoints > 2 && OtherTeamPoints < 11 ? Localizer["Points"].Value :
                 OtherTeamPoints == 2 ? Localizer["TwoPoint"].Value : Localizer["Point"].Value;
+
+                bool team1Wins = CityMallPoints > OtherTeamPoints;
+                bool team2Wins = OtherTeamPoints > CityMallPoints;
             }
-            <div class="animated fadeInDownBig col-md-4 full-team-score-name" style="padding-top:10%;cursor:pointer" data-score="visitors">
-                <span class="h2 h2-responsive d-flex justify-content-center text-center white-color" style="cursor:pointer">@Model.Team2Name</span>
-                <span class="h1 h1-responsive d-flex justify-content-center text-center white-color pt-5">@OtherTeamPoints @Otherpoints</span>
+
+            <!-- Team 1 Score -->
+            <div class="team-score-section glass-card full-team-score-name" data-score="city-mall">
+                @if (team1Wins)
+                {
+                    <div class="winner-crown">👑</div>
+                }
+                @if (Model.IsFinalCompetition)
+                {
+                    <div class="competition-team-name">@Model.TeamCityMall.FirstOrDefault()?.Name</div>
+                }
+                else
+                {
+                    <div class="competition-team-name">@Model.Team1Name</div>
+                }
+                <div class="competition-team-score">@CityMallPoints</div>
+                <div class="score-points-text">@points</div>
+            </div>
+
+            <!-- VS Section -->
+            <div class="competition-vs-section">
+                <div class="competition-vs-circle">
+                    VS
+                </div>
+            </div>
+
+            <!-- Team 2 Score -->
+            <div class="team-score-section glass-card full-team-score-name" data-score="visitors">
+                @if (team2Wins)
+                {
+                    <div class="winner-crown">👑</div>
+                }
+                @if (Model.IsFinalCompetition)
+                {
+                    <div class="competition-team-name">@Model.OtherTeam.FirstOrDefault()?.Name</div>
+                }
+                else
+                {
+                    <div class="competition-team-name">@Model.Team2Name</div>
+                }
+                <div class="competition-team-score">@OtherTeamPoints</div>
+                <div class="score-points-text">@Otherpoints</div>
             </div>
         </div>
     </div>
 </div>
-
 
 <script>
     $(document).ready(function () {
