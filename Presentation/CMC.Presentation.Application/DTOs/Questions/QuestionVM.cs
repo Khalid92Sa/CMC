@@ -17,6 +17,7 @@ namespace CMC.Presentation.Application.DTOs.Questions
         public int? AnswertType { get; set; }
         public IFormFile Img { get; set; }
         public string ImgPath { get; set; }
+        public bool ChangedQuestion { get; set; }
         public List<LookupModel> Categories { get; set; } = new List<LookupModel>();
         public List<AnswerOptions> Answers { get; set; } = new List<AnswerOptions>();
     }

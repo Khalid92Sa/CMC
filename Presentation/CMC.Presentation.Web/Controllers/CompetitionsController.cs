@@ -379,6 +379,7 @@ namespace CMC.Presentation.Web.Controllers
                 {
                     currentCompetition.CurrentQuestion = randomQuestion.Data;
                     currentCompetition.Questions.Add(randomQuestion.Data);
+                    randomQuestion.Data.ChangedQuestion = true;
                     currentCompetition.TotalCurrentCompetitionQuestions.Add(randomQuestion.Data);
                 }
                 else
@@ -456,7 +457,7 @@ namespace CMC.Presentation.Web.Controllers
                 if (currentCompetition.IsQuestionsTypeIsRound)
                 {
                     var TotalQuestionPerRound = currentCompetition.TeamCityMall.Count;
-                    var PendingQuestionsPerRound = (TotalQuestionPerRound * currentCompetition.CurrentRound) - currentCompetition.TotalCurrentCompetitionQuestions.Count;
+                    var PendingQuestionsPerRound = (TotalQuestionPerRound * currentCompetition.CurrentRound) - currentCompetition.TotalCurrentCompetitionQuestions.Where(a => !a.ChangedQuestion).Count();
                     if (PendingQuestionsPerRound <= 0)
                     {
                         if (IsAnswer || (answerOnQuestionDTO.IsCityMallPlayerAnswered && answerOnQuestionDTO.IsOtherPlayerAnswered))

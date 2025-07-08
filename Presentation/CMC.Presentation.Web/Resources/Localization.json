@@ -508,7 +508,13 @@
       "ar-JO": "إذهب إلى الرئيسية"
     }
   },
-
+  {
+    "Key": "ExistFromCompetition",
+    "LocalizedValue": {
+      "en-US": "Exit",
+      "ar-JO": "الخروج من السابقة"
+    }
+  },
 
 
   //Buttons
@@ -2519,6 +2525,29 @@
       "ar-JO": "نطاق زمني"
     }
   },
+  {
+    "Key": "SelectPlayerFirst",
+    "LocalizedValue": {
+      "en-US": "Please select a player first",
+      "ar-JO": "يرجى اختيار لاعب أولاً"
+    }
+  },
+  {
+    "Key": "ShowOptions",
+    "LocalizedValue": {
+      "en-US": "Show Options",
+      "ar-JO": "إظهار الخيارات"
+    }
+  },
+  {
+    "Key": "SubmitAnswer",
+    "LocalizedValue": {
+      "en-US": "Submit Answer",
+      "ar-JO": "إرسال الإجابة"
+    }
+  },
+
+
 
 
 
@@ -2598,6 +2627,20 @@
     "LocalizedValue": {
       "en-US": "Round",
       "ar-JO": "الجولة"
+    }
+  },
+  {
+    "Key": "FinalScores",
+    "LocalizedValue": {
+      "en-US": "Final Scores",
+      "ar-JO": "النتائج النهائية"
+    }
+  },
+  {
+    "Key": "CompetitionResults",
+    "LocalizedValue": {
+      "en-US": "Competition Results",
+      "ar-JO": "نتائج المسابقة"
     }
   },
   {

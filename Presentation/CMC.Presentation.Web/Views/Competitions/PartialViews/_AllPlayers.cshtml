@@ -5,7 +5,7 @@
     bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
 }
 
-<div class="competition-home-container">
+<div class="competition-home-container @(Model.IsFinalCompetition ? "final-competition" : "")">
     <div class="logo-section">
         <img src="~/assets/competition/images/Citymall.svg" alt="City Mall Logo" />
     </div>
@@ -15,73 +15,118 @@
         <div class="team-section">
             <div class="team-title">@Model.Team1Name</div>
             <div class="players-grid">
-                @foreach (var player in Model.TeamCityMall)
+                @if (Model.IsFinalCompetition)
                 {
-                    string points = player.Points == 0 || player.Points > 2 && player.Points < 11 ? Localizer["Points"].Value :
-                    player.Points == 2 ? Localizer["TwoPoint"].Value : Localizer["Point"].Value;
+                    <!-- Final Competition: Show only one player centered -->
+                    var firstPlayer = Model.TeamCityMall.First();
+                    string points = firstPlayer.Points == 0 || firstPlayer.Points > 2 && firstPlayer.Points < 11 ? Localizer["Points"].Value :
+                    firstPlayer.Points == 2 ? Localizer["TwoPoint"].Value : Localizer["Point"].Value;
 
-                    string initials = player.Name.Split(' ').Take(2).Select(n => n.Substring(0, 1)).Aggregate((a, b) => a + b);
+                    string initials = firstPlayer.Name.Split(' ').Take(2).Select(n => n.Substring(0, 1)).Aggregate((a, b) => a + b);
 
-                    <div class="player-card cityMallPlayers" data-player-Id="@player.Id">
+                    <div class="player-card" data-player-Id="@firstPlayer.Id">
                         <div class="player-avatar">
-                            @if (!string.IsNullOrEmpty(player.ProfilePicture))
+                            @if (!string.IsNullOrEmpty(firstPlayer.ProfilePicture))
                             {
-                                <img src="data:image/jpeg;base64,@player.ProfilePicture" alt="@player.Name" />
+                                <img src="data:image/jpeg;base64,@firstPlayer.ProfilePicture" alt="@firstPlayer.Name" />
                             }
                             else
                             {
                                 <span class="initials">@initials</span>
                             }
                         </div>
-                        <div class="player-name">@player.Name</div>
-                        @if(Model.IsFinalCompetition)
-                        {
-                            <div class="player-score">@player.Points @points</div>
-                        }
+                        <div class="player-name">@firstPlayer.Name</div>
+                        <div class="player-score">@firstPlayer.Points @points</div>
                     </div>
+                }
+                else
+                {
+                    <!-- Regular Competition: Show all players in grid -->
+                    @foreach (var player in Model.TeamCityMall)
+                    {
+                        string initials = player.Name.Split(' ').Take(2).Select(n => n.Substring(0, 1)).Aggregate((a, b) => a + b);
+
+                        <div class="player-card cityMallPlayers" data-player-Id="@player.Id">
+                            <div class="player-avatar">
+                                @if (!string.IsNullOrEmpty(player.ProfilePicture))
+                                {
+                                    <img src="data:image/jpeg;base64,@player.ProfilePicture" alt="@player.Name" />
+                                }
+                                else
+                                {
+                                    <span class="initials">@initials</span>
+                                }
+                            </div>
+                            <div class="player-name">@player.Name</div>
+                        </div>
+                    }
                 }
             </div>
         </div>
 
         <!-- VS Section -->
         <div class="vs-section">
-            <div class="vs-circle" id="img-vs">
+            <div class="vs-circle @(Model.IsFinalCompetition ? "active" : "")" id="img-vs">
                 VS
             </div>
-            <button class="battle-back-btn" id="battle-back-btn">
-                <i class="fas fa-exchange-alt"></i>
-                <span class="tooltip-text">Change Players</span>
-            </button>
+            @if (!Model.IsFinalCompetition)
+            {
+                <button class="battle-back-btn" id="battle-back-btn">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span class="tooltip-text">Change Players</span>
+                </button>
+            }
         </div>
 
         <!-- Team 2 - Other Team -->
         <div class="team-section">
             <div class="team-title">@Model.Team2Name</div>
             <div class="players-grid">
-                @foreach (var player in Model.OtherTeam)
+                @if (Model.IsFinalCompetition)
                 {
-                    string points = player.Points == 0 || player.Points > 2 && player.Points < 11 ? Localizer["Points"].Value :
-                    player.Points == 2 ? Localizer["TwoPoint"].Value : Localizer["Point"].Value;
+                    <!-- Final Competition: Show only one player centered -->
+                    var firstPlayer = Model.OtherTeam.First();
+                    string points = firstPlayer.Points == 0 || firstPlayer.Points > 2 && firstPlayer.Points < 11 ? Localizer["Points"].Value :
+                    firstPlayer.Points == 2 ? Localizer["TwoPoint"].Value : Localizer["Point"].Value;
 
-                    string initials = player.Name.Split(' ').Take(2).Select(n => n.Substring(0, 1)).Aggregate((a, b) => a + b);
+                    string initials = firstPlayer.Name.Split(' ').Take(2).Select(n => n.Substring(0, 1)).Aggregate((a, b) => a + b);
 
-                    <div class="player-card OtherPlayers" data-player-Id="@player.Id">
+                    <div class="player-card" data-player-Id="@firstPlayer.Id">
                         <div class="player-avatar">
-                            @if (!string.IsNullOrEmpty(player.ProfilePicture))
+                            @if (!string.IsNullOrEmpty(firstPlayer.ProfilePicture))
                             {
-                                <img src="data:image/jpeg;base64,@player.ProfilePicture" alt="@player.Name" />
+                                <img src="data:image/jpeg;base64,@firstPlayer.ProfilePicture" alt="@firstPlayer.Name" />
                             }
                             else
                             {
                                 <span class="initials">@initials</span>
                             }
                         </div>
-                        <div class="player-name">@player.Name</div>
-                        @if(Model.IsFinalCompetition)
-                        {
-                            <div class="player-score">@player.Points @points</div>
-                        }
+                        <div class="player-name">@firstPlayer.Name</div>
+                        <div class="player-score">@firstPlayer.Points @points</div>
                     </div>
+                }
+                else
+                {
+                    <!-- Regular Competition: Show all players in grid -->
+                    @foreach (var player in Model.OtherTeam)
+                    {
+                        string initials = player.Name.Split(' ').Take(2).Select(n => n.Substring(0, 1)).Aggregate((a, b) => a + b);
+
+                        <div class="player-card OtherPlayers" data-player-Id="@player.Id">
+                            <div class="player-avatar">
+                                @if (!string.IsNullOrEmpty(player.ProfilePicture))
+                                {
+                                    <img src="data:image/jpeg;base64,@player.ProfilePicture" alt="@player.Name" />
+                                }
+                                else
+                                {
+                                    <span class="initials">@initials</span>
+                                }
+                            </div>
+                            <div class="player-name">@player.Name</div>
+                        </div>
+                    }
                 }
             </div>
         </div>
@@ -91,5 +136,5 @@
 <script>
     var isFinalCompetition = '@Model.IsFinalCompetition.ToString().ToLower()' == 'true';
     var isRoundCompetition = '@Model.IsQuestionsTypeIsRound.ToString().ToLower()' == 'true';
-    var isBattleMode = false;
+    var isBattleMode = isFinalCompetition; // In final competition, always start in battle mode
 </script>

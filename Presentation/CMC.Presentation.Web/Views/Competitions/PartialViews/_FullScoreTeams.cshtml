@@ -5,11 +5,596 @@
     bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
 }
 
-<div class="competition-body">
-    <div class="competition-container score-container">
-        <!-- Logo Section -->
-        <div class="competition-logo-section" id="go-home-page-bg">
-            <img src="~/assets/competition/images/Citymall.svg" alt="City Mall Logo" />
+<style>
+    .full-score-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        backdrop-filter: blur(5px);
+        overflow: hidden;
+    }
+
+    .full-score-content {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        animation: fullScoreSlideIn 0.6s ease-out;
+        padding: 2rem;
+        box-sizing: border-box;
+    }
+
+    @@keyframes fullScoreSlideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-50px) scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    /* Logo Section */
+    .competition-logo-section {
+        position: absolute;
+        top: 2rem;
+        left: 2rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        animation: fadeInDown 0.6s ease-out;
+        z-index: 10;
+    }
+
+    .competition-logo-section:hover {
+        transform: scale(1.05);
+        filter: brightness(1.1);
+    }
+
+    .competition-logo-section img {
+        height: 60px;
+        width: auto;
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+    }
+
+    /* Main Header */
+    .full-score-header {
+        text-align: center;
+        margin-bottom: 3rem;
+        animation: fadeInDown 0.6s ease-out 0.2s both;
+    }
+
+    .full-score-header h1 {
+        font-size: 4rem;
+        font-weight: 900;
+        color: white;
+        margin-bottom: 1rem;
+        text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        background: linear-gradient(45deg, #FFD700, #FFA500, #FFD700);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    }
+
+    .full-score-subtitle {
+        font-size: 1.5rem;
+        color: rgba(255, 255, 255, 0.9);
+        margin: 0;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Teams Score Container */
+    .teams-score-container {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        gap: 4rem;
+        align-items: center;
+        width: 100%;
+        max-width: 1400px;
+        animation: fadeInUp 0.6s ease-out 0.4s both;
+    }
+
+    /* Team Score Section */
+    .team-score-section {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 25px;
+        padding: 2rem;
+        text-align: center;
+        backdrop-filter: blur(15px);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        position: relative;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 500px;
+    }
+
+    .team-score-section::before {
+        content: '';
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: linear-gradient(45deg, #FFD700, #FFA500, #FF6B6B, #4ECDC4, #45B7D1, #96CEB4, #FFEAA7, #DDA0DD);
+        background-size: 400% 400%;
+        border-radius: 25px;
+        z-index: -1;
+        animation: gradientShift 3s ease infinite;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .team-score-section:hover::before {
+        opacity: 0.7;
+    }
+
+    .team-score-section:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        background: rgba(255, 255, 255, 0.15);
+    }
+
+    @@keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    /* Winner Crown */
+    .winner-crown {
+        position: absolute;
+        top: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 3rem;
+        animation: crownBounce 2s infinite;
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+    }
+
+    @@keyframes crownBounce {
+        0%, 20%, 50%, 80%, 100% {
+            transform: translateX(-50%) translateY(0);
+        }
+        40% {
+            transform: translateX(-50%) translateY(-10px);
+        }
+        60% {
+            transform: translateX(-50%) translateY(-5px);
+        }
+    }
+
+    /* Team Name */
+    .competition-team-name {
+        font-size: 2rem;
+        font-weight: bold;
+        color: white;
+        margin-bottom: 1.5rem;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+
+    /* Players Display */
+    .team-players-display {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        width: 100%;
+    }
+
+    .player-display-item {
+        display: flex;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 15px;
+        padding: 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+        animation: slideInPlayer 0.5s ease-out forwards;
+        opacity: 0;
+    }
+
+    .player-display-item:nth-child(1) { animation-delay: 0.1s; }
+    .player-display-item:nth-child(2) { animation-delay: 0.2s; }
+    .player-display-item:nth-child(3) { animation-delay: 0.3s; }
+    .player-display-item:nth-child(4) { animation-delay: 0.4s; }
+
+    .player-display-item:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: translateX(5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    @@keyframes slideInPlayer {
+        from {
+            opacity: 0;
+            transform: translateX(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .player-avatar-display {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        overflow: hidden;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        flex-shrink: 0;
+        margin-right: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .player-avatar-display:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .player-avatar-display img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .player-avatar-display .initials {
+        color: white;
+        font-weight: bold;
+        font-size: 0.9rem;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    .player-info-display {
+        flex: 1;
+        text-align: left;
+        color: white;
+    }
+
+    .player-name-display {
+        font-size: 1rem;
+        font-weight: bold;
+        margin-bottom: 0.3rem;
+        color: white;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    .player-points-display {
+        font-size: 0.9rem;
+        color: #FFD700;
+        font-weight: 600;
+    }
+
+    /* Team Score */
+    .competition-team-score {
+        font-size: 4rem;
+        font-weight: 900;
+        color: #FFD700;
+        margin-bottom: 0.5rem;
+        text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        background: linear-gradient(45deg, #FFD700, #FFA500);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        animation: scoreGlow 2s ease-in-out infinite alternate;
+    }
+
+    @@keyframes scoreGlow {
+        from {
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+        to {
+            filter: drop-shadow(0 4px 12px rgba(255, 215, 0, 0.5));
+        }
+    }
+
+    /* Score Points Text */
+    .score-points-text {
+        font-size: 1.5rem;
+        color: rgba(255, 255, 255, 0.8);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 600;
+    }
+
+    /* VS Section */
+    .competition-vs-section {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: fadeInUp 0.6s ease-out 0.6s both;
+    }
+
+    .competition-vs-circle {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: linear-gradient(45deg, #ff6b6b, #feca57);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: white;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        animation: vsRotate 6s linear infinite;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .competition-vs-circle::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        animation: vsShine 3s ease-in-out infinite;
+    }
+
+    .competition-vs-circle:hover {
+        transform: scale(1.1);
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+    }
+
+    @@keyframes vsRotate {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    @@keyframes vsShine {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* Navigation Button */
+    .full-score-navigation {
+        position: absolute;
+        bottom: 3rem;
+        display: flex;
+        gap: 2rem;
+        animation: fadeInUp 0.6s ease-out 0.8s both;
+    }
+
+    .nav-button {
+        padding: 1.2rem 3rem;
+        border: none;
+        border-radius: 25px;
+        font-weight: bold;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .nav-button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s ease;
+    }
+
+    .nav-button:hover::before {
+        left: 100%;
+    }
+
+    .btn-home {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+    }
+
+    .btn-home:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        background: linear-gradient(45deg, #5a67d8, #6b46c1);
+    }
+
+    .btn-details {
+        background: linear-gradient(45deg, #4ECDC4, #44A08D);
+        color: white;
+    }
+
+    .btn-details:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        background: linear-gradient(45deg, #38B2AC, #319795);
+    }
+
+    /* Floating Particles Background */
+    .floating-particles {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .particle {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.7);
+        border-radius: 50%;
+        animation: float 15s infinite linear;
+    }
+
+    .particle:nth-child(odd) {
+        animation-duration: 20s;
+        background: rgba(255, 215, 0, 0.6);
+    }
+
+    .particle:nth-child(3n) {
+        animation-duration: 25s;
+        background: rgba(255, 107, 107, 0.6);
+    }
+
+    @@keyframes float {
+        0% {
+            transform: translateY(100vh) rotate(0deg);
+            opacity: 0;
+        }
+        10% {
+            opacity: 1;
+        }
+        90% {
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(-100px) rotate(360deg);
+            opacity: 0;
+        }
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 1200px) {
+        .teams-score-container {
+            max-width: 1000px;
+            gap: 3rem;
+        }
+        
+        .competition-team-score {
+            font-size: 5rem;
+        }
+        
+        .full-score-header h1 {
+            font-size: 3rem;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .teams-score-container {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            max-width: 500px;
+        }
+
+        .competition-vs-section {
+            order: 2;
+            margin: 1rem 0;
+        }
+
+        .competition-vs-circle {
+            width: 80px;
+            height: 80px;
+            font-size: 1.8rem;
+        }
+
+        .full-score-header h1 {
+            font-size: 2.5rem;
+        }
+
+        .competition-team-score {
+            font-size: 4rem;
+        }
+
+        .competition-team-name {
+            font-size: 2rem;
+        }
+
+        .team-score-section {
+            padding: 2rem 1.5rem;
+        }
+
+        .full-score-navigation {
+            bottom: 2rem;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .nav-button {
+            padding: 1rem 2rem;
+            font-size: 1rem;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .full-score-content {
+            padding: 1rem;
+        }
+
+        .full-score-header {
+            margin-bottom: 2rem;
+        }
+
+        .full-score-header h1 {
+            font-size: 2rem;
+        }
+
+        .competition-team-score {
+            font-size: 3rem;
+        }
+
+        .competition-team-name {
+            font-size: 1.5rem;
+        }
+    }
+
+
+</style>
+
+<div class="full-score-container">
+    <!-- Floating Particles Background -->
+    <div class="floating-particles">
+        <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+        <div class="particle" style="left: 20%; animation-delay: 2s;"></div>
+        <div class="particle" style="left: 30%; animation-delay: 4s;"></div>
+        <div class="particle" style="left: 40%; animation-delay: 6s;"></div>
+        <div class="particle" style="left: 50%; animation-delay: 8s;"></div>
+        <div class="particle" style="left: 60%; animation-delay: 10s;"></div>
+        <div class="particle" style="left: 70%; animation-delay: 12s;"></div>
+        <div class="particle" style="left: 80%; animation-delay: 14s;"></div>
+        <div class="particle" style="left: 90%; animation-delay: 16s;"></div>
+    </div>
+
+    <div class="full-score-content">
+        <!-- Header -->
+        <div class="full-score-header">
+            <h1>@Localizer["FinalScores"]</h1>
+            <p class="full-score-subtitle">@Localizer["CompetitionResults"]</p>
         </div>
 
         <!-- Teams Score Container -->
@@ -41,6 +626,33 @@
                 {
                     <div class="competition-team-name">@Model.Team1Name</div>
                 }
+
+                <!-- Team Players Display -->
+                <div class="team-players-display">
+                    @foreach (var player in Model.TeamCityMall.OrderByDescending(p => p.Points).ThenBy(p => p.Time))
+                    {
+                        string initials = player.Name.Split(' ').Take(2).Select(n => n.Substring(0, 1)).Aggregate((a, b) => a + b);
+                        string firstName = player.Name.Split(' ').FirstOrDefault();
+
+                        <div class="player-display-item">
+                            <div class="player-avatar-display">
+                                @if (!string.IsNullOrEmpty(player.ProfilePicture))
+                                {
+                                    <img src="data:image/jpeg;base64,@player.ProfilePicture" alt="@player.Name" />
+                                }
+                                else
+                                {
+                                    <span class="initials">@initials</span>
+                                }
+                            </div>
+                            <div class="player-info-display">
+                                <div class="player-name-display">@firstName</div>
+                                <div class="player-points-display">@player.Points @(player.Points == 1 ? Localizer["Point"].Value : Localizer["Points"].Value)</div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
                 <div class="competition-team-score">@CityMallPoints</div>
                 <div class="score-points-text">@points</div>
             </div>
@@ -66,10 +678,43 @@
                 {
                     <div class="competition-team-name">@Model.Team2Name</div>
                 }
+
+                <!-- Team Players Display -->
+                <div class="team-players-display">
+                    @foreach (var player in Model.OtherTeam.OrderByDescending(p => p.Points).ThenBy(p => p.Time))
+                    {
+                        string initials = player.Name.Split(' ').Take(2).Select(n => n.Substring(0, 1)).Aggregate((a, b) => a + b);
+                        string firstName = player.Name.Split(' ').FirstOrDefault();
+
+                        <div class="player-display-item">
+                            <div class="player-avatar-display">
+                                @if (!string.IsNullOrEmpty(player.ProfilePicture))
+                                {
+                                    <img src="data:image/jpeg;base64,@player.ProfilePicture" alt="@player.Name" />
+                                }
+                                else
+                                {
+                                    <span class="initials">@initials</span>
+                                }
+                            </div>
+                            <div class="player-info-display">
+                                <div class="player-name-display">@firstName</div>
+                                <div class="player-points-display">@player.Points @(player.Points == 1 ? Localizer["Point"].Value : Localizer["Points"].Value)</div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
                 <div class="competition-team-score">@OtherTeamPoints</div>
                 <div class="score-points-text">@Otherpoints</div>
             </div>
         </div>
+    </div>
+    <!-- Navigation Buttons -->
+    <div class="full-score-navigation mt-5">
+        <button class="nav-button btn-home" onclick="StartCompetition.GoToHomePage()">
+            <i class="fas fa-home"></i> @Localizer["ExistFromCompetition"]
+        </button>
     </div>
 </div>
 

@@ -32,6 +32,16 @@
     <script type="text/javascript" src="~/assets/competition/shared/bootstrap/js/bootstrap.min.js"></script>
 
     <script>
+        var globalResources = {
+            ErrorOccurred: '@Localizer["ErrorOccurred"]',
+            Back: '@Localizer["Back"]',
+            ViewScores: '@Localizer["ViewScores"]',
+            Continue:'@Localizer["Continue"]',
+            SelectPlayerFirst:'@Localizer["SelectPlayerFirst"]',
+            ShowOptions:'@Localizer["ShowOptions"]',
+            SubmitAnswer:'@Localizer["SubmitAnswer"]'
+        };
+
         var generalSettings = {
             pageSize: '@PaginationSettings.PageSize',
             BaseURL: '@baseURL'
@@ -320,11 +330,7 @@
             Logout: '@Url.Action("Logout", "Users")',
         };
 
-        var globalResources = {
-            ErrorOccurred: '@Localizer["ErrorOccurred"]',
-            Back: '@Localizer["Back"]',
-            ViewScores: '@Localizer["ViewScores"]'
-        };
+        
 
         // Enhanced Competition Configuration
         window.CompetitionConfig = {
