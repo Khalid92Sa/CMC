@@ -341,6 +341,13 @@
     }
   },
   {
+    "Key": "OK",
+    "LocalizedValue": {
+      "en-US": "Ok",
+      "ar-JO": "موافق"
+    }
+  },
+  {
     "Key": "Select",
     "LocalizedValue": {
       "en-US": "Select",
@@ -1197,6 +1204,34 @@
     }
   },
   {
+    "Key": "QuestionsArchivedSuccessfully",
+    "LocalizedValue": {
+      "en-US": "Questions archived successfully",
+      "ar-JO": "تم تحديث الأرشيف بنجاح"
+    }
+  },
+  {
+    "Key": "ArchiveQuestions",
+    "LocalizedValue": {
+      "en-US": "Archive questions",
+      "ar-JO": "أرشفة الأسئلة الحالية"
+    }
+  },
+  {
+    "Key": "UnArchiveQuestions",
+    "LocalizedValue": {
+      "en-US": "UnArchive questions",
+      "ar-JO": "إستعادة الأرشيف"
+    }
+  },
+  {
+    "Key": "Alert_ArchiveQuestions",
+    "LocalizedValue": {
+      "en-US": "Are you sure you want to archive all questions?",
+      "ar-JO": "هل أنت متأكد من أرشفة جميع الأسئلة السابقة؟"
+    }
+  },
+  {
     "Key": "Alert_DeleteQuestion",
     "LocalizedValue": {
       "en-US": "Do you sure you want to delete this question?",
@@ -1430,8 +1465,8 @@
   {
     "Key": "QuestionsImportedSuccessfully",
     "LocalizedValue": {
-      "en-US": "Questions imported successfully!",
-      "ar-JO": "تم استيراد الأسئلة بنجاح!"
+      "en-US": "Questions imported successfully! and question count is",
+      "ar-JO": "تم استيراد الأسئلة بنجاح وعددها !"
     }
   },
   {
@@ -1460,6 +1495,13 @@
     "LocalizedValue": {
       "en-US": "Validation Errors",
       "ar-JO": "أخطاء التحقق"
+    }
+  },
+  {
+    "Key": "CategorySelectionRequired",
+    "LocalizedValue": {
+      "en-US": "Please select a category before importing questions.",
+      "ar-JO": "يرجى اختيار التصنيف قبل اضافة الأسئلة"
     }
   },
   {
@@ -1712,6 +1754,13 @@
     "LocalizedValue": {
       "en-US": "Points must be greater than zero",
       "ar-JO": "النقاط يجب أن تكون أكبر من الصفر"
+    }
+  },
+  {
+    "Key": "QuestionsAddedSuccessfully",
+    "LocalizedValue": {
+      "en-US": "Questions added successfully",
+      "ar-JO": "تم إضافة الاسئلة بنجاح"
     }
   },
 
@@ -2320,6 +2369,13 @@
     "LocalizedValue": {
       "en-US": "Question",
       "ar-JO": "السؤال"
+    }
+  },
+  {
+    "Key": "TheQuestion2",
+    "LocalizedValue": {
+      "en-US": "questions",
+      "ar-JO": "سؤال"
     }
   },
   {

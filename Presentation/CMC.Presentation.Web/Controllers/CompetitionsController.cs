@@ -140,7 +140,10 @@ namespace CMC.Presentation.Web.Controllers
                 };
 
                 competitionsDTO.Categories = await _questionsService.GetCategories();
-                
+                var ParentCompetition = await _competitionsService.GetCompetitionsLookup();
+                if (ParentCompetition.Succeeded)
+                    competitionsDTO.ParentCompetition = ParentCompetition.Data;
+
                 competitionsDTO.QuestionArchiveType = await _lookupService.GetLookupItems(LookupTypes.QuestionArchiveType);
 
                 // Populate Available Competitions for exclusion (exclude current competition if editing)

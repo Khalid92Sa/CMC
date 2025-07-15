@@ -274,6 +274,22 @@ namespace CMC.Presentation.Web.Controllers
             }
         }
 
+        [HttpGet]
+        [RolePermission(PermissionCodes.WebQuestionsView)]
+        public async Task<IActionResult> ArchiveQuestions(int type)
+        {
+            try
+            {
+                var result = await _questionsService.ArchiveQuestions(type);
+                return Json(new { isSuccess = result.Succeeded, msg = _localizer["QuestionsArchivedSuccessfully"].Value });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogError(ex, "ArchiveQuestions", $"type:{type}", null, false);
+                return Json(new { isSuccess = false });
+            }
+        }
+
         /// <summary>
         /// Add multiple questions in bulk
         /// </summary>

@@ -551,7 +551,7 @@
 
                         // Show success message
                         Swal.fire({
-                            title: globalResources.Success || 'Success',
+                            title: globalResources.QuestionsAddedSuccessfully,
                             text: response.message,
                             icon: 'success',
                             timer: 3000,
@@ -917,6 +917,17 @@
             });
         },
         saveSelectedQuestions: function () {
+            const selectedCategoryId = $('#ddlBulkCategories').val();
+            if (!selectedCategoryId || selectedCategoryId === '' || selectedCategoryId === null) {
+                Swal.fire({
+                    title: globalResources.ValidationErrors,
+                    text: globalResources.CategorySelectionRequired,
+                    icon: 'warning',
+                    confirmButtonText: globalResources.Ok 
+                });
+                return;
+            }
+
             const selectedQuestions = Categories.BulkImport.importedQuestions.filter(q => q.selected && q.isValid);
 
             if (selectedQuestions.length === 0) {
@@ -926,40 +937,47 @@
 
             // Show loading
             GeneralClass.showLoading();
-
-            // Convert to format expected by your backend
+            // Create the payload with exact property names matching C# model
             const questionsData = {
-                questions: selectedQuestions.map(q => ({
-                    CategoryId: q.categoryId || $('#ddlBulkCategories').val(),
-                    TextEn: q.questionEn,
-                    TextAr: q.questionAr,
-                    AnswertType: 1, // Text answers
-                    Answers: q.answers.map(answer => ({
-                        TextEn: answer.textEn,
-                        TextAr: answer.textAr,
-                        IsAnswer: answer.isAnswer
+                Questions: selectedQuestions.map(q => ({
+                    CategoryId: parseInt(q.categoryId || $('#ddlBulkCategories').val()) || null,
+                    TextEn: q.questionEn || '',
+                    TextAr: q.questionAr || '',
+                    AnswertType: 1,
+                    Answers: (q.answers || []).map(answer => ({
+                        TextEn: answer.textEn || '',
+                        TextAr: answer.textAr || '',
+                        IsAnswer: Boolean(answer.isAnswer)
                     }))
-                }))
+                })),
+                DefaultCategoryId: $('#ddlBulkCategories').val() ? parseInt($('#ddlBulkCategories').val()) : null
             };
+            // Log the data being sent
+            console.log('Sending data to server:', JSON.stringify(questionsData, null, 2));
 
-            // AJAX call to backend AddBulkQuestions method
+            // Make the AJAX request
             $.ajax({
                 type: 'POST',
                 url: publicURls.AddBulkQuestions,
                 data: JSON.stringify(questionsData),
-                contentType: 'application/json',
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                processData: false,
+                beforeSend: function (xhr) {
+                    console.log('Request headers:', xhr.getAllResponseHeaders());
+                },
                 success: function (response) {
+                    console.log('Server response:', response);
                     GeneralClass.hideLoading();
 
                     if (response.isSuccess) {
                         Swal.fire({
                             title: '',
-                            text: globalResources.QuestionsImportedSuccessfully || `Successfully imported ${selectedQuestions.length} questions!`,
+                            text: `${globalResources.QuestionsImportedSuccessfully}` + ` ${selectedQuestions.length} ` + ` ${globalResources.TheQuestion2}`,
                             icon: 'success',
                             showConfirmButton: false,
                             timer: 3000
                         }).then(() => {
-                            // Redirect back to categories or refresh page
                             if ($('#ddlBulkCategories').val()) {
                                 window.location.href = publicURls.AddCategory + '/' + $('#ddlBulkCategories').val();
                             } else {
@@ -981,8 +999,13 @@
                 },
                 error: function (xhr, status, error) {
                     GeneralClass.hideLoading();
-                    console.error('Save questions error:', error);
-                    GeneralClass.ShowErrorAlert(globalResources.ErrorOccurred);
+                    console.error('AJAX Error Details:');
+                    console.error('Status:', status);
+                    console.error('Error:', error);
+                    console.error('Response Text:', xhr.responseText);
+                    console.error('Status Code:', xhr.status);
+
+                    GeneralClass.ShowErrorAlert('Request failed: ' + (xhr.responseText || error));
                 }
             });
         },
@@ -1125,20 +1148,6 @@ var Questions = {
             }
         });
 
-        //$('button[data-bs-toggle="tab"]').off('shown.bs.tab').on('shown.bs.tab', function (e) {
-        //    const target = $(e.target).attr('data-bs-target');
-        //    console.log('BS5 Tab switched to:', target);
-
-        //    if (target === '#bulk-import') {
-        //        console.log('Initializing bulk import...');
-        //        // Only initialize if not already done
-        //        if (!Categories.BulkImport.isInitialized) {
-        //            Categories.BulkImport.OnLoad();
-        //        }
-        //    }
-        //});
-
-        //// Bootstrap 4 syntax (fallback)
         $('a[data-toggle="tab"], button[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
             const target = $(e.target).attr('data-bs-target') || $(e.target).attr('href');
 
@@ -1147,13 +1156,6 @@ var Questions = {
                 Categories.BulkImport.OnLoad();
             }
         });
-
-        //// ALTERNATIVE: Direct click event (more reliable)
-        //$('#bulk-tab').on('click', function () {
-        //    setTimeout(function () {
-        //        Categories.BulkImport.OnLoad();
-        //    }, 200); // Small delay to ensure tab content is visible
-        //});
 
         $('#bulk-tab').one('click', function () {
             console.log('Bulk tab clicked for first time');
@@ -1186,6 +1188,55 @@ var Questions = {
         });
 
         //Categories.BulkImport.OnLoad();
+    },
+    ArchiveNonArchive: function (type) {
+            Swal.fire({
+            title: globalResources.Alert_ArchiveQuestions,
+            text: '',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: globalResources.Yes,
+            cancelButtonText: globalResources.Cancel,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+    type: 'GET',
+    url: publicURls.ArchiveQuestions,
+    data: {
+        type: type, // 1 = Archive, 2 = Unarchive
+    },
+    success: function (data) {
+        if (data.isSuccess) {
+            Swal.fire({
+                title: '',
+                text: data.msg,
+                icon: 'success',
+                showConfirmButton: false,
+                timer: 2000
+            }).then(function (result) {
+                if ($("#pagination").length > 0) {
+                    //Delete from Pagination
+                    $("#pagination").twbsPagination('destroy');
+                    Categories.GetAllWithPager(1, GeneralClass.pageSize);
+                }
+                else {
+                    //Delete from question page.
+                    window.location.reload();
+                }
+            });
+        }
+        else {
+            GeneralClass.ShowErrorAlert();
+        }
+    },
+    error: function (error) {
+        GeneralClass.ShowErrorAlert();
+    }
+                });
+            }
+        });
     },
     SelectAnswerByImage: function (id) {
         $('#chk-option-img-' + id).prop('checked', 'checked');

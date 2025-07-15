@@ -282,6 +282,11 @@ namespace CMC.Kernel.Infrastructure.Persistence.Repositories
             }
         }
 
+        public async Task<int> ExecuteSqlRawAsync(string sql, params object[] parameters)
+        {
+            return await DbContext.Database.ExecuteSqlRawAsync(sql, parameters);
+        }
+
         public void Dispose()
         {
             DbContext.DisposeAsync();

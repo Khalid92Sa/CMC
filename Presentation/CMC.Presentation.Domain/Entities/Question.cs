@@ -13,6 +13,7 @@ namespace CMC.Presentation.Domain.Entities
         public int AnswersType { get; set; }
         public virtual int? CategoryID { get; set; }
         public virtual Lookup Category { get; set; }
+        public bool? IsArchived { get; set; }
 
 
         public virtual ICollection<Answer> Answers { get; set; }

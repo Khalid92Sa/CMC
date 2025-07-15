@@ -406,7 +406,7 @@ namespace CMC.Presentation.Application.Services.Questions
                 bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
 
                 PagedResult<QuestionListVM> response = new PagedResult<QuestionListVM>();
-                var questions = _questionRepository.GetAll(a => a.CategoryID == searchQuestionDTO.CategoryId && a.IsDeleted != true).AsQueryable();
+                var questions = _questionRepository.GetAll(a => a.CategoryID == searchQuestionDTO.CategoryId && a.IsDeleted != true && a.IsArchived != true).AsQueryable();
 
                 var result = questions
                         .WhereIf(!string.IsNullOrEmpty(searchQuestionDTO.QuestionText) && IsAr, a => a.TextAr.Contains(searchQuestionDTO.QuestionText))
@@ -441,7 +441,7 @@ namespace CMC.Presentation.Application.Services.Questions
                 bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
 
                 PagedResult<QuestionListVM> response = new PagedResult<QuestionListVM>();
-                var questions = _questionRepository.GetAll(a => a.IsDeleted != true)
+                var questions = _questionRepository.GetAll(a => a.IsDeleted != true && a.IsArchived != true)
                     .Include(a => a.Category)
                     .AsQueryable();
 
@@ -495,7 +495,7 @@ namespace CMC.Presentation.Application.Services.Questions
 
                 if (IsUpdate)
                 {
-                    question = await _questionRepository.GetAll(a => a.Id == questionVM.Id.Value && a.IsDeleted != true).Include(a => a.Answers).FirstOrDefaultAsync();
+                    question = await _questionRepository.GetAll(a => a.Id == questionVM.Id.Value && a.IsDeleted != true && a.IsArchived != true).Include(a => a.Answers).FirstOrDefaultAsync();
                     if (question == null)
                         return new Response() { Succeeded = false, StatusCode = (int)HttpStatusCode.NotFound };
                 }
@@ -875,6 +875,29 @@ namespace CMC.Presentation.Application.Services.Questions
         }
 
         /// <summary>
+        /// Archive questions
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public async Task<Response> ArchiveQuestions(int type)
+        {
+            try
+            {
+                var isArchived = type == 1;
+
+                var rowsAffected = await _questionRepository.ExecuteSqlRawAsync(
+                    "UPDATE [CMC].[Questions] SET IsArchived = {0} WHERE IsDeleted != 1 OR IsDeleted IS NULL",
+                    isArchived);
+
+                return new Response() { Succeeded = true, Message = "Success" };
+            }
+            catch (Exception ex)
+            {
+                return new Response() { Succeeded = false, Message = "Error ocurred once update archiving" };
+            }
+        }
+
+        /// <summary>
         /// Get Random question for category in competition
         /// </summary>
         /// <param name="categoryId"></param>
@@ -886,7 +909,7 @@ namespace CMC.Presentation.Application.Services.Questions
             {
                 var questionsDb = await _questionRepository.GetAll()
                     .Include(a => a.Answers)
-                    .Where(a => a.CategoryID == categoryId && a.IsDeleted != true && !questions.Contains(a.Id) && a.Answers.Any(answer => answer.IsDeleted != true))
+                    .Where(a => a.CategoryID == categoryId && a.IsDeleted != true && a.IsArchived != true && !questions.Contains(a.Id) && a.Answers.Any(answer => answer.IsDeleted != true))
                     .ToListAsync();
 
                 if (questionsDb.Count > 0)
@@ -1053,7 +1076,7 @@ namespace CMC.Presentation.Application.Services.Questions
                     {
                         _unitOfWork.BeginTransaction();
                         await _questionRepository.InsertAsync(questionsToSave);
-                        await _unitOfWork.SaveChangesAsync();
+                        await _questionRepository.UnitOfWork.SaveChangesAsync();
                         _unitOfWork.Commit();
                     }
                     catch (Exception ex)
@@ -1474,6 +1497,7 @@ namespace CMC.Presentation.Application.Services.Questions
         /// <returns></returns>
         public async Task<Response<List<QuestionVM>>> ReadExcelFile(IFormFile file)
         {
+            bool isEnglish = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "en";
             try
             {
                 if (file == null || file.Length == 0)
@@ -1581,7 +1605,7 @@ namespace CMC.Presentation.Application.Services.Questions
                 {
                     Succeeded = true,
                     Data = questions,
-                    Message = $"Successfully read {questions.Count} questions from Excel file",
+                    Message = isEnglish ? $"Successfully read {questions.Count} questions from Excel file" : $"تم قراءة {questions.Count} سؤال من الملف",
                     StatusCode = (int)HttpStatusCode.Ok
                 };
             }

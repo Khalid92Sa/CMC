@@ -74,6 +74,12 @@ namespace CMC.Presentation.Application.Services.Questions
         /// <returns></returns>
         Task<Response> DeleteQuestion(int id);
         /// <summary>
+        /// Archive Question
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<Response> ArchiveQuestions(int type);
+        /// <summary>
         /// Get Random question for category in competition
         /// </summary>
         /// <param name="categoryId"></param>

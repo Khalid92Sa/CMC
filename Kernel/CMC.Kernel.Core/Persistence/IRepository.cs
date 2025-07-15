@@ -52,5 +52,7 @@ namespace CMC.Kernel.Core.Persistence
                                              Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
                                              bool disableTracking = true,
                                              bool ignoreQueryFilters = false);
+
+        Task<int> ExecuteSqlRawAsync(string sql, params object[] parameters);
     }
 }

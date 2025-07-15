@@ -158,7 +158,7 @@ namespace CMC.Presentation.Application.Services.Competitions
                 }
 
                 competition.ParentId = competitionsDTO.ParentId;
-                
+
                 // Map Archive Settings
                 competition.ArchiveType = competitionsDTO.ArchiveType;
                 competition.ArchiveMonths = competitionsDTO.ArchiveMonths;
@@ -967,9 +967,6 @@ namespace CMC.Presentation.Application.Services.Competitions
 
 
                     List<CompetitionQuestion> AllQuestionsWasAskedBefore = await GetAllExcludedQuestionsAsync(competition);
-                    //List<CompetitionQuestion> AllQuestionsWasAskedBefore = new List<CompetitionQuestion>();
-                    //if (competition.Parent != null)
-                    //    AllQuestionsWasAskedBefore = await GetAllQuestionsForCompetitionAndParentsAsync(competition.Parent.Id);
 
                     bool IsCompetitionStartedBefore = competition.CompetitionQuestions != null && competition.CompetitionQuestions.Count > 0;
 
