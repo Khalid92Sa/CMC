@@ -27,8 +27,10 @@ namespace CMC.Kernel.Core.Controllers
             {
                 var httpContext = context.HttpContext;
 
-                if (context.RouteData.Values["controller"].ToString().Equals("Users", StringComparison.OrdinalIgnoreCase) &&
-                context.RouteData.Values["action"].ToString().Equals("Login", StringComparison.OrdinalIgnoreCase))
+                if ((context.RouteData.Values["controller"].ToString().Equals("Users", StringComparison.OrdinalIgnoreCase) &&
+                    context.RouteData.Values["action"].ToString().Equals("Login", StringComparison.OrdinalIgnoreCase)) ||
+                    (context.RouteData.Values["controller"].ToString().Equals("Home", StringComparison.OrdinalIgnoreCase) &&
+                    context.RouteData.Values["action"].ToString().Equals("SetCulture", StringComparison.OrdinalIgnoreCase)))
                 {
                     // Skip UserId check
                 }

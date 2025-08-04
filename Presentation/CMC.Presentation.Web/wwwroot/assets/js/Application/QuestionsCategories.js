@@ -38,6 +38,7 @@
             }
         });
 
+        GeneralClass.InitalizeDatePicker('txtDate', undefined);
         $(document).ready(function () {
             Categories.GetAllWithPager(1, GeneralClass.pageSize);
             $('#btnSearch').on('click', function () {
@@ -348,9 +349,10 @@
     },
     GetAllWithPager: function (pageIndex, pageSize) {
         var QuestionText = $('#txtQuestionText').val();
+        var QuestionsDate = $('#txtDate').val();
         var CategoryId = $('#Id').val();
         Grid.currentPageIndex = pageIndex;
-        APIHelper.httpGet(generalSettings.BaseURL + 'Questions/GetAllQuestions?pageNumber=' + pageIndex + '&pageSize=' + pageSize + '&CategoryId=' + CategoryId + '&QuestionText=' + QuestionText
+        APIHelper.httpGet(generalSettings.BaseURL + 'Questions/GetAllQuestions?pageNumber=' + pageIndex + '&pageSize=' + pageSize + '&CategoryId=' + CategoryId + '&QuestionText=' + QuestionText + '&Date=' + QuestionsDate
             , null, null, this.getAll_Success, null);
     },
     getAll_Success: function (data, textStatus, xhr) {
@@ -1202,38 +1204,39 @@ var Questions = {
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-    type: 'GET',
-    url: publicURls.ArchiveQuestions,
-    data: {
-        type: type, // 1 = Archive, 2 = Unarchive
-    },
-    success: function (data) {
-        if (data.isSuccess) {
-            Swal.fire({
-                title: '',
-                text: data.msg,
-                icon: 'success',
-                showConfirmButton: false,
-                timer: 2000
-            }).then(function (result) {
-                if ($("#pagination").length > 0) {
-                    //Delete from Pagination
-                    $("#pagination").twbsPagination('destroy');
-                    Categories.GetAllWithPager(1, GeneralClass.pageSize);
-                }
-                else {
-                    //Delete from question page.
-                    window.location.reload();
-                }
-            });
-        }
-        else {
-            GeneralClass.ShowErrorAlert();
-        }
-    },
-    error: function (error) {
-        GeneralClass.ShowErrorAlert();
-    }
+                    type: 'GET',
+                    url: publicURls.ArchiveQuestions,
+                    data: {
+                        type: type, // 1 = Archive, 2 = Unarchive
+                        categoryId: $('#Id').val()
+                    },
+                    success: function (data) {
+                        if (data.isSuccess) {
+                            Swal.fire({
+                                title: '',
+                                text: data.msg,
+                                icon: 'success',
+                                showConfirmButton: false,
+                                timer: 2000
+                            }).then(function (result) {
+                                if ($("#pagination").length > 0) {
+                                    //Delete from Pagination
+                                    $("#pagination").twbsPagination('destroy');
+                                    Categories.GetAllWithPager(1, GeneralClass.pageSize);
+                                }
+                                else {
+                                    //Delete from question page.
+                                    window.location.reload();
+                                }
+                            });
+                        }
+                        else {
+                            GeneralClass.ShowErrorAlert();
+                        }
+                    },
+                    error: function (error) {
+                        GeneralClass.ShowErrorAlert();
+                    }
                 });
             }
         });

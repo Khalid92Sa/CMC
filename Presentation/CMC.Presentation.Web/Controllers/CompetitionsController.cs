@@ -2,6 +2,7 @@
 using CMC.Kernel.Core.Controllers;
 using CMC.Kernel.Core.Enums;
 using CMC.Kernel.Core.Infrastructure;
+using CMC.Kernel.Core.Wrappers;
 using CMC.Kernel.Infrastructure.Caching.Model;
 using CMC.Kernel.Infrastructure.Persistence.Services;
 using CMC.Presentation.Application.ActionFilters;
@@ -210,18 +211,56 @@ namespace CMC.Presentation.Web.Controllers
             {
                 _httpContextAccessor.HttpContext.Session.Remove("CompetitionScoreDetails");
                 var competitionStart = await _competitionsService.StartCompetiton(id);
+                string viewContent = string.Empty;
                 if (competitionStart.Succeeded)
                 {
-                    PartialViewResult otpPartialView = PartialView("PartialViews/_AllPlayers", competitionStart.Data);
-                    string viewContent = ConvertViewToString(this.ControllerContext, otpPartialView, _viewEngine);
-                    ViewData["Partial"] = viewContent;
+                    var currentCompetition = await _competitionsService.GetCompetition(id);
+                    if (currentCompetition.Succeeded && currentCompetition.Data.CompetitionStartDTO != null)
+                    {
+                        CompetitionStateDto competitionStateDto = new CompetitionStateDto()
+                        {
+                            Id = currentCompetition.Data.Id.Value,
+                            CityMallPlayed = currentCompetition.Data.CompetitionStartDTO.CityMallPlayed,
+                            CurrentStep = currentCompetition.Data.CompetitionStartDTO.CurrentStep,
+                            cityMallSelectedId = currentCompetition.Data.CompetitionStartDTO.cityMallSelectedId,
+                            IsBattled = currentCompetition.Data.CompetitionStartDTO.IsBattled,
+                            OtherTeamPlayed = currentCompetition.Data.CompetitionStartDTO.OtherTeamPlayed,
+                            OtherTeamSelectedId = currentCompetition.Data.CompetitionStartDTO.OtherTeamSelectedId,
+                            QuestionId = currentCompetition.Data.CompetitionStartDTO.QuestionId,
+                            CagegoryId = currentCompetition.Data.CompetitionStartDTO.CurrentQuestion?.CategoryId ?? 0
+                        };
 
+                        ViewData["CurrentCompetition"] = competitionStateDto;
+                        // competition was already started
+                        if (currentCompetition.Data.CurrentStep == "initial" || currentCompetition.Data.CurrentStep == "battle-mode")
+                        {
+                            PartialViewResult otpPartialView = PartialView("PartialViews/_AllPlayers", competitionStart.Data);
+                            viewContent = ConvertViewToString(this.ControllerContext, otpPartialView, _viewEngine);
+                        }
+                        else if (currentCompetition.Data.CurrentStep == "categories")
+                        {
+                            PartialViewResult otpPartialView = PartialView("PartialViews/_SelectCategory", competitionStart.Data);
+                            viewContent = ConvertViewToString(this.ControllerContext, otpPartialView, _viewEngine);
+                        }
+                        else if(currentCompetition.Data.CurrentStep == "question")
+                        {
+                            PartialViewResult otpPartialView = PartialView("PartialViews/_Question", competitionStart.Data);
+                            viewContent = ConvertViewToString(this.ControllerContext, otpPartialView, _viewEngine);
+                        }
+                    }
+                    else
+                    {
+                        PartialViewResult otpPartialView = PartialView("PartialViews/_AllPlayers", competitionStart.Data);
+                        viewContent = ConvertViewToString(this.ControllerContext, otpPartialView, _viewEngine);
+                       
+                    }
+                    ViewData["Partial"] = viewContent;
                     return View(competitionStart.Data);
                 }
-                else if(competitionStart.StatusCode == (int)HttpStatusCode.NotAuthenticated)
+                else if (competitionStart.StatusCode == (int)HttpStatusCode.NotAuthenticated)
                 {
                     // means the parent competition not ended
-                    return RedirectToAction("Index", "Error", new { message  = "CompetitionNotEndedValidation" });
+                    return RedirectToAction("Index", "Error", new { message = "CompetitionNotEndedValidation" });
                 }
                 else
                     return RedirectToAction("Index", "Error");
@@ -307,20 +346,21 @@ namespace CMC.Presentation.Web.Controllers
             {
                 var currentCompetition = JsonConvert.DeserializeObject<CompetitionStartDTO>(_httpContextAccessor.HttpContext.Session.GetString("CompetitionStart"));
 
-                if(currentCompetition.TeamCityMall.Count == 1 && !currentCompetition.TeamCityMall.Where(a => a.IsVSPlayer).Any())
+                if (currentCompetition.TeamCityMall.Count == 1 && !currentCompetition.TeamCityMall.Where(a => a.IsVSPlayer).Any())
                 {
                     //Means Final 
                     currentCompetition.TeamCityMall.FirstOrDefault().IsVSPlayer = true;
                     currentCompetition.OtherTeam.FirstOrDefault().IsVSPlayer = true;
-
                 }
 
                 if (currentCompetition.Categories == null || currentCompetition.Categories.Count == 0)
                     currentCompetition.Categories = await _questionsService.GetCategories();
 
 
+
                 var competitonString = JsonConvert.SerializeObject(currentCompetition);
                 _httpContextAccessor.HttpContext.Session.SetString("CompetitionStart", competitonString);
+
 
                 PartialViewResult otpPartialView = PartialView("PartialViews/_SelectCategory", currentCompetition);
                 string viewContent = ConvertViewToString(this.ControllerContext, otpPartialView, _viewEngine);
@@ -819,12 +859,12 @@ namespace CMC.Presentation.Web.Controllers
         }
 
         [HttpGet]
-        [RolePermission(PermissionCodes.WebCompetitionCreate,PermissionCodes.WebCompetitionStart)]
-        public async Task<IActionResult> GetModalPlayer(int playerId,bool isCityMall)
+        [RolePermission(PermissionCodes.WebCompetitionCreate, PermissionCodes.WebCompetitionStart)]
+        public async Task<IActionResult> GetModalPlayer(int playerId, bool isCityMall)
         {
             try
             {
-                if(string.IsNullOrEmpty(_httpContextAccessor.HttpContext.Session.GetString("CompetitionScoreDetails")) && string.IsNullOrEmpty(_httpContextAccessor.HttpContext.Session.GetString("CompetitionStart")))
+                if (string.IsNullOrEmpty(_httpContextAccessor.HttpContext.Session.GetString("CompetitionScoreDetails")) && string.IsNullOrEmpty(_httpContextAccessor.HttpContext.Session.GetString("CompetitionStart")))
                     return Json(new { isSuccess = false });
 
                 if (!string.IsNullOrEmpty(_httpContextAccessor.HttpContext.Session.GetString("CompetitionStart")))
@@ -865,7 +905,7 @@ namespace CMC.Presentation.Web.Controllers
 
         [HttpGet]
         [RolePermission(PermissionCodes.WebCompetitionCreate, PermissionCodes.WebCompetitionStart)]
-        public async Task<IActionResult> GetPlayerScoreDetails(int competitionId,int playerId)
+        public async Task<IActionResult> GetPlayerScoreDetails(int competitionId, int playerId)
         {
             try
             {
@@ -929,6 +969,34 @@ namespace CMC.Presentation.Web.Controllers
             }
             catch (Exception ex)
             {
+                return Json(new { isSuccess = false });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateCurrentStep(CompetitionStateDto competitionStateDto)
+        {
+            try
+            {
+                var currentCompetition = JsonConvert.DeserializeObject<CompetitionStartDTO>(_httpContextAccessor.HttpContext.Session.GetString("CompetitionStart"));
+
+                if (competitionStateDto != null && competitionStateDto.Id != 0)
+                {
+                    currentCompetition.CurrentStep = competitionStateDto.CurrentStep;
+                    currentCompetition.CityMallPlayed = competitionStateDto.CityMallPlayed;
+                    currentCompetition.OtherTeamPlayed = competitionStateDto.OtherTeamPlayed;
+                    currentCompetition.IsBattled = competitionStateDto.IsBattled;
+                    currentCompetition.cityMallSelectedId = competitionStateDto.cityMallSelectedId;
+                    currentCompetition.OtherTeamSelectedId = competitionStateDto.OtherTeamSelectedId;
+                    currentCompetition.QuestionId = competitionStateDto.QuestionId;
+                }
+
+                var response = await _competitionsService.UpdateCompeititonState(currentCompetition);
+                return Json(new { isSuccess = response.Succeeded, msg = response.Message });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogError(ex, "UpdateCurrentStep", competitionStateDto, null, false);
                 return Json(new { isSuccess = false });
             }
         }

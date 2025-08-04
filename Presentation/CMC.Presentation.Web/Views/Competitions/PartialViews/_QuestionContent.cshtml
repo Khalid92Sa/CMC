@@ -52,7 +52,7 @@
         foreach (var answer in Model.CurrentQuestion.Answers)
         {
             string ImgSrc = $"data:image/jpeg;base64,{answer.ImgPath}";
-            <div class="answer-option" style="visibility:hidden">
+            <div class="answer-option" style="display:none">
                 <input type="radio" data-id="@answer.Id" name="investmentExp" data-iscorrect="@answer.IsAnswer" style="display:none;" />
                 <div class="answer-card img-answer-options" data-answer-id="@answer.Id" data-iscorrect="@answer.IsAnswer">
                     <div class="answer-image">
@@ -67,7 +67,7 @@
         // Text Options - Bilingual
         foreach (var answer in Model.CurrentQuestion.Answers)
         {
-            <div class="answer-option" style="visibility:hidden">
+            <div class="answer-option" style="display:none">
                 <input type="radio" data-id="@answer.Id" name="investmentExp" data-iscorrect="@answer.IsAnswer" style="display:none;" />
                 <div class="answer-card" data-answer-id="@answer.Id" data-iscorrect="@answer.IsAnswer">
                     @if (!string.IsNullOrEmpty(answer.TextEn))

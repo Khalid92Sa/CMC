@@ -444,6 +444,8 @@ namespace CMC.Presentation.Application.Services.Competitions
 
                 if (competition != null)
                 {
+                    CompetitionStartDTO competitionStartDto = competition.StateData != null ? JsonConvert.DeserializeObject<CompetitionStartDTO>(competition.StateData) : null;
+
                     return new Response<CompetitionsDTO>()
                     {
                         Succeeded = true,
@@ -467,6 +469,8 @@ namespace CMC.Presentation.Application.Services.Competitions
                             ExcludedCompetitionIds = !string.IsNullOrEmpty(competition.ExcludedCompetitionIds) ?
                                                      competition.ExcludedCompetitionIds.Split(',').Select(int.Parse).ToList() :
                                                      new List<int>(),
+                            CompetitionStartDTO = competitionStartDto,
+                            CurrentStep = competition.CurrentStep,
                             Round1Points = competition.Round1Points,
                             Round1Time = competition.Round1Time,
                             Round2Points = competition.Round2Points,
@@ -944,9 +948,9 @@ namespace CMC.Presentation.Application.Services.Competitions
 
 
                     //Check start background
-                    var attachmentBackground = await _attachmentRepository.GetAll(a => a.EntityId == 1 && a.EntityType == (int)AttachmentTypes.BackgroundImg).SingleOrDefaultAsync();
-                    if (attachmentBackground != null)
-                        competitionStartDTO.StartBackground = Convert.ToBase64String(attachmentBackground.FileData);
+                    //var attachmentBackground = await _attachmentRepository.GetAll(a => a.EntityId == 1 && a.EntityType == (int)AttachmentTypes.BackgroundImg).SingleOrDefaultAsync();
+                    //if (attachmentBackground != null)
+                    //    competitionStartDTO.StartBackground = Convert.ToBase64String(attachmentBackground.FileData);
 
 
                     competitionStartDTO.IsFinalCompetition = competition.IsFinalCompetition ?? false;
@@ -1169,8 +1173,19 @@ namespace CMC.Presentation.Application.Services.Competitions
                     else
                         competitionStartDTO.Categories = allCategories;
 
-                    var competitonString = JsonConvert.SerializeObject(competitionStartDTO);
-                    _httpContextAccessor.HttpContext.Session.SetString("CompetitionStart", competitonString);
+
+
+                    if(competition.StateData!=null)
+                    {
+                        _httpContextAccessor.HttpContext.Session.SetString("CompetitionStart", competition.StateData);
+                        competitionStartDTO = JsonConvert.DeserializeObject<CompetitionStartDTO>(competition.StateData);
+                    }
+                    else
+                    {
+                        var competitonString = JsonConvert.SerializeObject(competitionStartDTO);
+                        _httpContextAccessor.HttpContext.Session.SetString("CompetitionStart", competitonString);
+                    }
+                    
 
                     return new Response<CompetitionStartDTO>()
                     {
@@ -1408,6 +1423,37 @@ namespace CMC.Presentation.Application.Services.Competitions
             catch (Exception ex)
             {
                 await _logger.LogError(ex, "GetPlayerScoreDetails", $"competitionId:{competitionId} - PlayerId:{playerId}", null, false);
+                return new Response<CompetitionsPlayerDTO>()
+                {
+                    Message = ex.Message
+                };
+            }
+        }
+
+        public async Task<Response> UpdateCompeititonState(CompetitionStartDTO competitionStartDTO)
+        {
+            try
+            {
+                Competition competition = await _competitionRepository.FindAsync(competitionStartDTO.Id);
+                if (competition == null)
+                    return new Response() { Succeeded = false, Message = "competition not found", StatusCode = (int)HttpStatusCode.NotFound };
+
+                competition.LastStateUpdate = DateTime.Now;
+                competition.CurrentStep = competitionStartDTO.CurrentStep;
+                competition.StateData = JsonConvert.SerializeObject(competitionStartDTO);
+
+                _competitionRepository.Update(competition);
+                await _competitionRepository.UnitOfWork.SaveChangesAsync();
+
+                return new Response()
+                {
+                    Succeeded = true,
+                    Message = "Success"
+                };
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogError(ex, "UpdateCompeititonState", $"competitionId:{competitionStartDTO.Id}", null, false);
                 return new Response<CompetitionsPlayerDTO>()
                 {
                     Message = ex.Message

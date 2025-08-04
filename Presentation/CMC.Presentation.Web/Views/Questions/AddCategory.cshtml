@@ -77,7 +77,7 @@
                             <span class="danger"></span>
                             <div class="input-group mb-3">
                                 <div class="custom-file">
-                                    <input type="file" asp-for="Img" name="Img" class="custom-file-input" style="cursor:pointer" data-hide="btnDeleteCategoryImg"
+                                    <input type="file" asp-for="Img" id="file-category-img" name="Img" class="custom-file-input" style="cursor:pointer" data-hide="btnDeleteCategoryImg"
                                            placeholder="@Localizer["ChooseImg"].Value" accept=".jpg, .jpeg, .png">
                                     <label class="custom-file-label upload-btn">
                                         <span id="lblImageName">@Localizer["ChooseImg"]</span>
@@ -119,12 +119,21 @@
             <div class="card mt-5">
                 <div class="card-body">
                     <div class="form-row mb-3 filter">
-                        <div class="form-group col-md-4 pr-md-2 m-0">
+                        <div class="form-group col-md-2 pr-md-2 m-0">
                             <label class="d-block">@Localizer["QuestionText"]</label>
                             <input type="text" class="form-control d-inline-block" id="txtQuestionText" />
                         </div>
-                        <div class="form-group col-md-auto px-md-2 m-0 text-left">
+                        <!--Date-->
+                        <div class="form-group col-md-2">
+                            <label class="requiredLabel">@Localizer["AddedInDated"]</label>
+                            <input type="text" class="form-control d-inline-block" id="txtDate" />
+                        </div>
+                        <div class="form-group col-md-1 px-md-2 m-0 text-left">
                             <button id="btnSearch" type="button" class="btn btn-primary rounded">@Localizer["Search"]</button>
+                        </div>
+                        <div class="form-group col-md-3 pr-md-2 ml-5 mr-5 pt-3">
+                            <a class="btn btn-primary mx-0" onclick="Questions.ArchiveNonArchive(1)">@Localizer["ArchiveQuestions"]</a>
+                            <a class="btn btn-primary mx-0" onclick="Questions.ArchiveNonArchive(2)">@Localizer["UnArchiveQuestions"]</a>
                         </div>
                     </div>
                     <div class="from-row mb-3">

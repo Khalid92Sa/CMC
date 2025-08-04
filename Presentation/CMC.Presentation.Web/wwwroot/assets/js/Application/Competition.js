@@ -610,7 +610,6 @@ var StartCompetition = {
         // VS button is already active via CSS, no need to manually activate
         isBattleMode = true;
     },
-
     SetupRegularCompetition: function () {
         // Regular competition setup
         $('.cityMallPlayers').on('click', function (e) {
@@ -696,6 +695,8 @@ var StartCompetition = {
         // Reset avatar animations
         $('.player-avatar').css('animation-name', 'pulse');
 
+        StartCompetition.UpdateCompetitionStep('initial');
+
         // Optional: Show a brief message
         // You can add a toast notification here if you want
     },
@@ -742,7 +743,6 @@ var StartCompetition = {
     },
     ActivateBattleMode: function () {
         isBattleMode = true;
-
         // Add battle mode class to main container
         $('.competition-home-container').addClass('battle-mode');
 
@@ -766,6 +766,7 @@ var StartCompetition = {
                 selectedTeams++;
             }
 
+
             // Always show single player centered in final competition
             StartCompetition.UpdateFinalCompetitionLayout();
 
@@ -776,6 +777,8 @@ var StartCompetition = {
                 $('#img-vs').addClass('active');
             }
         }
+
+        StartCompetition.UpdateCompetitionStep('battle-mode');
 
         // After transition completes, add battle animations
         setTimeout(function () {
@@ -887,6 +890,7 @@ var StartCompetition = {
                 if (data.isSuccess) {
                     if (data.partial != '') {
                         $('#dv-partial').html(data.partial);
+                        StartCompetition.UpdateCompetitionStep('categories');
 
                         $('.select-category').on('click', function (e) {
                             var elem = e.currentTarget;
@@ -930,6 +934,8 @@ var StartCompetition = {
                         $('#btn-change-question').on('click', function (e) {
                             StartCompetition.ChangeQuestion();
                         });
+
+                        StartCompetition.UpdateCompetitionStep('question');
                     }
                 }
                 else {
@@ -1010,7 +1016,7 @@ var StartCompetition = {
 
         // Show main card and continue button initially
         setTimeout(function () {
-            $('#card-main').css('visibility', 'visible').addClass('animated fadeInUpBig');
+            $('#card-main').removeAttr('style').addClass('animated fadeInUpBig');
             $('#dv-confirm').css('visibility', 'visible');
             $('#btn-answer').prop('disabled', false).removeClass('disabled');
             StartCompetition.UpdateContinueButtonText();
@@ -1119,7 +1125,7 @@ var StartCompetition = {
         playerTimer.IsPlayerAnswered = false;
 
         // Check if options are already visible (second player selection)
-        var optionsAlreadyVisible = $('#dv-answers-options').find('.answer-option[style*="visible"]').length > 0;
+        var optionsAlreadyVisible = $('#dv-answers-options').find('.answer-option:visible').length > 0;
 
         if (optionsAlreadyVisible) {
             // Options already shown, go directly to options state
@@ -1176,7 +1182,7 @@ var StartCompetition = {
             $('#dv-answers-options').find('.answer-option').each(function (index) {
                 var element = this;
                 setTimeout(function () {
-                    $(element).css('visibility', 'visible').addClass('animated fadeInUp');
+                    $(element).removeAttr('style').addClass('animated fadeInUp');
                 }, index * 200);
             });
         }, 300);
@@ -1311,7 +1317,7 @@ var StartCompetition = {
             $('#dv-answers-options').find('.answer-option').each(function (index) {
                 var element = this;
                 setTimeout(function () {
-                    $(element).css('visibility', 'visible').addClass('animated fadeInUp');
+                    $(element).removeAttr('style').addClass('animated fadeInUp');
                 }, index * 200); // 200ms delay between each answer
             });
         }, 300);
@@ -1587,42 +1593,6 @@ var StartCompetition = {
             playerTimer.IsOtherPlayerAnswered = true;
         }
 
-
-        // Check if both players have answered or if it's final competition
-        //var bothPlayersAnswered = (playerTimer.IsPlayerCityMallAnswered && playerTimer.IsOtherPlayerAnswered);
-
-        //if (bothPlayersAnswered || isFinalCompetition) {
-        //    isQuestionFinished = true;
-        //    currentGameState = gameState.QUESTION_FINISHED;
-        //    StartCompetition.DisableAllInteractions();
-
-        //    playerTimer.IsPlayerCityMallAnswered = true;
-        //    playerTimer.IsOtherPlayerAnswered = true;
-
-        //} else {
-        //    // Allow selecting another player, keep options visible
-        //    currentGameState = gameState.QUESTION_SHOWN;
-        //    selectedPlayerId = null; // Reset selected player
-
-        //    // Re-enable player selection and keep options visible
-        //    $('#dv-cityMall-player, #dv-Other-player').css('pointer-events', 'auto').removeClass('disabled');
-
-        //    // Clear only the selection, keep options visible
-        //    $('.answer-card').removeClass('selected correct-answer wrong-answer');
-        //    $('input[name="investmentExp"]').prop('checked', false).prop('disabled', false);
-        //    $('.img-answer-options').removeClass('bg-answer-border');
-
-        //    // Reset timer display but don't restart it
-        //    $('#dv-p-timer').addClass('d-none');
-
-        //    // Update button text and disable until player selected
-        //    StartCompetition.UpdateContinueButtonText();
-        //    $('#btn-answer').prop('disabled', true).addClass('disabled');
-
-        //    // Show change question button again
-        //    $('#dv-change-question').css('visibility', 'visible');
-        //}
-
         isQuestionFinished = true;
         currentGameState = gameState.QUESTION_FINISHED;
         StartCompetition.DisableAllInteractions();
@@ -1686,6 +1656,7 @@ var StartCompetition = {
                             $('#dv-homePage').off('click').on('click', function () {
                                 $('#dv-partial').html(data.partial);
                                 StartCompetition.OnLoad();
+                                StartCompetition.UpdateCompetitionStep('initial');
                             });
                         }, 3000);
                     }
@@ -1709,6 +1680,7 @@ var StartCompetition = {
                                     $('#dv-homePage').off('click').on('click', function () {
                                         $('#dv-partial').html(data.partial);
                                         StartCompetition.OnLoad();
+                                        StartCompetition.UpdateCompetitionStep('initial');
                                     });
                                 } else {
                                     if (data.finished) {
@@ -1724,6 +1696,7 @@ var StartCompetition = {
                                         }
                                         $('#dv-partial').html(data.partial);
                                         StartCompetition.OnLoad();
+                                        StartCompetition.UpdateCompetitionStep('initial');
                                     });
                                 }
 
@@ -1772,6 +1745,7 @@ var StartCompetition = {
                                     if (data.reset) {
                                         StartCompetition.ResetPlayed();
                                     }
+                                    StartCompetition.UpdateCompetitionStep('initial');
                                 });
 
                                 if (data.isScoreView) {
@@ -1942,7 +1916,6 @@ var StartCompetition = {
             window.location.href = publicURls.Logout;
         });
     },
-
     ShowDetailedScores: function () {
         $('.full-score-container').addClass('transitioning');
 
@@ -1950,7 +1923,6 @@ var StartCompetition = {
             StartCompetition.GetTeamScoreDetails(true);
         }, 300);
     },
-
     AnimateScoreReveal: function () {
         // Animate score numbers counting up
         $('.competition-team-score').each(function () {
@@ -2077,6 +2049,99 @@ var StartCompetition = {
                 //GeneralClass.ShowErrorAlert(globalResources.ErrorOccurred);
             }
         });
+    },
+    UpdateCompetitionStep: function (step) {
+        var data = new FormData();
+        data.append("Id", $('#competitionId').val());
+        data.append("CityMallPlayed", CityMallPlayed.join(','));
+        data.append("OtherTeamPlayed", OtherTeamPlayed.join(','));
+        data.append("IsBattled", isBattleMode);
+
+        if (playersInCompetition.CityMallPlayer != '') {
+            data.append("cityMallSelectedId", playersInCompetition.CityMallPlayer);
+        }
+        if (playersInCompetition.OtherPlayer != '') {
+            data.append("OtherTeamSelectedId", playersInCompetition.OtherPlayer);
+        }
+        if ($('#hdnQuestionId').length > 0 && $('#hdnQuestionId').val() != '') {
+            data.append("QuestionId", $('#hdnQuestionId').val());
+        }
+
+        data.append("CurrentStep", step);
+
+        $.ajax({
+            type: 'POST',
+            url: publicURls.UpdateCurrentStep,
+            dataType: 'json',
+            data: data,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+            },
+            error: function (e) {
+            }
+        });
+    },
+    ReadDataFromCurrentCompetition: function () {
+        var competitionDataElement = document.getElementById('competitionData');
+        if (competitionDataElement) {
+            // Get battle mode
+            //isBattleMode = competitionDataElement.dataset.isBattled === 'true';
+
+            // Parse CityMall played players
+            var cityMallPlayedStr = competitionDataElement.dataset.citymallPlayed;
+            if (cityMallPlayedStr) {
+                CityMallPlayed = cityMallPlayedStr.split(',')
+                    .map(id => parseInt(id.trim()))
+                    .filter(id => !isNaN(id) && id > 0);
+            }
+
+            // Parse OtherTeam played players
+            var otherTeamPlayedStr = competitionDataElement.dataset.otherteamPlayed;
+            if (otherTeamPlayedStr) {
+                OtherTeamPlayed = otherTeamPlayedStr.split(',')
+                    .map(id => parseInt(id.trim()))
+                    .filter(id => !isNaN(id) && id > 0);
+            }
+
+            // Get other values
+            var runButtleMode = competitionDataElement.dataset.currentStep == 'initial' || competitionDataElement.dataset.currentStep == 'battle-mode';
+            if (competitionDataElement.dataset.citymallSelected != '') {
+                playersInCompetition.CityMallPlayer = competitionDataElement.dataset.citymallSelected;
+                if (runButtleMode) {
+                    const playerCityMallDivSelected = document.querySelector('[data-player-Id="' + playersInCompetition.CityMallPlayer + '"]');
+                    StartCompetition.SelectCityMallPlayer($(playerCityMallDivSelected));
+                }
+            }
+            if (competitionDataElement.dataset.otherteamSelected != '') {
+                playersInCompetition.OtherPlayer = competitionDataElement.dataset.otherteamSelected;
+                if (runButtleMode) {
+                    const playerOtherDivSelected = document.querySelector('[data-player-Id="' + playersInCompetition.OtherPlayer + '"]');
+                    StartCompetition.SelectOtherTeamPlayer($(playerOtherDivSelected));
+                }
+            }
+
+
+            if (competitionDataElement.dataset.currentStep == 'categories') {
+                //StartCompetition.UpdateCompetitionStep('categories');
+                $('.select-category').on('click', function (e) {
+                    var elem = e.currentTarget;
+                    var categoryId = $(elem).attr('data-Id');
+                    StartCompetition.GoToQuestion(categoryId);
+                });
+            }
+            else if (competitionDataElement.dataset.currentStep == 'question') {
+                selectedAnswer = null;
+                StartCompetition.RenderEventOnGetQuestion();
+                var selectedCategoryId = competitionDataElement.dataset.categoryId;
+                $('#btn-change-question').attr('data', 'val-categoryId').val(selectedCategoryId);
+                $('#btn-change-question').on('click', function (e) {
+                    StartCompetition.ChangeQuestion();
+                });
+            }
+
+            return true;
+        }
     }
 }
 

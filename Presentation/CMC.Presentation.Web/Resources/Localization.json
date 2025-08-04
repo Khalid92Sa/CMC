@@ -1211,6 +1211,13 @@
     }
   },
   {
+    "Key": "AddedInDated",
+    "LocalizedValue": {
+      "en-US": "Added in date",
+      "ar-JO": "أضيفت بتاريخ"
+    }
+  },
+  {
     "Key": "ArchiveQuestions",
     "LocalizedValue": {
       "en-US": "Archive questions",
@@ -1528,7 +1535,7 @@
   {
     "Key": "DownloadTemplateText",
     "LocalizedValue": {
-      "en-US": "Don't have a template?",
+      "en-US": "Dont have a template?",
       "ar-JO": "ليس لديك قالب؟"
     }
   },

@@ -108,5 +108,7 @@ namespace CMC.Presentation.Application.Services.Competitions
         /// <param name="playerId"></param>
         /// <returns></returns>
         Task<Response<CompetitionsPlayerDTO>> GetPlayerScoreDetails(int competitionId,int playerId);
+
+        Task<Response> UpdateCompeititonState(CompetitionStartDTO competitionStartDTO);
     }
 }

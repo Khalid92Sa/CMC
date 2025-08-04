@@ -53,6 +53,10 @@ namespace CMC.Presentation.Domain.Entities
         public DateTime? ArchiveFromDate { get; set; } // For date range archive
         public DateTime? ArchiveToDate { get; set; } // For date range archive
 
+        public string CurrentStep { get; set; }
+        public string StateData { get; set; }
+        public DateTime? LastStateUpdate { get; set; }
+
         public virtual ICollection<CompetitionQuestion> CompetitionQuestions { get; set; }
     }
 }

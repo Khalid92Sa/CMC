@@ -403,25 +403,59 @@ namespace CMC.Presentation.Application.Services.Questions
         {
             try
             {
-                bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
+                bool isAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
+                var response = new PagedResult<QuestionListVM>();
 
-                PagedResult<QuestionListVM> response = new PagedResult<QuestionListVM>();
-                var questions = _questionRepository.GetAll(a => a.CategoryID == searchQuestionDTO.CategoryId && a.IsDeleted != true && a.IsArchived != true).AsQueryable();
+                // Get base query with category and soft delete filters
+                var questions = _questionRepository.GetAll(a => a.CategoryID == searchQuestionDTO.CategoryId
+                    && a.IsDeleted != true
+                    && a.IsArchived != true).AsQueryable();
 
-                var result = questions
-                        .WhereIf(!string.IsNullOrEmpty(searchQuestionDTO.QuestionText) && IsAr, a => a.TextAr.Contains(searchQuestionDTO.QuestionText))
-                        .WhereIf(!string.IsNullOrEmpty(searchQuestionDTO.QuestionText) && !IsAr, a => a.TextEn.Contains(searchQuestionDTO.QuestionText))
-                        .OrderByDescending(a => a.CreatedOn)
-                        .ToQueryResultAsync(searchQuestionDTO.PageNumber, searchQuestionDTO.PageSize);
+                // Apply text search filters based on language
+                if (!string.IsNullOrEmpty(searchQuestionDTO.QuestionText))
+                {
+                    questions = isAr
+                        ? questions.Where(a => a.TextAr.Contains(searchQuestionDTO.QuestionText))
+                        : questions.Where(a => a.TextEn.Contains(searchQuestionDTO.QuestionText));
+                }
 
-                response.PageSize = result.Result.PageSize;
-                response.CurrentPage = result.Result.CurrentPage;
-                response.TotalCount = result.Result.TotalCount;
-                response.BrokenRules = result.Result.BrokenRules;
-                response.Data = result.Result.Data.Select(x => new QuestionListVM
+                // Apply date filtering and sorting
+                if (!string.IsNullOrEmpty(searchQuestionDTO.Date))
+                {
+                    // Parse the date and get start and end of day
+                    DateTime dateStart = Convert.ToDateTime(searchQuestionDTO.Date).Date;
+                    DateTime dateEnd = dateStart.AddDays(1);
+
+                    // Filter questions from the specified date onwards
+                    questions = questions.Where(q => q.CreatedOn >= dateStart);
+
+                    // Apply conditional sorting:
+                    // - Questions created on the specific day: order by Id ASC
+                    // - Questions created after that day: order by CreatedOn DESC
+                    questions = questions
+                        .OrderBy(q => q.CreatedOn >= dateEnd ? 1 : 0) // Same day questions first
+                        .ThenBy(q => q.CreatedOn < dateEnd ? q.Id : 0) // Order by Id ASC for same day
+                        .ThenByDescending(q => q.CreatedOn); // Order by CreatedOn DESC for later dates
+                }
+                else
+                {
+                    // No date filter: order all by CreatedOn DESC
+                    questions = questions.OrderByDescending(q => q.CreatedOn);
+                }
+
+                // Apply pagination
+                var result = await questions
+                    .ToQueryResultAsync(searchQuestionDTO.PageNumber, searchQuestionDTO.PageSize);
+
+                // Map to response
+                response.PageSize = result.PageSize;
+                response.CurrentPage = result.CurrentPage;
+                response.TotalCount = result.TotalCount;
+                response.BrokenRules = result.BrokenRules;
+                response.Data = result.Data.Select(x => new QuestionListVM
                 {
                     Id = x.Id,
-                    Text = IsAr ? x.TextAr : x.TextEn,
+                    Text = isAr ? x.TextAr : x.TextEn,
                 });
 
                 return response;
@@ -429,7 +463,7 @@ namespace CMC.Presentation.Application.Services.Questions
             catch (Exception ex)
             {
                 await _logger.LogError(ex, "GetAllQuestions", searchQuestionDTO, null, false);
-                throw ex;
+                throw;
             }
         }
 
@@ -879,15 +913,15 @@ namespace CMC.Presentation.Application.Services.Questions
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        public async Task<Response> ArchiveQuestions(int type)
+        public async Task<Response> ArchiveQuestions(int type, int categoryId)
         {
             try
             {
                 var isArchived = type == 1;
 
                 var rowsAffected = await _questionRepository.ExecuteSqlRawAsync(
-                    "UPDATE [CMC].[Questions] SET IsArchived = {0} WHERE IsDeleted != 1 OR IsDeleted IS NULL",
-                    isArchived);
+                    "UPDATE [CMC].[Questions] SET IsArchived = {0} WHERE CategoryID = {1} AND IsDeleted != 1 OR IsDeleted IS NULL",
+                    isArchived,categoryId);
 
                 return new Response() { Succeeded = true, Message = "Success" };
             }

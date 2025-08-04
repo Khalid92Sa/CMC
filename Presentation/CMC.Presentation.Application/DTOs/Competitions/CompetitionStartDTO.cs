@@ -26,6 +26,14 @@ namespace CMC.Presentation.Application.DTOs.Competitions
         public int CurrentRound { get; set; }
         public int RoundTime { get; set; }
         public int RoundPoints { get; set; }
+
+        public string CityMallPlayed { get; set; }
+        public string OtherTeamPlayed { get; set; }
+        public bool IsBattled { get; set; }
+        public int cityMallSelectedId { get; set; }
+        public int OtherTeamSelectedId { get; set; }
+        public int QuestionId { get; set; }
+        public string CurrentStep { get; set; }
     }
 
     public class CompetitionsPlayerDTO

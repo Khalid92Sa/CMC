@@ -24,7 +24,7 @@
             @foreach (var category in Model.Categories)
             {
                 string categoryName = IsAr ? category.NameAr : category.NameEn;
-                <div class="category-card glass-card">
+                <div class="category-card glass-card select-category" data-Id="@category.Id">
                     <div class="category-title">
                         @categoryName
                     </div>
@@ -35,9 +35,9 @@
                         }
                         <img src="@imgPath" alt="@categoryName" class="category-image" />
                     </div>
-                    <button class="category-button select-category" data-Id="@category.Id">
+                    @* <button class="category-button select-category" data-Id="@category.Id">
                         @Localizer["ChooseCategory"]
-                    </button>
+                    </button> *@
                 </div>
             }
         </div>

@@ -276,11 +276,11 @@ namespace CMC.Presentation.Web.Controllers
 
         [HttpGet]
         [RolePermission(PermissionCodes.WebQuestionsView)]
-        public async Task<IActionResult> ArchiveQuestions(int type)
+        public async Task<IActionResult> ArchiveQuestions(int type,int categoryId)
         {
             try
             {
-                var result = await _questionsService.ArchiveQuestions(type);
+                var result = await _questionsService.ArchiveQuestions(type,categoryId);
                 return Json(new { isSuccess = result.Succeeded, msg = _localizer["QuestionsArchivedSuccessfully"].Value });
             }
             catch (Exception ex)

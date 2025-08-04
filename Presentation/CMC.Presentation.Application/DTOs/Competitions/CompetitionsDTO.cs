@@ -1,5 +1,6 @@
 ﻿using CMC.Kernel.Infrastructure.Caching.Model;
 using CMC.Presentation.Application.DTOs.Players;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -46,6 +47,9 @@ namespace CMC.Presentation.Application.DTOs.Competitions
         public DateTime? ArchiveFromDate { get; set; }
         public DateTime? ArchiveToDate { get; set; }
 
+
+        public CompetitionStartDTO CompetitionStartDTO { get; set; }
+        public string CurrentStep { get; set; }
 
         public List<LookupModel> Categories { get; set; } = new List<LookupModel>();
         public List<LookupModel> QuestionArchiveType { get; set; } = new List<LookupModel>();

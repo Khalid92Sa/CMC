@@ -9,5 +9,6 @@ namespace CMC.Presentation.Application.DTOs.Questions
     {
         public int CategoryId { get; set; }
         public string QuestionText { get; set; }
+        public string Date { get; set; }
     }
 }

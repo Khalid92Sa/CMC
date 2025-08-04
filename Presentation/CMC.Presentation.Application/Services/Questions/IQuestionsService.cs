@@ -78,7 +78,7 @@ namespace CMC.Presentation.Application.Services.Questions
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<Response> ArchiveQuestions(int type);
+        Task<Response> ArchiveQuestions(int type,int categoryId);
         /// <summary>
         /// Get Random question for category in competition
         /// </summary>

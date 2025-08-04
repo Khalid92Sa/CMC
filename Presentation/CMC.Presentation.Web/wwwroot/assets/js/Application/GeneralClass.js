@@ -38,6 +38,8 @@ var GeneralClass = {
                 console.log('AJAX Error:', xhr.responseText);
                 console.log('Status:', status);
                 console.log('Error:', error);
+                console.log('Response Headers:', xhr.getAllResponseHeaders());
+                console.log('Response Text:', xhr.responseText);
             }
         });
     },

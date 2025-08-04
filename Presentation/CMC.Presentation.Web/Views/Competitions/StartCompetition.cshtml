@@ -1,5 +1,7 @@
 ﻿@model CMC.Presentation.Application.DTOs.Competitions.CompetitionStartDTO
 @using CMC.Kernel.Core.Constants
+@using CMC.Presentation.Application.DTOs.Competitions
+@using Newtonsoft.Json
 
 @{
     ViewData["Title"] = "";
@@ -7,21 +9,56 @@
     string baseURL = configuration.GetValue<string>("BaseURL");
     Layout = "~/Views/Shared/_CompetitionLayout.cshtml";
     bool IsTest = configuration.GetValue<bool>("IsTest");
+
+    var currentCompetition = ViewData["CurrentCompetition"] as CompetitionStateDto;
+    string competitionStateJson = currentCompetition != null ?
+        JsonConvert.SerializeObject(currentCompetition) : "null";
 }
 
+<input type="hidden" id="competitionId" value="@Model.Id" />
+
 <div class="container-fluid py-3 main-padding d-flex flex-grow-1 position-relative  align-items-start">
-  <section id="dv-partial" style="width:100%">
+    <section id="dv-partial" style="width:100%">
         @if (ViewData["Partial"] != null)
         {
             @Html.Raw(ViewData["Partial"].ToString())
         }
-  </section>
-       
+    </section>
+
 </div>
+
+@if (currentCompetition != null)
+{
+    <div id="competitionData" 
+         data-id="@currentCompetition.Id"
+         data-is-battled="@currentCompetition.IsBattled.ToString().ToLower()"
+         data-citymall-played="@(currentCompetition.CityMallPlayed ?? "")"
+         data-otherteam-played="@(currentCompetition.OtherTeamPlayed ?? "")"
+         data-citymall-selected="@currentCompetition.cityMallSelectedId"
+         data-otherteam-selected="@currentCompetition.OtherTeamSelectedId"
+         data-question-id="@currentCompetition.QuestionId"
+         data-category-id="@currentCompetition.CagegoryId"
+         data-current-step="@(currentCompetition.CurrentStep ?? "")"
+         style="display: none;">
+    </div>
+}
+
 
 <script src="~/assets/js/Application/Competition.js"></script>
 <script>
-    var _isTest = '@IsTest.ToString().ToLower()' == 'true';
-    debugger;
-    StartCompetition.OnLoad();
+    var isFinalCompetition = '@Model.IsFinalCompetition.ToString().ToLower()' == 'true';
+    var isRoundCompetition = '@Model.IsQuestionsTypeIsRound.ToString().ToLower()' == 'true';
+    var isBattleMode = isFinalCompetition; // In final competition, always start in battle mode
+    var isAlreadyRun = $('#competitionData').length > 0;
 </script>
+<script>
+    var _isTest = '@IsTest.ToString().ToLower()' == 'true';
+    StartCompetition.OnLoad();
+    $(document).ready(function () {
+        // Load the data
+        if(isAlreadyRun){
+            StartCompetition.ReadDataFromCurrentCompetition();
+        }
+    });
+</script>
+
