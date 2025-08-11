@@ -27,6 +27,8 @@ namespace CMC.Presentation.Application.DTOs.Competitions
         public int RoundTime { get; set; }
         public int RoundPoints { get; set; }
 
+
+        public bool IsSessionData { get; set; }
         public string CityMallPlayed { get; set; }
         public string OtherTeamPlayed { get; set; }
         public bool IsBattled { get; set; }

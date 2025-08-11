@@ -947,23 +947,17 @@ namespace CMC.Presentation.Application.Services.Competitions
                     }
 
 
-                    //Check start background
-                    //var attachmentBackground = await _attachmentRepository.GetAll(a => a.EntityId == 1 && a.EntityType == (int)AttachmentTypes.BackgroundImg).SingleOrDefaultAsync();
-                    //if (attachmentBackground != null)
-                    //    competitionStartDTO.StartBackground = Convert.ToBase64String(attachmentBackground.FileData);
-
-
                     competitionStartDTO.IsFinalCompetition = competition.IsFinalCompetition ?? false;
                     competitionStartDTO.IsQuestionsTypeIsRound = competition.CompetitionQuestionType == (int)CompetitionQuestionType.Rounds;
                     if (!competitionStartDTO.IsQuestionsTypeIsRound)
                         competitionStartDTO.QuestionPerPlayer = competition.QuestionForEachPlayer ?? 0;
-                    
+
                     competitionStartDTO.TotalRound = competition.RoundCount;
                     competitionStartDTO.CurrentRound = 1;
-                    
+
                     competitionStartDTO.RoundTime = competition.Round1Time ?? 0;
                     competitionStartDTO.RoundPoints = competition.Round1Points ?? 0;
-                    
+
                     competitionStartDTO.TeamCityMall = new List<CompetitionsPlayerDTO>();
                     competitionStartDTO.OtherTeam = new List<CompetitionsPlayerDTO>();
                     competitionStartDTO.Team1Name = competition.Team1.TeamName;
@@ -994,15 +988,15 @@ namespace CMC.Presentation.Application.Services.Competitions
                         if (IsCompetitionStartedBefore)
                             cityMallPlayer1.Points = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == cityMallPlayer1.Id).Sum(a => a.Point).Value;
 
-                        if (competition.Team1.Player1.HasProfilePicture == true)
-                        {
-                            var attachment = await _attachmentRepository.GetAll(a =>
-                                a.EntityId == cityMallPlayer1.Id &&
-                                a.EntityType == (int)AttachmentTypes.PlayerProfilePicture &&
-                                a.IsDeleted != true).SingleOrDefaultAsync();
+                        //if (competition.Team1.Player1.HasProfilePicture == true)
+                        //{
+                        //    var attachment = await _attachmentRepository.GetAll(a =>
+                        //        a.EntityId == cityMallPlayer1.Id &&
+                        //        a.EntityType == (int)AttachmentTypes.PlayerProfilePicture &&
+                        //        a.IsDeleted != true).SingleOrDefaultAsync();
 
-                            cityMallPlayer1.ProfilePicture = attachment != null ? Convert.ToBase64String(attachment.FileData) : null;
-                        }
+                        //    cityMallPlayer1.ProfilePicture = attachment != null ? Convert.ToBase64String(attachment.FileData) : null;
+                        //}
 
                         competitionStartDTO.TeamCityMall.Add(cityMallPlayer1);
                     }
@@ -1016,15 +1010,16 @@ namespace CMC.Presentation.Application.Services.Competitions
                         if (IsCompetitionStartedBefore)
                             cityMallPlayer2.Points = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == cityMallPlayer2.Id).Sum(a => a.Point).Value;
 
-                        if (competition.Team1.Player2.HasProfilePicture == true)
-                        {
-                            var attachment = await _attachmentRepository.GetAll(a =>
-                                a.EntityId == cityMallPlayer2.Id &&
-                                a.EntityType == (int)AttachmentTypes.PlayerProfilePicture &&
-                                a.IsDeleted != true).SingleOrDefaultAsync();
+                        //if (competition.Team1.Player2.HasProfilePicture == true)
+                        //{
+                        //    var attachment = await _attachmentRepository.GetAll(a =>
+                        //        a.EntityId == cityMallPlayer2.Id &&
+                        //        a.EntityType == (int)AttachmentTypes.PlayerProfilePicture &&
+                        //        a.IsDeleted != true).SingleOrDefaultAsync();
 
-                            cityMallPlayer2.ProfilePicture = attachment != null ? Convert.ToBase64String(attachment.FileData) : null;
-                        }
+                        //    cityMallPlayer2.ProfilePicture = attachment != null ? Convert.ToBase64String(attachment.FileData) : null;
+                        //}
+
                         competitionStartDTO.TeamCityMall.Add(cityMallPlayer2);
                     }
 
@@ -1036,16 +1031,17 @@ namespace CMC.Presentation.Application.Services.Competitions
                         cityMallPlayer3.Points = 0;
                         if (IsCompetitionStartedBefore)
                             cityMallPlayer3.Points = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == cityMallPlayer3.Id).Sum(a => a.Point).Value;
-                        
-                        if (competition.Team1.Player3.HasProfilePicture == true)
-                        {
-                            var attachment = await _attachmentRepository.GetAll(a =>
-                                a.EntityId == cityMallPlayer3.Id &&
-                                a.EntityType == (int)AttachmentTypes.PlayerProfilePicture &&
-                                a.IsDeleted != true).SingleOrDefaultAsync();
 
-                            cityMallPlayer3.ProfilePicture = attachment != null ? Convert.ToBase64String(attachment.FileData) : null;
-                        }
+                        //if (competition.Team1.Player3.HasProfilePicture == true)
+                        //{
+                        //    var attachment = await _attachmentRepository.GetAll(a =>
+                        //        a.EntityId == cityMallPlayer3.Id &&
+                        //        a.EntityType == (int)AttachmentTypes.PlayerProfilePicture &&
+                        //        a.IsDeleted != true).SingleOrDefaultAsync();
+
+                        //    cityMallPlayer3.ProfilePicture = attachment != null ? Convert.ToBase64String(attachment.FileData) : null;
+                        //}
+
                         competitionStartDTO.TeamCityMall.Add(cityMallPlayer3);
                     }
 
@@ -1058,15 +1054,15 @@ namespace CMC.Presentation.Application.Services.Competitions
                         if (IsCompetitionStartedBefore)
                             cityMallPlayer4.Points = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == cityMallPlayer4.Id).Sum(a => a.Point).Value;
 
-                        if (competition.Team1.Player4.HasProfilePicture == true)
-                        {
-                            var attachment = await _attachmentRepository.GetAll(a =>
-                                a.EntityId == cityMallPlayer4.Id &&
-                                a.EntityType == (int)AttachmentTypes.PlayerProfilePicture &&
-                                a.IsDeleted != true).SingleOrDefaultAsync();
+                        //if (competition.Team1.Player4.HasProfilePicture == true)
+                        //{
+                        //    var attachment = await _attachmentRepository.GetAll(a =>
+                        //        a.EntityId == cityMallPlayer4.Id &&
+                        //        a.EntityType == (int)AttachmentTypes.PlayerProfilePicture &&
+                        //        a.IsDeleted != true).SingleOrDefaultAsync();
 
-                            cityMallPlayer4.ProfilePicture = attachment != null ? Convert.ToBase64String(attachment.FileData) : null;
-                        }
+                        //    cityMallPlayer4.ProfilePicture = attachment != null ? Convert.ToBase64String(attachment.FileData) : null;
+                        //}
 
                         competitionStartDTO.TeamCityMall.Add(cityMallPlayer4);
                     }
@@ -1082,15 +1078,15 @@ namespace CMC.Presentation.Application.Services.Competitions
                         if (IsCompetitionStartedBefore)
                             otherPlayer1.Points = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == otherPlayer1.Id).Sum(a => a.Point).Value;
 
-                        if (competition.Team2.Player1.HasProfilePicture == true)
-                        {
-                            var attachment = await _attachmentRepository.GetAll(a =>
-                                a.EntityId == otherPlayer1.Id &&
-                                a.EntityType == (int)AttachmentTypes.PlayerProfilePicture &&
-                                a.IsDeleted != true).SingleOrDefaultAsync();
+                        //if (competition.Team2.Player1.HasProfilePicture == true)
+                        //{
+                        //    var attachment = await _attachmentRepository.GetAll(a =>
+                        //        a.EntityId == otherPlayer1.Id &&
+                        //        a.EntityType == (int)AttachmentTypes.PlayerProfilePicture &&
+                        //        a.IsDeleted != true).SingleOrDefaultAsync();
 
-                            otherPlayer1.ProfilePicture = attachment != null ? Convert.ToBase64String(attachment.FileData) : null;
-                        }
+                        //    otherPlayer1.ProfilePicture = attachment != null ? Convert.ToBase64String(attachment.FileData) : null;
+                        //}
 
                         competitionStartDTO.OtherTeam.Add(otherPlayer1);
                     }
@@ -1104,15 +1100,15 @@ namespace CMC.Presentation.Application.Services.Competitions
                         if (IsCompetitionStartedBefore)
                             otherPlayer2.Points = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == otherPlayer2.Id).Sum(a => a.Point).Value;
 
-                        if (competition.Team2.Player2.HasProfilePicture == true)
-                        {
-                            var attachment = await _attachmentRepository.GetAll(a =>
-                                a.EntityId == otherPlayer2.Id &&
-                                a.EntityType == (int)AttachmentTypes.PlayerProfilePicture &&
-                                a.IsDeleted != true).SingleOrDefaultAsync();
+                        //if (competition.Team2.Player2.HasProfilePicture == true)
+                        //{
+                        //    var attachment = await _attachmentRepository.GetAll(a =>
+                        //        a.EntityId == otherPlayer2.Id &&
+                        //        a.EntityType == (int)AttachmentTypes.PlayerProfilePicture &&
+                        //        a.IsDeleted != true).SingleOrDefaultAsync();
 
-                            otherPlayer2.ProfilePicture = attachment != null ? Convert.ToBase64String(attachment.FileData) : null;
-                        }
+                        //    otherPlayer2.ProfilePicture = attachment != null ? Convert.ToBase64String(attachment.FileData) : null;
+                        //}
 
                         competitionStartDTO.OtherTeam.Add(otherPlayer2);
 
@@ -1127,15 +1123,15 @@ namespace CMC.Presentation.Application.Services.Competitions
                         if (IsCompetitionStartedBefore)
                             otherPlayer3.Points = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == otherPlayer3.Id).Sum(a => a.Point).Value;
 
-                        if (competition.Team2.Player3.HasProfilePicture == true)
-                        {
-                            var attachment = await _attachmentRepository.GetAll(a =>
-                                a.EntityId == otherPlayer3.Id &&
-                                a.EntityType == (int)AttachmentTypes.PlayerProfilePicture &&
-                                a.IsDeleted != true).SingleOrDefaultAsync();
+                        //if (competition.Team2.Player3.HasProfilePicture == true)
+                        //{
+                        //    var attachment = await _attachmentRepository.GetAll(a =>
+                        //        a.EntityId == otherPlayer3.Id &&
+                        //        a.EntityType == (int)AttachmentTypes.PlayerProfilePicture &&
+                        //        a.IsDeleted != true).SingleOrDefaultAsync();
 
-                            otherPlayer3.ProfilePicture = attachment != null ? Convert.ToBase64String(attachment.FileData) : null;
-                        }
+                        //    otherPlayer3.ProfilePicture = attachment != null ? Convert.ToBase64String(attachment.FileData) : null;
+                        //}
 
                         competitionStartDTO.OtherTeam.Add(otherPlayer3);
                     }
@@ -1149,15 +1145,15 @@ namespace CMC.Presentation.Application.Services.Competitions
                         if (IsCompetitionStartedBefore)
                             otherPlayer4.Points = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == otherPlayer4.Id).Sum(a => a.Point).Value;
 
-                        if (competition.Team2.Player4.HasProfilePicture == true)
-                        {
-                            var attachment = await _attachmentRepository.GetAll(a =>
-                                a.EntityId == otherPlayer4.Id &&
-                                a.EntityType == (int)AttachmentTypes.PlayerProfilePicture &&
-                                a.IsDeleted != true).SingleOrDefaultAsync();
+                        //if (competition.Team2.Player4.HasProfilePicture == true)
+                        //{
+                        //    var attachment = await _attachmentRepository.GetAll(a =>
+                        //        a.EntityId == otherPlayer4.Id &&
+                        //        a.EntityType == (int)AttachmentTypes.PlayerProfilePicture &&
+                        //        a.IsDeleted != true).SingleOrDefaultAsync();
 
-                            otherPlayer4.ProfilePicture = attachment != null ? Convert.ToBase64String(attachment.FileData) : null;
-                        }
+                        //    otherPlayer4.ProfilePicture = attachment != null ? Convert.ToBase64String(attachment.FileData) : null;
+                        //}
 
                         competitionStartDTO.OtherTeam.Add(otherPlayer4);
                     }
@@ -1175,17 +1171,18 @@ namespace CMC.Presentation.Application.Services.Competitions
 
 
 
-                    if(competition.StateData!=null)
+                    if (competition.StateData != null)
                     {
                         _httpContextAccessor.HttpContext.Session.SetString("CompetitionStart", competition.StateData);
                         competitionStartDTO = JsonConvert.DeserializeObject<CompetitionStartDTO>(competition.StateData);
+                        competitionStartDTO.IsSessionData = true;
                     }
                     else
                     {
                         var competitonString = JsonConvert.SerializeObject(competitionStartDTO);
                         _httpContextAccessor.HttpContext.Session.SetString("CompetitionStart", competitonString);
                     }
-                    
+
 
                     return new Response<CompetitionStartDTO>()
                     {
@@ -1434,7 +1431,11 @@ namespace CMC.Presentation.Application.Services.Competitions
         {
             try
             {
-                Competition competition = await _competitionRepository.FindAsync(competitionStartDTO.Id);
+                Competition competition = await _competitionRepository.GetFirstOrDefaultAsync(
+                    selector: x => x,
+                    predicate: x => x.Id == competitionStartDTO.Id,
+                    disableTracking: true);
+                
                 if (competition == null)
                     return new Response() { Succeeded = false, Message = "competition not found", StatusCode = (int)HttpStatusCode.NotFound };
 
@@ -1455,6 +1456,93 @@ namespace CMC.Presentation.Application.Services.Competitions
             {
                 await _logger.LogError(ex, "UpdateCompeititonState", $"competitionId:{competitionStartDTO.Id}", null, false);
                 return new Response<CompetitionsPlayerDTO>()
+                {
+                    Message = ex.Message
+                };
+            }
+        }
+
+        public async Task<Response<string>> GetBackgroundAttachment()
+        {
+            try
+            {
+                //Check start background
+                var attachmentBackground = await _attachmentRepository.GetAll(a => a.EntityId == 1 && a.EntityType == (int)AttachmentTypes.BackgroundImg).SingleOrDefaultAsync();
+                if (attachmentBackground != null)
+                {
+                    string file = Convert.ToBase64String(attachmentBackground.FileData);
+                    return new Response<string>()
+                    {
+                        Succeeded = true,
+                        Data = file,
+                        StatusCode = (int)HttpStatusCode.Ok
+                    };
+                }
+
+                return new Response<string>()
+                {
+                    Succeeded = false,
+                    Message = "File not found"
+                };
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogError(ex, "GetBackgroundAttachment", null, null, false);
+                return new Response<string>()
+                {
+                    Message = ex.Message
+                };
+            }
+        }
+
+        public async Task<Response<CompetitionStartDTO>> GetPlayersProfilePictures(CompetitionStartDTO competitionStartDTO)
+        {
+            try
+            {
+                List<int> team1 = competitionStartDTO.TeamCityMall.Select(a=>a.Id).ToList();
+                List<int> team2 = competitionStartDTO.OtherTeam.Select(a => a.Id).ToList();
+
+                var players1 = await _playerRepository.GetAll(a => team1.Contains(a.Id) && a.HasProfilePicture == true).Select(a => a.Id).ToListAsync();
+                var players2 = await _playerRepository.GetAll(a => team2.Contains(a.Id) && a.HasProfilePicture == true).Select(a => a.Id).ToListAsync();
+
+                foreach(var player in players1)
+                {
+                    var competitionPlayer = competitionStartDTO.TeamCityMall.FirstOrDefault(a => a.Id == player);
+                    if (competitionPlayer != null)
+                    {
+                        var attachment = await _attachmentRepository.GetAll(a =>
+                                                   a.EntityId == player &&
+                                                                              a.EntityType == (int)AttachmentTypes.PlayerProfilePicture &&
+                                                                                                         a.IsDeleted != true).SingleOrDefaultAsync();
+
+                        competitionPlayer.ProfilePicture = attachment != null ? Convert.ToBase64String(attachment.FileData) : null;
+                    }
+                }
+
+                foreach(var player in players2)
+                {
+                    var competitionPlayer = competitionStartDTO.OtherTeam.FirstOrDefault(a => a.Id == player);
+                    if (competitionPlayer != null)
+                    {
+                        var attachment = await _attachmentRepository.GetAll(a =>
+                                                   a.EntityId == player &&
+                                                                              a.EntityType == (int)AttachmentTypes.PlayerProfilePicture &&
+                                                                                                         a.IsDeleted != true).SingleOrDefaultAsync();
+
+                        competitionPlayer.ProfilePicture = attachment != null ? Convert.ToBase64String(attachment.FileData) : null;
+                    }
+                }
+
+                return new Response<CompetitionStartDTO>()
+                {
+                    Data = competitionStartDTO,
+                    Succeeded = true
+                };
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogError(ex, "GetBackgroundAttachment", $"CompetitionId:{competitionStartDTO.Id}", null, false);
+                return new Response<CompetitionStartDTO>()
                 {
                     Message = ex.Message
                 };

@@ -43,6 +43,7 @@ namespace CMC.Presentation.Web.Controllers
         readonly IQuestionsService _questionsService;
         readonly IUserService _userService;
         readonly ICompositeViewEngine _viewEngine;
+        readonly ICompetitionUpdateQueue _competitionUpdateQueue;
 
 
         public static IHttpContextAccessor _httpContextAccessor { get { return new HttpContextAccessor(); } }
@@ -55,6 +56,7 @@ namespace CMC.Presentation.Web.Controllers
             IStringLocalizer<PlayersController> localizer,
             ISettingsService settingsService,
             IQuestionsService questionsService,
+            ICompetitionUpdateQueue competitionUpdateQueue,
             ICompositeViewEngine viewEngine)
         {
             _competitionsService = competitionsService;
@@ -65,6 +67,7 @@ namespace CMC.Presentation.Web.Controllers
             _localizer = localizer;
             _settingService = settingsService;
             _questionsService = questionsService;
+            _competitionUpdateQueue = competitionUpdateQueue;
             _viewEngine = viewEngine;
 
         }
@@ -214,35 +217,46 @@ namespace CMC.Presentation.Web.Controllers
                 string viewContent = string.Empty;
                 if (competitionStart.Succeeded)
                 {
-                    var currentCompetition = await _competitionsService.GetCompetition(id);
-                    if (currentCompetition.Succeeded && currentCompetition.Data.CompetitionStartDTO != null)
+                    if (competitionStart.Data.IsSessionData)
                     {
                         CompetitionStateDto competitionStateDto = new CompetitionStateDto()
                         {
-                            Id = currentCompetition.Data.Id.Value,
-                            CityMallPlayed = currentCompetition.Data.CompetitionStartDTO.CityMallPlayed,
-                            CurrentStep = currentCompetition.Data.CompetitionStartDTO.CurrentStep,
-                            cityMallSelectedId = currentCompetition.Data.CompetitionStartDTO.cityMallSelectedId,
-                            IsBattled = currentCompetition.Data.CompetitionStartDTO.IsBattled,
-                            OtherTeamPlayed = currentCompetition.Data.CompetitionStartDTO.OtherTeamPlayed,
-                            OtherTeamSelectedId = currentCompetition.Data.CompetitionStartDTO.OtherTeamSelectedId,
-                            QuestionId = currentCompetition.Data.CompetitionStartDTO.QuestionId,
-                            CagegoryId = currentCompetition.Data.CompetitionStartDTO.CurrentQuestion?.CategoryId ?? 0
+                            Id = competitionStart.Data.Id,
+                            CityMallPlayed = competitionStart.Data.CityMallPlayed,
+                            CurrentStep = competitionStart.Data.CurrentStep,
+                            cityMallSelectedId = competitionStart.Data.cityMallSelectedId,
+                            IsBattled = competitionStart.Data.IsBattled,
+                            OtherTeamPlayed = competitionStart.Data.OtherTeamPlayed,
+                            OtherTeamSelectedId = competitionStart.Data.OtherTeamSelectedId,
+                            QuestionId = competitionStart.Data.QuestionId,
+                            CagegoryId = competitionStart.Data.CurrentQuestion?.CategoryId ?? 0
                         };
 
                         ViewData["CurrentCompetition"] = competitionStateDto;
+
+                        // Get Background competition
+                        var bgCompetition = await _competitionsService.GetBackgroundAttachment();
+                        if (bgCompetition.Succeeded && !string.IsNullOrEmpty(bgCompetition.Data))
+                            competitionStart.Data.StartBackground = bgCompetition.Data;
+
+
+                        //Get Players Profile pictures
+                        var playersProfileCompetition = await _competitionsService.GetPlayersProfilePictures(competitionStart.Data);
+                        if (playersProfileCompetition.Succeeded)
+                            competitionStart.Data = playersProfileCompetition.Data;
+
                         // competition was already started
-                        if (currentCompetition.Data.CurrentStep == "initial" || currentCompetition.Data.CurrentStep == "battle-mode")
+                        if (competitionStart.Data.CurrentStep == "initial" || competitionStart.Data.CurrentStep == "battle-mode")
                         {
                             PartialViewResult otpPartialView = PartialView("PartialViews/_AllPlayers", competitionStart.Data);
                             viewContent = ConvertViewToString(this.ControllerContext, otpPartialView, _viewEngine);
                         }
-                        else if (currentCompetition.Data.CurrentStep == "categories")
+                        else if (competitionStart.Data.CurrentStep == "categories")
                         {
                             PartialViewResult otpPartialView = PartialView("PartialViews/_SelectCategory", competitionStart.Data);
                             viewContent = ConvertViewToString(this.ControllerContext, otpPartialView, _viewEngine);
                         }
-                        else if(currentCompetition.Data.CurrentStep == "question")
+                        else if (competitionStart.Data.CurrentStep == "question")
                         {
                             PartialViewResult otpPartialView = PartialView("PartialViews/_Question", competitionStart.Data);
                             viewContent = ConvertViewToString(this.ControllerContext, otpPartialView, _viewEngine);
@@ -250,10 +264,22 @@ namespace CMC.Presentation.Web.Controllers
                     }
                     else
                     {
+                        // Get Background competition
+                        var bgCompetition = await _competitionsService.GetBackgroundAttachment();
+                        if (bgCompetition.Succeeded && !string.IsNullOrEmpty(bgCompetition.Data))
+                            competitionStart.Data.StartBackground = bgCompetition.Data;
+
+
+                        //Get Players Profile pictures
+                        var playersProfileCompetition = await _competitionsService.GetPlayersProfilePictures(competitionStart.Data);
+                        if (playersProfileCompetition.Succeeded)
+                            competitionStart.Data = playersProfileCompetition.Data;
+
+
                         PartialViewResult otpPartialView = PartialView("PartialViews/_AllPlayers", competitionStart.Data);
                         viewContent = ConvertViewToString(this.ControllerContext, otpPartialView, _viewEngine);
-                       
                     }
+
                     ViewData["Partial"] = viewContent;
                     return View(competitionStart.Data);
                 }
@@ -326,6 +352,11 @@ namespace CMC.Presentation.Web.Controllers
                 var competitonString = JsonConvert.SerializeObject(currentCompetition);
                 _httpContextAccessor.HttpContext.Session.SetString("CompetitionStart", competitonString);
 
+                //Get Players Profile pictures
+                var playersProfileCompetition = await _competitionsService.GetPlayersProfilePictures(currentCompetition);
+                if (playersProfileCompetition.Succeeded)
+                    currentCompetition = playersProfileCompetition.Data;
+
                 PartialViewResult otpPartialView = PartialView("PartialViews/_PlayerVsPlayer", currentCompetition);
                 string viewContent = ConvertViewToString(this.ControllerContext, otpPartialView, _viewEngine);
 
@@ -396,6 +427,11 @@ namespace CMC.Presentation.Web.Controllers
                 var competitonString = JsonConvert.SerializeObject(currentCompetition);
                 _httpContextAccessor.HttpContext.Session.SetString("CompetitionStart", competitonString);
 
+                //Get Players Profile pictures
+                var playersProfileCompetition = await _competitionsService.GetPlayersProfilePictures(currentCompetition);
+                if (playersProfileCompetition.Succeeded)
+                    currentCompetition = playersProfileCompetition.Data;
+
                 PartialViewResult otpPartialView = PartialView("PartialViews/_Question", currentCompetition);
                 string viewContent = ConvertViewToString(this.ControllerContext, otpPartialView, _viewEngine);
 
@@ -452,6 +488,12 @@ namespace CMC.Presentation.Web.Controllers
             {
                 bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
                 var currentCompetition = JsonConvert.DeserializeObject<CompetitionStartDTO>(_httpContextAccessor.HttpContext.Session.GetString("CompetitionStart"));
+
+                //Get Players Profile pictures
+                var playersProfileCompetition = await _competitionsService.GetPlayersProfilePictures(currentCompetition);
+                if (playersProfileCompetition.Succeeded)
+                    currentCompetition = playersProfileCompetition.Data;
+
 
                 //Get Specific player who answered on question
                 CompetitionsPlayerDTO competitionsPlayerDTO = null;
@@ -669,6 +711,9 @@ namespace CMC.Presentation.Web.Controllers
                         roundScoresView = ConvertViewToString(this.ControllerContext, roundScoresPartial, _viewEngine);
                     }
 
+                    currentCompetition.TeamCityMall.ForEach(a => a.ProfilePicture = null);
+                    currentCompetition.OtherTeam.ForEach(a => a.ProfilePicture = null);
+
                     var competitonString = JsonConvert.SerializeObject(currentCompetition);
                     _httpContextAccessor.HttpContext.Session.SetString("CompetitionStart", competitonString);
 
@@ -794,6 +839,9 @@ namespace CMC.Presentation.Web.Controllers
                         PartialViewResult otpPartialView = PartialView("PartialViews/_AllPlayers", currentCompetition);
                         viewContent = ConvertViewToString(this.ControllerContext, otpPartialView, _viewEngine);
                     }
+
+                    currentCompetition.TeamCityMall.ForEach(a => a.ProfilePicture = null);
+                    currentCompetition.OtherTeam.ForEach(a => a.ProfilePicture = null);
 
                     var competitonString = JsonConvert.SerializeObject(currentCompetition);
                     _httpContextAccessor.HttpContext.Session.SetString("CompetitionStart", competitonString);
@@ -974,11 +1022,17 @@ namespace CMC.Presentation.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateCurrentStep(CompetitionStateDto competitionStateDto)
+        public IActionResult UpdateCurrentStep(CompetitionStateDto competitionStateDto)
         {
             try
             {
-                var currentCompetition = JsonConvert.DeserializeObject<CompetitionStartDTO>(_httpContextAccessor.HttpContext.Session.GetString("CompetitionStart"));
+                var sessionData = _httpContextAccessor.HttpContext.Session.GetString("CompetitionStart");
+                if (string.IsNullOrEmpty(sessionData))
+                {
+                    return Json(new { isSuccess = false, msg = "Session expired" });
+                }
+
+                var currentCompetition = JsonConvert.DeserializeObject<CompetitionStartDTO>(sessionData);
 
                 if (competitionStateDto != null && competitionStateDto.Id != 0)
                 {
@@ -991,13 +1045,20 @@ namespace CMC.Presentation.Web.Controllers
                     currentCompetition.QuestionId = competitionStateDto.QuestionId;
                 }
 
-                var response = await _competitionsService.UpdateCompeititonState(currentCompetition);
-                return Json(new { isSuccess = response.Succeeded, msg = response.Message });
+                // Update session immediately
+                var updatedSessionData = JsonConvert.SerializeObject(currentCompetition);
+                _httpContextAccessor.HttpContext.Session.SetString("CompetitionStart", updatedSessionData);
+
+                // Queue the database update to avoid tracking issues
+                _competitionUpdateQueue.QueueUpdate(currentCompetition);
+
+                // Return immediately without waiting
+                return Json(new { isSuccess = true, msg = "Queued for update" });
             }
             catch (Exception ex)
             {
-                await _logger.LogError(ex, "UpdateCurrentStep", competitionStateDto, null, false);
-                return Json(new { isSuccess = false });
+                _logger.LogError(ex, "UpdateCurrentStep", competitionStateDto, null, false);
+                return Json(new { isSuccess = false, msg = "Error occurred" });
             }
         }
     }

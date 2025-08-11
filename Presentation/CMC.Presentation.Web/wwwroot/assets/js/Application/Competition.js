@@ -2069,6 +2069,7 @@ var StartCompetition = {
 
         data.append("CurrentStep", step);
 
+
         $.ajax({
             type: 'POST',
             url: publicURls.UpdateCurrentStep,

@@ -1,18 +1,19 @@
+using AutoMapper;
+using CMC.Kernel.Core.Configurations;
+using CMC.Kernel.Core.Helpers;
+using CMC.Kernel.Domain.Entities.Identity;
+using CMC.Kernel.Host.Base;
+using CMC.Kernel.Host.Base.Configurations;
+using CMC.Presentation.Application.DTOs.Identity;
+using CMC.Presentation.Application.Services.Competitions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
-using CMC.Kernel.Core.Configurations;
-using CMC.Kernel.Host.Base;
-using CMC.Kernel.Host.Base.Configurations;
-using AutoMapper;
-using CMC.Kernel.Domain.Entities.Identity;
-using CMC.Presentation.Application.DTOs.Identity;
-using CMC.Kernel.Core.Helpers;
-using Microsoft.Diagnostics.Tracing;
-using System;
-using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Server.IISIntegration;
+using Microsoft.Diagnostics.Tracing;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using System;
 
 namespace CMC.Presentation.Web
 {
@@ -24,6 +25,8 @@ namespace CMC.Presentation.Web
         {
             base.ConfigureAdditionalServices(services, config);
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddSingleton<ICompetitionUpdateQueue, CompetitionUpdateQueue>();
+            services.AddHostedService<CompetitionUpdateQueue>(provider => (CompetitionUpdateQueue)provider.GetService<ICompetitionUpdateQueue>());
             services.AddHttpContextAccessor();
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
             services.AddLogging();

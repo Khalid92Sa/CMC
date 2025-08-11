@@ -110,5 +110,9 @@ namespace CMC.Presentation.Application.Services.Competitions
         Task<Response<CompetitionsPlayerDTO>> GetPlayerScoreDetails(int competitionId,int playerId);
 
         Task<Response> UpdateCompeititonState(CompetitionStartDTO competitionStartDTO);
+
+        Task<Response<string>> GetBackgroundAttachment();
+
+        Task<Response<CompetitionStartDTO>> GetPlayersProfilePictures(CompetitionStartDTO  competitionStartDTO);
     }
 }
