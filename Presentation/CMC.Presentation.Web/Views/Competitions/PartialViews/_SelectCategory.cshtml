@@ -24,10 +24,17 @@
             @foreach (var category in Model.Categories)
             {
                 string categoryName = IsAr ? category.NameAr : category.NameEn;
+                string otherCategoryName = IsAr ? category.NameEn : category.NameAr;
                 <div class="category-card glass-card select-category" data-Id="@category.Id">
                     <div class="category-title">
                         @categoryName
                     </div>
+                    @if (!string.IsNullOrEmpty(otherCategoryName))
+                    {
+                        <div class="category-title">
+                            @otherCategoryName
+                        </div>
+                    }
                     <div class="category-image-container">
                         @{
                             string ApplicationName = configuration.GetValue<string>("ApplicationName");

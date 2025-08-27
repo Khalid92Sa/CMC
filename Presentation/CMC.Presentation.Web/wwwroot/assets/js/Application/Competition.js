@@ -1090,7 +1090,7 @@ var StartCompetition = {
         if (isQuestionFinished) {
             return;
         }
-
+        debugger;
         // Check if this player has already answered
         var playerAlreadyAnswered = false;
         if (playerId === 'dv-cityMall-player' && playerTimer.IsPlayerCityMallAnswered) {
@@ -1621,6 +1621,7 @@ var StartCompetition = {
                             StartCompetition.showWrongAnswerFeedback();
                             $('#notCorrectModal').modal('show');
                             InCorrectAnswerSound.play();
+                            playerTimer.IsFirstTime = false;
                         }
 
                         setTimeout(function () {
@@ -1724,7 +1725,7 @@ var StartCompetition = {
                             StartCompetition.showWrongAnswerFeedback();
                             $('#notCorrectModal').modal('show');
                             InCorrectAnswerSound.play();
-
+                            playerTimer.IsFirstTime = false;
                             setTimeout(function () {
                                 $('#notCorrectModal').modal('hide');
                             }, 4000);
