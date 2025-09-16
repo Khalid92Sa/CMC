@@ -8,6 +8,6 @@ namespace CMC.Presentation.Application.Services.Competitions
 {
     public interface ICompetitionUpdateQueue
     {
-        void QueueUpdate(CompetitionStartDTO competitionData);
+        void QueueUpdate(CompetitionStateDto competitionStateData);
     }
 }

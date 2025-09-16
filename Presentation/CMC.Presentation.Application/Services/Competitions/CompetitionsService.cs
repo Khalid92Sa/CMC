@@ -444,8 +444,6 @@ namespace CMC.Presentation.Application.Services.Competitions
 
                 if (competition != null)
                 {
-                    CompetitionStartDTO competitionStartDto = competition.StateData != null ? JsonConvert.DeserializeObject<CompetitionStartDTO>(competition.StateData) : null;
-
                     return new Response<CompetitionsDTO>()
                     {
                         Succeeded = true,
@@ -469,7 +467,6 @@ namespace CMC.Presentation.Application.Services.Competitions
                             ExcludedCompetitionIds = !string.IsNullOrEmpty(competition.ExcludedCompetitionIds) ?
                                                      competition.ExcludedCompetitionIds.Split(',').Select(int.Parse).ToList() :
                                                      new List<int>(),
-                            CompetitionStartDTO = competitionStartDto,
                             CurrentStep = competition.CurrentStep,
                             Round1Points = competition.Round1Points,
                             Round1Time = competition.Round1Time,
@@ -902,28 +899,6 @@ namespace CMC.Presentation.Application.Services.Competitions
             try
             {
                 var competition = await _competitionRepository.GetAll(a => a.Id == id && a.IsDeleted != true && !a.EndDate.HasValue)
-                    .Include(a => a.CompetitionQuestions)
-                       .ThenInclude(a => a.Question)
-                       .ThenInclude(a => a.Answers)
-                       .Include(a => a.CompetitionQuestions)
-                       .ThenInclude(a => a.Answer)
-                        .Include(a => a.Team1)
-                            .ThenInclude(t => t.Player1)
-                        .Include(a => a.Team1)
-                            .ThenInclude(t => t.Player2)
-                        .Include(a => a.Team1)
-                            .ThenInclude(t => t.Player3)
-                        .Include(a => a.Team1)
-                            .ThenInclude(t => t.Player4)
-                        .Include(a => a.Team2)
-                            .ThenInclude(t => t.Player1)
-                        .Include(a => a.Team2)
-                            .ThenInclude(t => t.Player2)
-                        .Include(a => a.Team2)
-                            .ThenInclude(t => t.Player3)
-                        .Include(a => a.Team2)
-                            .ThenInclude(t => t.Player4)
-                        .Include(a => a.Parent)
                             .FirstOrDefaultAsync();
 
                 bool IsAr = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName == "ar";
@@ -960,13 +935,26 @@ namespace CMC.Presentation.Application.Services.Competitions
 
                     competitionStartDTO.TeamCityMall = new List<CompetitionsPlayerDTO>();
                     competitionStartDTO.OtherTeam = new List<CompetitionsPlayerDTO>();
-                    competitionStartDTO.Team1Name = competition.Team1.TeamName;
-                    competitionStartDTO.Team2Name = competition.Team2.TeamName;
+
+                    var Team1 = await _teamRepository.GetAll(a => a.Id == competition.Team1Id)
+                        .Include(a => a.Player1)
+                        .Include(a => a.Player2)
+                        .Include(a => a.Player3)
+                        .Include(a => a.Player4)
+                        .FirstOrDefaultAsync();
+                    var Team2 = await _teamRepository.GetAll(a => a.Id == competition.Team2Id).Include(a => a.Player1)
+                        .Include(a => a.Player2)
+                        .Include(a => a.Player3)
+                        .Include(a => a.Player4)
+                        .FirstOrDefaultAsync();
+
+                    competitionStartDTO.Team1Name = Team1.TeamName;
+                    competitionStartDTO.Team2Name = Team2.TeamName;
 
 
                     List<CompetitionQuestion> AllQuestionsWasAskedBefore = await GetAllExcludedQuestionsAsync(competition);
 
-                    bool IsCompetitionStartedBefore = competition.CompetitionQuestions != null && competition.CompetitionQuestions.Count > 0;
+                    bool IsCompetitionStartedBefore = competition.LastStateUpdate.HasValue && competition.StateData != null;
 
                     //Add Previous Competition Questions
                     foreach (var question in AllQuestionsWasAskedBefore)
@@ -979,16 +967,16 @@ namespace CMC.Presentation.Application.Services.Competitions
 
 
                     //City Mall Team
-                    if (competition.Team1.Player1 != null)
+                    if (Team1.Player1 != null)
                     {
                         CompetitionsPlayerDTO cityMallPlayer1 = new CompetitionsPlayerDTO();
-                        cityMallPlayer1.Id = competition.Team1.Player1.Id;
-                        cityMallPlayer1.Name = competition.Team1.Player1.Name;
+                        cityMallPlayer1.Id = Team1.Player1.Id;
+                        cityMallPlayer1.Name = Team1.Player1.Name;
                         cityMallPlayer1.Points = 0;
                         if (IsCompetitionStartedBefore)
                             cityMallPlayer1.Points = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == cityMallPlayer1.Id).Sum(a => a.Point).Value;
 
-                        //if (competition.Team1.Player1.HasProfilePicture == true)
+                        //if (Team1.Player1.HasProfilePicture == true)
                         //{
                         //    var attachment = await _attachmentRepository.GetAll(a =>
                         //        a.EntityId == cityMallPlayer1.Id &&
@@ -1001,16 +989,16 @@ namespace CMC.Presentation.Application.Services.Competitions
                         competitionStartDTO.TeamCityMall.Add(cityMallPlayer1);
                     }
 
-                    if (competition.Team1.Player2 != null)
+                    if (Team1.Player2 != null)
                     {
                         CompetitionsPlayerDTO cityMallPlayer2 = new CompetitionsPlayerDTO();
-                        cityMallPlayer2.Id = competition.Team1.Player2.Id;
-                        cityMallPlayer2.Name = competition.Team1.Player2.Name;
+                        cityMallPlayer2.Id = Team1.Player2.Id;
+                        cityMallPlayer2.Name = Team1.Player2.Name;
                         cityMallPlayer2.Points = 0;
                         if (IsCompetitionStartedBefore)
                             cityMallPlayer2.Points = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == cityMallPlayer2.Id).Sum(a => a.Point).Value;
 
-                        //if (competition.Team1.Player2.HasProfilePicture == true)
+                        //if (Team1.Player2.HasProfilePicture == true)
                         //{
                         //    var attachment = await _attachmentRepository.GetAll(a =>
                         //        a.EntityId == cityMallPlayer2.Id &&
@@ -1023,16 +1011,16 @@ namespace CMC.Presentation.Application.Services.Competitions
                         competitionStartDTO.TeamCityMall.Add(cityMallPlayer2);
                     }
 
-                    if (competition.Team1.Player3 != null)
+                    if (Team1.Player3 != null)
                     {
                         CompetitionsPlayerDTO cityMallPlayer3 = new CompetitionsPlayerDTO();
-                        cityMallPlayer3.Id = competition.Team1.Player3.Id;
-                        cityMallPlayer3.Name = competition.Team1.Player3.Name;
+                        cityMallPlayer3.Id = Team1.Player3.Id;
+                        cityMallPlayer3.Name = Team1.Player3.Name;
                         cityMallPlayer3.Points = 0;
                         if (IsCompetitionStartedBefore)
                             cityMallPlayer3.Points = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == cityMallPlayer3.Id).Sum(a => a.Point).Value;
 
-                        //if (competition.Team1.Player3.HasProfilePicture == true)
+                        //if (Team1.Player3.HasProfilePicture == true)
                         //{
                         //    var attachment = await _attachmentRepository.GetAll(a =>
                         //        a.EntityId == cityMallPlayer3.Id &&
@@ -1045,16 +1033,16 @@ namespace CMC.Presentation.Application.Services.Competitions
                         competitionStartDTO.TeamCityMall.Add(cityMallPlayer3);
                     }
 
-                    if (competition.Team1.Player4 != null)
+                    if (Team1.Player4 != null)
                     {
                         CompetitionsPlayerDTO cityMallPlayer4 = new CompetitionsPlayerDTO();
-                        cityMallPlayer4.Id = competition.Team1.Player4.Id;
-                        cityMallPlayer4.Name = competition.Team1.Player4.Name;
+                        cityMallPlayer4.Id = Team1.Player4.Id;
+                        cityMallPlayer4.Name = Team1.Player4.Name;
                         cityMallPlayer4.Points = 0;
                         if (IsCompetitionStartedBefore)
                             cityMallPlayer4.Points = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == cityMallPlayer4.Id).Sum(a => a.Point).Value;
 
-                        //if (competition.Team1.Player4.HasProfilePicture == true)
+                        //if (Team1.Player4.HasProfilePicture == true)
                         //{
                         //    var attachment = await _attachmentRepository.GetAll(a =>
                         //        a.EntityId == cityMallPlayer4.Id &&
@@ -1069,16 +1057,16 @@ namespace CMC.Presentation.Application.Services.Competitions
 
 
                     // Other Team
-                    if (competition.Team2.Player1 != null)
+                    if (Team2.Player1 != null)
                     {
                         CompetitionsPlayerDTO otherPlayer1 = new CompetitionsPlayerDTO();
-                        otherPlayer1.Id = competition.Team2.Player1.Id;
-                        otherPlayer1.Name = competition.Team2.Player1.Name;
+                        otherPlayer1.Id = Team2.Player1.Id;
+                        otherPlayer1.Name = Team2.Player1.Name;
                         otherPlayer1.Points = 0;
                         if (IsCompetitionStartedBefore)
                             otherPlayer1.Points = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == otherPlayer1.Id).Sum(a => a.Point).Value;
 
-                        //if (competition.Team2.Player1.HasProfilePicture == true)
+                        //if (Team2.Player1.HasProfilePicture == true)
                         //{
                         //    var attachment = await _attachmentRepository.GetAll(a =>
                         //        a.EntityId == otherPlayer1.Id &&
@@ -1091,16 +1079,16 @@ namespace CMC.Presentation.Application.Services.Competitions
                         competitionStartDTO.OtherTeam.Add(otherPlayer1);
                     }
 
-                    if (competition.Team2.Player2 != null)
+                    if (Team2.Player2 != null)
                     {
                         CompetitionsPlayerDTO otherPlayer2 = new CompetitionsPlayerDTO();
-                        otherPlayer2.Id = competition.Team2.Player2.Id;
-                        otherPlayer2.Name = competition.Team2.Player2.Name;
+                        otherPlayer2.Id = Team2.Player2.Id;
+                        otherPlayer2.Name = Team2.Player2.Name;
                         otherPlayer2.Points = 0;
                         if (IsCompetitionStartedBefore)
                             otherPlayer2.Points = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == otherPlayer2.Id).Sum(a => a.Point).Value;
 
-                        //if (competition.Team2.Player2.HasProfilePicture == true)
+                        //if (Team2.Player2.HasProfilePicture == true)
                         //{
                         //    var attachment = await _attachmentRepository.GetAll(a =>
                         //        a.EntityId == otherPlayer2.Id &&
@@ -1114,16 +1102,16 @@ namespace CMC.Presentation.Application.Services.Competitions
 
                     }
 
-                    if (competition.Team2.Player3 != null)
+                    if (Team2.Player3 != null)
                     {
                         CompetitionsPlayerDTO otherPlayer3 = new CompetitionsPlayerDTO();
-                        otherPlayer3.Id = competition.Team2.Player3.Id;
-                        otherPlayer3.Name = competition.Team2.Player3.Name;
+                        otherPlayer3.Id = Team2.Player3.Id;
+                        otherPlayer3.Name = Team2.Player3.Name;
                         otherPlayer3.Points = 0;
                         if (IsCompetitionStartedBefore)
                             otherPlayer3.Points = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == otherPlayer3.Id).Sum(a => a.Point).Value;
 
-                        //if (competition.Team2.Player3.HasProfilePicture == true)
+                        //if (Team2.Player3.HasProfilePicture == true)
                         //{
                         //    var attachment = await _attachmentRepository.GetAll(a =>
                         //        a.EntityId == otherPlayer3.Id &&
@@ -1136,16 +1124,16 @@ namespace CMC.Presentation.Application.Services.Competitions
                         competitionStartDTO.OtherTeam.Add(otherPlayer3);
                     }
 
-                    if (competition.Team2.Player4 != null)
+                    if (Team2.Player4 != null)
                     {
                         CompetitionsPlayerDTO otherPlayer4 = new CompetitionsPlayerDTO();
-                        otherPlayer4.Id = competition.Team2.Player4.Id;
-                        otherPlayer4.Name = competition.Team2.Player4.Name;
+                        otherPlayer4.Id = Team2.Player4.Id;
+                        otherPlayer4.Name = Team2.Player4.Name;
                         otherPlayer4.Points = 0;
                         if (IsCompetitionStartedBefore)
                             otherPlayer4.Points = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == otherPlayer4.Id).Sum(a => a.Point).Value;
 
-                        //if (competition.Team2.Player4.HasProfilePicture == true)
+                        //if (Team2.Player4.HasProfilePicture == true)
                         //{
                         //    var attachment = await _attachmentRepository.GetAll(a =>
                         //        a.EntityId == otherPlayer4.Id &&
@@ -1160,7 +1148,7 @@ namespace CMC.Presentation.Application.Services.Competitions
 
 
                     //Fill Categories
-                    var allCategories = await _questionsService.GetCategories();
+                    var allCategories = await _questionsService.GetCategories(false);
                     if (!string.IsNullOrWhiteSpace(competition.CategoriesIds))
                     {
                         var allowedCategories = competition.CategoriesIds.Split(',').Select(int.Parse).ToList();
@@ -1173,16 +1161,19 @@ namespace CMC.Presentation.Application.Services.Competitions
 
                     if (competition.StateData != null)
                     {
-                        _httpContextAccessor.HttpContext.Session.SetString("CompetitionStart", competition.StateData);
-                        competitionStartDTO = JsonConvert.DeserializeObject<CompetitionStartDTO>(competition.StateData);
+                        var competitionStateDto = JsonConvert.DeserializeObject<CompetitionStateDto>(competition.StateData);
+                        competitionStartDTO.CurrentStep = competitionStateDto.CurrentStep;
+                        competitionStartDTO.CityMallPlayed = competitionStateDto.CityMallPlayed;
+                        competitionStartDTO.OtherTeamPlayed = competitionStateDto.OtherTeamPlayed;
+                        competitionStartDTO.IsBattled = competitionStateDto.IsBattled;
+                        competitionStartDTO.cityMallSelectedId = competitionStateDto.cityMallSelectedId;
+                        competitionStartDTO.OtherTeamSelectedId = competitionStateDto.OtherTeamSelectedId;
+                        competitionStartDTO.QuestionId = competitionStateDto.QuestionId;
                         competitionStartDTO.IsSessionData = true;
                     }
-                    else
-                    {
-                        var competitonString = JsonConvert.SerializeObject(competitionStartDTO);
-                        _httpContextAccessor.HttpContext.Session.SetString("CompetitionStart", competitonString);
-                    }
 
+                    var competitonString = JsonConvert.SerializeObject(competitionStartDTO);
+                    _httpContextAccessor.HttpContext.Session.SetString("CompetitionStart", competitonString);
 
                     return new Response<CompetitionStartDTO>()
                     {
@@ -1427,21 +1418,21 @@ namespace CMC.Presentation.Application.Services.Competitions
             }
         }
 
-        public async Task<Response> UpdateCompeititonState(CompetitionStartDTO competitionStartDTO)
+        public async Task<Response> UpdateCompetitonState(CompetitionStateDto competitionStateDTO)
         {
             try
             {
                 Competition competition = await _competitionRepository.GetFirstOrDefaultAsync(
                     selector: x => x,
-                    predicate: x => x.Id == competitionStartDTO.Id,
+                    predicate: x => x.Id == competitionStateDTO.Id,
                     disableTracking: true);
                 
                 if (competition == null)
                     return new Response() { Succeeded = false, Message = "competition not found", StatusCode = (int)HttpStatusCode.NotFound };
 
                 competition.LastStateUpdate = DateTime.Now;
-                competition.CurrentStep = competitionStartDTO.CurrentStep;
-                competition.StateData = JsonConvert.SerializeObject(competitionStartDTO);
+                competition.CurrentStep = competitionStateDTO.CurrentStep;
+                competition.StateData = JsonConvert.SerializeObject(competitionStateDTO);
 
                 _competitionRepository.Update(competition);
                 await _competitionRepository.UnitOfWork.SaveChangesAsync();
@@ -1454,7 +1445,7 @@ namespace CMC.Presentation.Application.Services.Competitions
             }
             catch (Exception ex)
             {
-                await _logger.LogError(ex, "UpdateCompeititonState", $"competitionId:{competitionStartDTO.Id}", null, false);
+                await _logger.LogError(ex, "UpdateCompeititonState", $"competitionId:{competitionStateDTO.Id}", null, false);
                 return new Response<CompetitionsPlayerDTO>()
                 {
                     Message = ex.Message

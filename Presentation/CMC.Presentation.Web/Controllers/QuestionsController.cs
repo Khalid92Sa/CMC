@@ -51,7 +51,7 @@ namespace CMC.Presentation.Web.Controllers
         {
             try
             {
-                var categories = await _questionsService.GetCategories();
+                var categories = await _questionsService.GetCategories(true);
                 return View(categories);
             }
             catch (Exception ex)
@@ -225,7 +225,7 @@ namespace CMC.Presentation.Web.Controllers
                    //questionVM.Points = await _settingService.GetValue<int>(SystemSettings.QuestionDefaultPoint);
                     questionVM.Time = await _settingService.GetValue<int>(SystemSettings.QuestionDefaultTime);
                 }
-                questionVM.Categories = await _questionsService.GetCategories();
+                questionVM.Categories = await _questionsService.GetCategories(false);
                 
                 return View(questionVM);
             }

@@ -13,7 +13,7 @@ namespace CMC.Presentation.Application.Services.Competitions
 {
     public class CompetitionUpdateQueue : BackgroundService, ICompetitionUpdateQueue
     {
-        private readonly ConcurrentQueue<CompetitionStartDTO> _queue = new ConcurrentQueue<CompetitionStartDTO>();
+        private readonly ConcurrentQueue<CompetitionStateDto> _queue = new ConcurrentQueue<CompetitionStateDto>();
         private readonly SemaphoreSlim _signal = new SemaphoreSlim(0);
         private readonly IServiceProvider _serviceProvider;
         private readonly ILogger<CompetitionUpdateQueue> _logger;
@@ -26,9 +26,9 @@ namespace CMC.Presentation.Application.Services.Competitions
             _logger = logger;
         }
 
-        public void QueueUpdate(CompetitionStartDTO competitionData)
+        public void QueueUpdate(CompetitionStateDto competitionStateData)
         {
-            _queue.Enqueue(competitionData);
+            _queue.Enqueue(competitionStateData);
             _signal.Release();
         }
 
@@ -48,7 +48,7 @@ namespace CMC.Presentation.Application.Services.Competitions
 
                         try
                         {
-                            await competitionsService.UpdateCompeititonState(competitionData);
+                            await competitionsService.UpdateCompetitonState(competitionData);
                             _logger.LogInformation($"Successfully updated competition state for ID: {competitionData.Id}");
                         }
                         catch (Exception ex)

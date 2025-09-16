@@ -9,6 +9,7 @@ using CMC.Kernel.Domain.Entities;
 using CMC.Kernel.Infrastructure.Caching.Model;
 using CMC.Kernel.Infrastructure.Persistence.Repositories.Lookups;
 using CMC.Kernel.Infrastructure.Persistence.UnitOfWork;
+using CMC.Presentation.Application.DTOs.Competitions;
 using CMC.Presentation.Application.DTOs.Questions;
 using CMC.Presentation.Application.Services.Settings;
 using CMC.Presentation.Domain.Entities;
@@ -22,12 +23,16 @@ using OfficeOpenXml.Style;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using LicenseContext = OfficeOpenXml.LicenseContext;
+
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.Formats;
+
 
 namespace CMC.Presentation.Application.Services.Questions
 {
@@ -86,7 +91,7 @@ namespace CMC.Presentation.Application.Services.Questions
         /// Get all categories of questions
         /// </summary>
         /// <returns></returns>
-        public async Task<List<LookupModel>> GetCategories()
+        public async Task<List<LookupModel>> GetCategories(bool withImages)
         {
             try
             {
@@ -97,8 +102,11 @@ namespace CMC.Presentation.Application.Services.Questions
                     categories.ForEach(category =>
                     {
                         category.Sort = _questionRepository.GetAll(a => a.CategoryID == category.Id && a.IsDeleted != true).Count();
-                        var attachmentImg = _attachmentRepository.GetAll(a => a.EntityId == category.Id && a.EntityType == (int)AttachmentTypes.Categories && a.IsDeleted != true).SingleOrDefault();
-                        category.Img = attachmentImg != null ? Convert.ToBase64String(attachmentImg.FileData) : null;
+                        if (withImages)
+                        {
+                            var attachmentImg = _attachmentRepository.GetAll(a => a.EntityId == category.Id && a.EntityType == (int)AttachmentTypes.Categories && a.IsDeleted != true).SingleOrDefault();
+                            category.Img = attachmentImg != null ? Convert.ToBase64String(attachmentImg.FileData) : null;
+                        }
                     });
                 }
                 return categories;
@@ -177,8 +185,73 @@ namespace CMC.Presentation.Application.Services.Questions
                     using (var memoryStream = new MemoryStream())
                     {
                         await categoryDTO.Img.CopyToAsync(memoryStream);
+                        memoryStream.Position = 0;
+
+                        // Process and resize image
+                        byte[] processedImageData;
+                        using (var originalStream = new MemoryStream())
+                        {
+                            await categoryDTO.Img.CopyToAsync(originalStream);
+                            originalStream.Position = 0;
+
+                            // Detect format BEFORE loading the image
+                            var format = Image.DetectFormat(originalStream);
+                            originalStream.Position = 0; // Reset position after detection
+
+                            using (var image = Image.Load(originalStream))
+                            {
+                                // Check if resizing is needed
+                                if (image.Width > 500 || image.Height > 500)
+                                {
+                                    // Resize maintaining aspect ratio
+                                    image.Mutate(x => x.Resize(new ResizeOptions
+                                    {
+                                        Mode = ResizeMode.Max,
+                                        Size = new Size(500, 500)
+                                    }));
+                                }
+
+                                // Save processed image to byte array IN THE SAME FORMAT
+                                using (var outputStream = new MemoryStream())
+                                {
+                                    if (format != null)
+                                    {
+                                        // Save in the detected format
+                                        image.Save(outputStream, format);
+                                    }
+                                    else
+                                    {
+                                        // Fallback: determine format from filename
+                                        var extension = Path.GetExtension(categoryDTO.Img.FileName)?.ToLower();
+                                        switch (extension)
+                                        {
+                                            case ".png":
+                                                image.SaveAsPng(outputStream);
+                                                break;
+                                            case ".gif":
+                                                image.SaveAsGif(outputStream);
+                                                break;
+                                            case ".bmp":
+                                                image.SaveAsBmp(outputStream);
+                                                break;
+                                            case ".jpg":
+                                            case ".jpeg":
+                                                image.SaveAsJpeg(outputStream);
+                                                break;
+                                            default:
+                                                // Default to PNG to preserve transparency
+                                                image.SaveAsPng(outputStream);
+                                                break;
+                                        }
+                                    }
+
+                                    processedImageData = outputStream.ToArray();
+                                }
+                            }
+                        }
+
                         currentAttachment.FileName = categoryDTO.Img.FileName;
-                        currentAttachment.FileData = memoryStream.ToArray();
+                        currentAttachment.FileData = processedImageData;
                         currentAttachment.EntityId = category.Id;
                         currentAttachment.EntityType = (int)AttachmentTypes.Categories;
 
@@ -1277,9 +1350,9 @@ namespace CMC.Presentation.Application.Services.Questions
                     // Create professional styles
                     var headerStyle = package.Workbook.Styles.CreateNamedStyle("HeaderStyle");
                     headerStyle.Style.Font.Bold = true;
-                    headerStyle.Style.Font.Color.SetColor(Color.White);
+                    headerStyle.Style.Font.Color.SetColor(System.Drawing.Color.White);
                     headerStyle.Style.Fill.PatternType = ExcelFillStyle.Solid;
-                    headerStyle.Style.Fill.BackgroundColor.SetColor(Color.DarkBlue);
+                    headerStyle.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.DarkBlue);
                     headerStyle.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
 
                     var dataStyle = package.Workbook.Styles.CreateNamedStyle("DataStyle");
@@ -1288,7 +1361,7 @@ namespace CMC.Presentation.Application.Services.Questions
 
                     var correctAnswerStyle = package.Workbook.Styles.CreateNamedStyle("CorrectAnswerStyle");
                     correctAnswerStyle.Style.Fill.PatternType = ExcelFillStyle.Solid;
-                    correctAnswerStyle.Style.Fill.BackgroundColor.SetColor(Color.LightGreen);
+                    correctAnswerStyle.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGreen);
                     correctAnswerStyle.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
 
                     // Headers with helpful descriptions
@@ -1509,7 +1582,7 @@ namespace CMC.Presentation.Application.Services.Questions
                         {
                             instructionsSheet.Cells[i + 1, 1].Style.Font.Bold = true;
                             instructionsSheet.Cells[i + 1, 1].Style.Font.Size = 12;
-                            instructionsSheet.Cells[i + 1, 1].Style.Font.Color.SetColor(Color.DarkBlue);
+                            instructionsSheet.Cells[i + 1, 1].Style.Font.Color.SetColor(System.Drawing.Color.DarkBlue);
                         }
                     }
                     instructionsSheet.Column(1).Width = 100;

@@ -14,6 +14,8 @@ using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -137,9 +139,72 @@ namespace CMC.Presentation.Application.Services.Players
 
                     using (var memoryStream = new MemoryStream())
                     {
-                        await playerDTO.ProfilePicture.CopyToAsync(memoryStream);
+                        // Process and resize image
+                        byte[] processedImageData;
+                        using (var originalStream = new MemoryStream())
+                        {
+                            await playerDTO.ProfilePicture.CopyToAsync(memoryStream);
+                            memoryStream.Position = 0;
+
+                            // Detect format BEFORE loading the image
+                            var format = Image.DetectFormat(originalStream);
+                            originalStream.Position = 0; // Reset position after detection
+
+                            using (var image = Image.Load(originalStream))
+                            {
+                                // Check if resizing is needed
+                                if (image.Width > 500 || image.Height > 500)
+                                {
+                                    // Resize maintaining aspect ratio
+                                    image.Mutate(x => x.Resize(new ResizeOptions
+                                    {
+                                        Mode = ResizeMode.Max,
+                                        Size = new Size(500, 500)
+                                    }));
+                                }
+
+                                // Save processed image to byte array IN THE SAME FORMAT
+                                using (var outputStream = new MemoryStream())
+                                {
+                                    if (format != null)
+                                    {
+                                        // Save in the detected format
+                                        image.Save(outputStream, format);
+                                    }
+                                    else
+                                    {
+                                        // Fallback: determine format from filename
+                                        var extension = Path.GetExtension(playerDTO.ProfilePicture.FileName)?.ToLower();
+                                        switch (extension)
+                                        {
+                                            case ".png":
+                                                image.SaveAsPng(outputStream);
+                                                break;
+                                            case ".gif":
+                                                image.SaveAsGif(outputStream);
+                                                break;
+                                            case ".bmp":
+                                                image.SaveAsBmp(outputStream);
+                                                break;
+                                            case ".jpg":
+                                            case ".jpeg":
+                                                image.SaveAsJpeg(outputStream);
+                                                break;
+                                            default:
+                                                // Default to PNG to preserve transparency
+                                                image.SaveAsPng(outputStream);
+                                                break;
+                                        }
+                                    }
+
+                                    processedImageData = outputStream.ToArray();
+                                }
+                            }
+                        }
+
+
                         currentAttachment.FileName = playerDTO.ProfilePicture.FileName;
-                        currentAttachment.FileData = memoryStream.ToArray();
+                        currentAttachment.FileData = processedImageData;
                         currentAttachment.EntityId = player.Id;
                         currentAttachment.EntityType = (int)AttachmentTypes.PlayerProfilePicture;
 

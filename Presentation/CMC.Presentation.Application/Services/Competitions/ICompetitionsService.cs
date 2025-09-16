@@ -109,7 +109,7 @@ namespace CMC.Presentation.Application.Services.Competitions
         /// <returns></returns>
         Task<Response<CompetitionsPlayerDTO>> GetPlayerScoreDetails(int competitionId,int playerId);
 
-        Task<Response> UpdateCompeititonState(CompetitionStartDTO competitionStartDTO);
+        Task<Response> UpdateCompetitonState(CompetitionStateDto competitionStateDTO);
 
         Task<Response<string>> GetBackgroundAttachment();
 

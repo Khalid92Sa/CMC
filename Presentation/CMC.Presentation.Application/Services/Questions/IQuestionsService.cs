@@ -2,6 +2,7 @@
 using CMC.Kernel.Core.Services;
 using CMC.Kernel.Core.Wrappers;
 using CMC.Kernel.Infrastructure.Caching.Model;
+using CMC.Presentation.Application.DTOs.Competitions;
 using CMC.Presentation.Application.DTOs.Questions;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ namespace CMC.Presentation.Application.Services.Questions
         /// Get all categories of questions
         /// </summary>
         /// <returns></returns>
-        Task<List<LookupModel>> GetCategories();
+        Task<List<LookupModel>> GetCategories(bool withImages);
 
         /// <summary>
         /// Add Or update question category
