@@ -6,6 +6,7 @@ using CMC.Kernel.Core.Services;
 using CMC.Kernel.Core.Wrappers;
 using CMC.Kernel.Domain.Entities;
 using CMC.Kernel.Infrastructure.Caching.Model;
+using CMC.Kernel.Infrastructure.Persistence.Services;
 using CMC.Presentation.Application.DTOs.Competitions;
 using CMC.Presentation.Application.DTOs.Questions;
 using CMC.Presentation.Application.Services.Questions;
@@ -33,6 +34,7 @@ namespace CMC.Presentation.Application.Services.Competitions
         readonly IRepository<Attachment> _attachmentRepository;
         readonly IQuestionsService _questionsService;
         readonly IRepository<Player> _playerRepository;
+        readonly ILookupsService _lookupsService;
         readonly IStringLocalizer<CompetitionsService> _localizer;
         public static IHttpContextAccessor _httpContextAccessor { get { return new HttpContextAccessor(); } }
 
@@ -45,11 +47,13 @@ namespace CMC.Presentation.Application.Services.Competitions
             IRepository<Attachment> attachmentRepository,
             IQuestionsService questionsService,
             IUnitOfWork unitOfWork,
+            ILookupsService lookupsService,
             IStringLocalizer<CompetitionsService> localizer,
             IValidatorFactory validatorFactory) : base(validatorFactory, unitOfWork)
         {
             _logger = logger;
             _localizer = localizer;
+            _lookupsService = lookupsService;
             _competitionRepository = competitionRepository;
             _teamRepository = teamRepository;
             _playerRepository = playerRepository;
@@ -817,8 +821,16 @@ namespace CMC.Presentation.Application.Services.Competitions
                     excludedQuestions.AddRange(parentQuestions);
                 }
 
-                // Apply archive settings based on archive type - Direct enum casting!
-                var archiveType = (QuestionArchiveTypeEnum)(competition.ArchiveType ?? 0);
+                // Apply archive settings based on archive type - Direct enum casting
+                QuestionArchiveTypeEnum archiveType = 0;
+                if (competition.ArchiveType.HasValue)
+                {
+                    var archiveTypeLookup = await _lookupsService.GetLookupById(competition.ArchiveType.Value);
+                    if (archiveTypeLookup != null)
+                    {
+                        archiveType = (QuestionArchiveTypeEnum)Convert.ToInt16(archiveTypeLookup.Code);
+                    }
+                }
 
                 switch (archiveType)
                 {
@@ -964,6 +976,7 @@ namespace CMC.Presentation.Application.Services.Competitions
                         questionVM.CategoryId = question.Question.CategoryID;
                         competitionStartDTO.Questions.Add(questionVM);
                     }
+
 
 
                     //City Mall Team
@@ -1170,6 +1183,16 @@ namespace CMC.Presentation.Application.Services.Competitions
                         competitionStartDTO.OtherTeamSelectedId = competitionStateDto.OtherTeamSelectedId;
                         competitionStartDTO.QuestionId = competitionStateDto.QuestionId;
                         competitionStartDTO.IsSessionData = true;
+
+                        if(competitionStartDTO.CurrentStep == "categories")
+                        {
+                            if (competitionStartDTO.TeamCityMall.Count == 1 && !competitionStartDTO.TeamCityMall.Where(a => a.IsVSPlayer).Any())
+                            {
+                                //Means Final 
+                                competitionStartDTO.TeamCityMall.FirstOrDefault().IsVSPlayer = true;
+                                competitionStartDTO.OtherTeam.FirstOrDefault().IsVSPlayer = true;
+                            }
+                        }
                     }
 
                     var competitonString = JsonConvert.SerializeObject(competitionStartDTO);
