@@ -45,6 +45,7 @@ namespace CMC.Presentation.Application.Services.Questions
         readonly ILookupRepository _lookupRepository;
         readonly ILookupCategoryRepository _lookupCategoryRepository;
         readonly IRepository<Question> _questionRepository;
+        readonly IRepository<Competition> _competitionRepository;
         readonly IRepository<Answer> _answerRepository;
         readonly IRepository<Attachment> _attachmentRepository;
         readonly IStringLocalizer<QuestionsService> _localizer;
@@ -59,6 +60,7 @@ namespace CMC.Presentation.Application.Services.Questions
             IRepository<Question> questionRepository,
             IRepository<Answer> answerRepository,
             IRepository<Attachment> attachmentRepository,
+            IRepository<Competition> competitionRepository,
             ILookupCategoryRepository lookupCategoryRepository,
             IUnitOfWork unitOfWork,
             IValidatorFactory validatorFactory,
@@ -71,6 +73,7 @@ namespace CMC.Presentation.Application.Services.Questions
             _logger = applicationLogger;
             _lookupRepository = lookupRepository;
             _lookupCategoryRepository = lookupCategoryRepository;
+            _competitionRepository = competitionRepository;
             _questionRepository = questionRepository;
             _attachmentRepository = attachmentRepository;
             _answerRepository = answerRepository;
@@ -91,7 +94,7 @@ namespace CMC.Presentation.Application.Services.Questions
         /// Get all categories of questions
         /// </summary>
         /// <returns></returns>
-        public async Task<List<LookupModel>> GetCategories(bool withImages)
+        public async Task<List<LookupModel>> GetCategories(bool withImages, int? competitionId = null)
         {
             try
             {
@@ -99,6 +102,15 @@ namespace CMC.Presentation.Application.Services.Questions
                 categories = await _lookupRepository.GetLookupItems(LookupTypes.QuestionsCategory);
                 if (categories.Count > 0)
                 {
+                    if (competitionId.HasValue)
+                    {
+                        var compeitionCategories = await _competitionRepository.GetAll(a => a.Id == competitionId.Value).Select(a => a.CategoriesIds).SingleOrDefaultAsync();
+                        if (!string.IsNullOrEmpty(compeitionCategories))
+                        {
+                            var allowedCategories = compeitionCategories.Split(',').Select(int.Parse).ToList();
+                            categories = categories.Where(a => allowedCategories.Contains(a.Id)).ToList();
+                        }
+                    }
                     categories.ForEach(category =>
                     {
                         category.Sort = _questionRepository.GetAll(a => a.CategoryID == category.Id && a.IsDeleted != true).Count();

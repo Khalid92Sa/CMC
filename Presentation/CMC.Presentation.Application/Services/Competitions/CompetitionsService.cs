@@ -1161,15 +1161,7 @@ namespace CMC.Presentation.Application.Services.Competitions
 
 
                     //Fill Categories
-                    var allCategories = await _questionsService.GetCategories(false);
-                    if (!string.IsNullOrWhiteSpace(competition.CategoriesIds))
-                    {
-                        var allowedCategories = competition.CategoriesIds.Split(',').Select(int.Parse).ToList();
-                        competitionStartDTO.Categories = allCategories.Where(a => allowedCategories.Contains(a.Id)).ToList();
-                    }
-                    else
-                        competitionStartDTO.Categories = allCategories;
-
+                    competitionStartDTO.Categories = await _questionsService.GetCategories(false, competitionStartDTO.Id);
 
 
                     if (competition.StateData != null)
@@ -1184,7 +1176,7 @@ namespace CMC.Presentation.Application.Services.Competitions
                         competitionStartDTO.QuestionId = competitionStateDto.QuestionId;
                         competitionStartDTO.IsSessionData = true;
 
-                        if(competitionStartDTO.CurrentStep == "categories")
+                        if(competitionStartDTO.CurrentStep == "categories" || competitionStartDTO.CurrentStep == "question")
                         {
                             if (competitionStartDTO.TeamCityMall.Count == 1 && !competitionStartDTO.TeamCityMall.Where(a => a.IsVSPlayer).Any())
                             {

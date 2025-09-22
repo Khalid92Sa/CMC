@@ -16,7 +16,7 @@ namespace CMC.Presentation.Application.Services.Questions
         /// Get all categories of questions
         /// </summary>
         /// <returns></returns>
-        Task<List<LookupModel>> GetCategories(bool withImages);
+        Task<List<LookupModel>> GetCategories(bool withImages,int? competitionId = null);
 
         /// <summary>
         /// Add Or update question category

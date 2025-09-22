@@ -254,7 +254,8 @@ namespace CMC.Presentation.Web.Controllers
                         }
                         else if (competitionStart.Data.CurrentStep == "categories")
                         {
-                            competitionStart.Data.Categories = await _questionsService.GetCategories(true);
+                            competitionStart.Data.Categories = await _questionsService.GetCategories(true, competitionStart.Data.Id);
+                            
                             PartialViewResult otpPartialView = PartialView("PartialViews/_SelectCategory", competitionStart.Data);
                             viewContent = ConvertViewToString(this.ControllerContext, otpPartialView, _viewEngine);
                         }
@@ -389,7 +390,7 @@ namespace CMC.Presentation.Web.Controllers
                 var competitonString = JsonConvert.SerializeObject(currentCompetition);
                 _httpContextAccessor.HttpContext.Session.SetString("CompetitionStart", competitonString);
 
-                currentCompetition.Categories = await _questionsService.GetCategories(true);
+                currentCompetition.Categories = await _questionsService.GetCategories(true, currentCompetition.Id);
 
                 PartialViewResult otpPartialView = PartialView("PartialViews/_SelectCategory", currentCompetition);
                 string viewContent = ConvertViewToString(this.ControllerContext, otpPartialView, _viewEngine);
@@ -506,7 +507,7 @@ namespace CMC.Presentation.Web.Controllers
                         Img = null,
                         ImgPath = null,
                     };
-                    
+
                     currentCompetition.CurrentQuestion = randomQ;
                     currentCompetition.Questions.Add(randomQ);
                     currentCompetition.TotalCurrentCompetitionQuestions.Add(randomQ);
@@ -1104,7 +1105,7 @@ namespace CMC.Presentation.Web.Controllers
                     // Queue the database update to avoid tracking issues
                     _competitionUpdateQueue.QueueUpdate(competitionStateDto);
                 }
-                
+
 
                 // Return immediately without waiting
                 return Json(new { isSuccess = true, msg = "Queued for update" });
