@@ -951,14 +951,15 @@ var StartCompetition = {
         newTimerQuestion = 0;
         selectedAnswer = null;
         currentGameState = gameState.INITIAL;
-        selectedPlayerId = null;
+        $('#dv-cityMall-player, #dv-Other-player').removeClass('active');
         isQuestionFinished = false;
+
 
         $('#btn-answer').off('click').on('click', function (e) {
             StartCompetition.HandleContinueButton();
         });
 
-        $('#btn-change-question').off('click').on('click', function (e) {
+        $('#btn-change-question').on('click', function (e) {
             if (currentGameState === gameState.QUESTION_SHOWN || currentGameState === gameState.PLAYER_SELECTED) {
                 StartCompetition.ChangeQuestion();
             }
@@ -1004,6 +1005,7 @@ var StartCompetition = {
 
         $('head').append(additionalStyles);
         StartCompetition.ResetObjects();
+        
 
         // Player click handlers - allow selection when question is shown OR when player is already selected (to change selection)
         $('#dv-cityMall-player, #dv-Other-player').off('click').on('click', function () {
@@ -1090,7 +1092,6 @@ var StartCompetition = {
         if (isQuestionFinished) {
             return;
         }
-        debugger;
         // Check if this player has already answered
         var playerAlreadyAnswered = false;
         if (playerId === 'dv-cityMall-player' && playerTimer.IsPlayerCityMallAnswered) {
@@ -1123,7 +1124,6 @@ var StartCompetition = {
 
         // Reset player answered flag for current attempt
         playerTimer.IsPlayerAnswered = false;
-
         // Check if options are already visible (second player selection)
         var optionsAlreadyVisible = $('#dv-answers-options').find('.answer-option:visible').length > 0;
 
@@ -1175,7 +1175,7 @@ var StartCompetition = {
         currentGameState = gameState.OPTIONS_SHOWN;
 
         // Disable change question button when timer starts
-        $('#btn-change-question').prop('disabled', true).addClass('disabled');
+        //$('#btn-change-question').prop('disabled', true).addClass('disabled');
 
         // Show answer options with animation
         setTimeout(function () {
@@ -1207,7 +1207,6 @@ var StartCompetition = {
         }
     },
     ChangeQuestion: function () {
-        debugger;
         var categoryId = $('#btn-change-question').attr('data', 'val-categoryId').val();
         $.ajax({
             type: 'GET',
@@ -1219,9 +1218,30 @@ var StartCompetition = {
                         // Replace the question content
                         $('#question-content-container').html(data.partial);
 
-                        StartCompetition.RenderEventOnGetQuestion();
+                        // Stop any running timer immediately
+                        if (playerTimer.TimerInterval) {
+                            clearTimeout(playerTimer.TimerInterval);
+                            playerTimer.TimerInterval = null;
+                        }
 
+                        // Hide timer display
+                        $('#dv-p-timer').addClass('d-none');
+                        $('#p-timer').text('');
+
+                        // Reset timer state
+                        playerTimer.IsTimerStarted = false;
+                        playerTimer.IsTimerFinished = false;
+                        newTimerQuestion = 0;
+
+                        // Clear the finished class from document
+                        document.documentElement.classList.remove('finished');
+
+                        var savedPlayerAlreadySelected = selectedPlayerId;
+                        StartCompetition.RenderEventOnGetQuestion();
                         $('#btn-answer').trigger('click');
+                        if (savedPlayerAlreadySelected != null) {
+                            StartCompetition.SelectPlayer(savedPlayerAlreadySelected);
+                        }
                     }
                 }
                 else {

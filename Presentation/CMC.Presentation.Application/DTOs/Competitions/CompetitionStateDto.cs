@@ -15,5 +15,6 @@ namespace CMC.Presentation.Application.DTOs.Competitions
         public int QuestionId { get; set; }
         public int CagegoryId { get; set; }
         public string CurrentStep { get; set; }
+        public int CurrentRound { get; set; }
     }
 }

@@ -521,6 +521,8 @@ namespace CMC.Presentation.Web.Controllers
                 else
                     return Json(new { isSuccess = false });
 
+                var responseUpdateCompetition = await _competitionsService.UpdateChangedQuestionSessionState(currentCompetition.Id, randomQuestion.Data.Id.Value);
+
                 PartialViewResult otpPartialView = PartialView("PartialViews/_QuestionContent", currentCompetition);
                 string viewContent = ConvertViewToString(this.ControllerContext, otpPartialView, _viewEngine);
 
@@ -1103,6 +1105,7 @@ namespace CMC.Presentation.Web.Controllers
                     _httpContextAccessor.HttpContext.Session.SetString("CompetitionStart", updatedSessionData);
 
                     // Queue the database update to avoid tracking issues
+                    competitionStateDto.CurrentRound = currentCompetition.CurrentRound;
                     _competitionUpdateQueue.QueueUpdate(competitionStateDto);
                 }
 

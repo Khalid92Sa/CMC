@@ -18,7 +18,6 @@ namespace CMC.Presentation.Application.DTOs.Competitions
         public List<QuestionVM> Questions { get; set; } = new List<QuestionVM>();
         public List<QuestionVM> TotalCurrentCompetitionQuestions { get; set; } = new List<QuestionVM>();
         public QuestionVM CurrentQuestion { get; set; } = new QuestionVM();
-        public int TotalQuestion { get; set; }
         public int TotalRound { get; set; }
         public bool IsFinalCompetition { get; set; }
         public bool IsQuestionsTypeIsRound { get; set; }

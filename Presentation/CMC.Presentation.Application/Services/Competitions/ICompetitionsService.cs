@@ -114,5 +114,7 @@ namespace CMC.Presentation.Application.Services.Competitions
         Task<Response<string>> GetBackgroundAttachment();
 
         Task<Response<CompetitionStartDTO>> GetPlayersProfilePictures(CompetitionStartDTO  competitionStartDTO);
+
+        Task<Response> UpdateChangedQuestionSessionState(int compeititonId, int questionId);
     }
 }

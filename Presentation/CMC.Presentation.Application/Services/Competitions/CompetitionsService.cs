@@ -1163,6 +1163,7 @@ namespace CMC.Presentation.Application.Services.Competitions
                     //Fill Categories
                     competitionStartDTO.Categories = await _questionsService.GetCategories(false, competitionStartDTO.Id);
 
+                    QuestionVM savedQuestion = null;
 
                     if (competition.StateData != null)
                     {
@@ -1174,21 +1175,66 @@ namespace CMC.Presentation.Application.Services.Competitions
                         competitionStartDTO.cityMallSelectedId = competitionStateDto.cityMallSelectedId;
                         competitionStartDTO.OtherTeamSelectedId = competitionStateDto.OtherTeamSelectedId;
                         competitionStartDTO.QuestionId = competitionStateDto.QuestionId;
+                        competitionStartDTO.CurrentRound = competitionStateDto.CurrentRound;
                         competitionStartDTO.IsSessionData = true;
 
                         if(competitionStartDTO.CurrentStep == "categories" || competitionStartDTO.CurrentStep == "question")
                         {
+                            var cityMallPlayer = competitionStartDTO.TeamCityMall.Where(a => a.Id == competitionStartDTO.cityMallSelectedId).SingleOrDefault();
+                            cityMallPlayer.IsVSPlayer = true;
+                            var otherPlayer = competitionStartDTO.OtherTeam.Where(a => a.Id == competitionStartDTO.OtherTeamSelectedId).SingleOrDefault();
+                            otherPlayer.IsVSPlayer = true;
+
                             if (competitionStartDTO.TeamCityMall.Count == 1 && !competitionStartDTO.TeamCityMall.Where(a => a.IsVSPlayer).Any())
                             {
                                 //Means Final 
                                 competitionStartDTO.TeamCityMall.FirstOrDefault().IsVSPlayer = true;
                                 competitionStartDTO.OtherTeam.FirstOrDefault().IsVSPlayer = true;
                             }
+
+                            if(competitionStartDTO.CurrentStep == "question" && competitionStartDTO.QuestionId != 0)
+                            {
+                                var randomQuestion = await _questionsService.GetQuestion(competitionStartDTO.QuestionId);
+                                if (randomQuestion.Succeeded)
+                                {
+                                    savedQuestion = randomQuestion.Data;
+                                    QuestionVM randomQ = new QuestionVM()
+                                    {
+                                        Answers = randomQuestion.Data.Answers
+                                        .Select(a => new AnswerOptions
+                                        {
+                                            Id = a.Id,
+                                            IsAnswer = a.IsAnswer,
+                                            IsImg = a.IsImg,
+                                            TextAr = a.TextAr,
+                                            TextEn = a.TextEn,
+                                            Img = null,      // avoid saving image
+                                            ImgPath = null   // avoid saving path
+                                        }).ToList(),
+                                        AnswertType = randomQuestion.Data.AnswertType,
+                                        Categories = randomQuestion.Data.Categories,
+                                        CategoryId = randomQuestion.Data.CategoryId,
+                                        Id = randomQuestion.Data.Id,
+                                        Points = randomQuestion.Data.Points,
+                                        TextAr = randomQuestion.Data.TextAr,
+                                        TextEn = randomQuestion.Data.TextEn,
+                                        Time = randomQuestion.Data.Time,
+                                        Img = null,
+                                        ImgPath = null
+                                    };
+                                    competitionStartDTO.CurrentQuestion = randomQ;
+                                    competitionStartDTO.Questions.Add(randomQ);
+                                    competitionStartDTO.TotalCurrentCompetitionQuestions.Add(randomQ);
+                                }
+                            }
                         }
                     }
 
                     var competitonString = JsonConvert.SerializeObject(competitionStartDTO);
                     _httpContextAccessor.HttpContext.Session.SetString("CompetitionStart", competitonString);
+
+                    if (savedQuestion != null)
+                        competitionStartDTO.CurrentQuestion = savedQuestion;
 
                     return new Response<CompetitionStartDTO>()
                     {
@@ -1548,6 +1594,33 @@ namespace CMC.Presentation.Application.Services.Competitions
             catch (Exception ex)
             {
                 await _logger.LogError(ex, "GetBackgroundAttachment", $"CompetitionId:{competitionStartDTO.Id}", null, false);
+                return new Response<CompetitionStartDTO>()
+                {
+                    Message = ex.Message
+                };
+            }
+        }
+
+        public async Task<Response> UpdateChangedQuestionSessionState(int compeititonId, int questionId)
+        {
+            try
+            {
+                var competition = await _competitionRepository.GetAll(a => a.Id == compeititonId).SingleOrDefaultAsync();
+                var competitionStateDto = JsonConvert.DeserializeObject<CompetitionStateDto>(competition.StateData);
+                competitionStateDto.QuestionId = questionId;
+                competition.StateData = JsonConvert.SerializeObject(competitionStateDto);
+
+                _competitionRepository.Update(competition);
+                await _competitionRepository.UnitOfWork.SaveChangesAsync();
+
+                return new Response()
+                {
+                    Succeeded = true
+                };
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogError(ex, "UpdateChangedQuestionSessionState", $"CompetitionId:{compeititonId}", null, false);
                 return new Response<CompetitionStartDTO>()
                 {
                     Message = ex.Message

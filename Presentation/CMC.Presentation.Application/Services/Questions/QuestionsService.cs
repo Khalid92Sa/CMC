@@ -105,7 +105,7 @@ namespace CMC.Presentation.Application.Services.Questions
                     if (competitionId.HasValue)
                     {
                         var compeitionCategories = await _competitionRepository.GetAll(a => a.Id == competitionId.Value).Select(a => a.CategoriesIds).SingleOrDefaultAsync();
-                        if (!string.IsNullOrEmpty(compeitionCategories))
+                        if (!string.IsNullOrEmpty(compeitionCategories) && compeitionCategories != "0")
                         {
                             var allowedCategories = compeitionCategories.Split(',').Select(int.Parse).ToList();
                             categories = categories.Where(a => allowedCategories.Contains(a.Id)).ToList();
