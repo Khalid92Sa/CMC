@@ -1106,6 +1106,7 @@ namespace CMC.Presentation.Web.Controllers
 
                     // Queue the database update to avoid tracking issues
                     competitionStateDto.CurrentRound = currentCompetition.CurrentRound;
+                    competitionStateDto.TotalCurrentCompetitionQuestions = currentCompetition.TotalCurrentCompetitionQuestions.Select(a=>a.Id.Value).ToList();
                     _competitionUpdateQueue.QueueUpdate(competitionStateDto);
                 }
 

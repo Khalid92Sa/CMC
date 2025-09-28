@@ -815,11 +815,14 @@ namespace CMC.Presentation.Application.Services.Competitions
             try
             {
                 // Always include parent competition questions (existing behavior)
-                if (competition.Parent != null)
-                {
-                    var parentQuestions = await GetAllQuestionsForCompetitionAndParentsAsync(competition.Parent.Id);
-                    excludedQuestions.AddRange(parentQuestions);
-                }
+                //if (competition.Parent != null)
+                //{
+                //    var parentQuestions = await GetAllQuestionsForCompetitionAndParentsAsync(competition.Parent.Id);
+                //    excludedQuestions.AddRange(parentQuestions);
+                //}
+
+                var currentQuestion = await GetAllQuestionsForCompetitionAndParentsAsync(competition.Id);
+                excludedQuestions.AddRange(currentQuestion);
 
                 // Apply archive settings based on archive type - Direct enum casting
                 QuestionArchiveTypeEnum archiveType = 0;
@@ -1177,8 +1180,17 @@ namespace CMC.Presentation.Application.Services.Competitions
                         competitionStartDTO.QuestionId = competitionStateDto.QuestionId;
                         competitionStartDTO.CurrentRound = competitionStateDto.CurrentRound;
                         competitionStartDTO.IsSessionData = true;
+                        if(competitionStateDto.TotalCurrentCompetitionQuestions!=null && competitionStateDto.TotalCurrentCompetitionQuestions.Count > 0)
+                        {
+                            competitionStartDTO.TotalCurrentCompetitionQuestions = competitionStateDto.TotalCurrentCompetitionQuestions.Select(a => new QuestionVM
+                            {
+                                Id = a
+                            })
+                            .ToList();
+                        }
+                        
 
-                        if(competitionStartDTO.CurrentStep == "categories" || competitionStartDTO.CurrentStep == "question")
+                        if (competitionStartDTO.CurrentStep == "categories" || competitionStartDTO.CurrentStep == "question")
                         {
                             var cityMallPlayer = competitionStartDTO.TeamCityMall.Where(a => a.Id == competitionStartDTO.cityMallSelectedId).SingleOrDefault();
                             cityMallPlayer.IsVSPlayer = true;
