@@ -990,7 +990,18 @@ namespace CMC.Presentation.Application.Services.Competitions
                         cityMallPlayer1.Name = Team1.Player1.Name;
                         cityMallPlayer1.Points = 0;
                         if (IsCompetitionStartedBefore)
+                        {
                             cityMallPlayer1.Points = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == cityMallPlayer1.Id).Sum(a => a.Point).Value;
+                            if (!competitionStartDTO.IsQuestionsTypeIsRound)
+                                cityMallPlayer1.competitonQuestions = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == cityMallPlayer1.Id).Select(a => new CompetitonQuestions
+                                {
+                                    QuestionId = a.QuestionId,
+                                    AnswerId = a.AnswerId,
+                                    IsCorrectAnswer = a.IsCorrectAnswer,
+                                    Points = a.Point,
+                                    Time = a.Time,
+                                }).ToList();
+                        }
 
                         //if (Team1.Player1.HasProfilePicture == true)
                         //{
@@ -1012,7 +1023,18 @@ namespace CMC.Presentation.Application.Services.Competitions
                         cityMallPlayer2.Name = Team1.Player2.Name;
                         cityMallPlayer2.Points = 0;
                         if (IsCompetitionStartedBefore)
+                        {
                             cityMallPlayer2.Points = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == cityMallPlayer2.Id).Sum(a => a.Point).Value;
+                            if (!competitionStartDTO.IsQuestionsTypeIsRound)
+                                cityMallPlayer2.competitonQuestions = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == cityMallPlayer2.Id).Select(a => new CompetitonQuestions
+                                {
+                                    QuestionId = a.QuestionId,
+                                    AnswerId = a.AnswerId,
+                                    IsCorrectAnswer = a.IsCorrectAnswer,
+                                    Points = a.Point,
+                                    Time = a.Time,
+                                }).ToList();
+                        }
 
                         //if (Team1.Player2.HasProfilePicture == true)
                         //{
@@ -1034,7 +1056,18 @@ namespace CMC.Presentation.Application.Services.Competitions
                         cityMallPlayer3.Name = Team1.Player3.Name;
                         cityMallPlayer3.Points = 0;
                         if (IsCompetitionStartedBefore)
+                        {
                             cityMallPlayer3.Points = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == cityMallPlayer3.Id).Sum(a => a.Point).Value;
+                            if (!competitionStartDTO.IsQuestionsTypeIsRound)
+                                cityMallPlayer3.competitonQuestions = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == cityMallPlayer3.Id).Select(a => new CompetitonQuestions
+                                {
+                                    QuestionId = a.QuestionId,
+                                    AnswerId = a.AnswerId,
+                                    IsCorrectAnswer = a.IsCorrectAnswer,
+                                    Points = a.Point,
+                                    Time = a.Time,
+                                }).ToList();
+                        }
 
                         //if (Team1.Player3.HasProfilePicture == true)
                         //{
@@ -1056,7 +1089,18 @@ namespace CMC.Presentation.Application.Services.Competitions
                         cityMallPlayer4.Name = Team1.Player4.Name;
                         cityMallPlayer4.Points = 0;
                         if (IsCompetitionStartedBefore)
+                        {
                             cityMallPlayer4.Points = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == cityMallPlayer4.Id).Sum(a => a.Point).Value;
+                            if (!competitionStartDTO.IsQuestionsTypeIsRound)
+                                cityMallPlayer4.competitonQuestions = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == cityMallPlayer4.Id).Select(a => new CompetitonQuestions
+                                {
+                                    QuestionId = a.QuestionId,
+                                    AnswerId = a.AnswerId,
+                                    IsCorrectAnswer = a.IsCorrectAnswer,
+                                    Points = a.Point,
+                                    Time = a.Time,
+                                }).ToList();
+                        }
 
                         //if (Team1.Player4.HasProfilePicture == true)
                         //{
@@ -1080,7 +1124,18 @@ namespace CMC.Presentation.Application.Services.Competitions
                         otherPlayer1.Name = Team2.Player1.Name;
                         otherPlayer1.Points = 0;
                         if (IsCompetitionStartedBefore)
+                        {
                             otherPlayer1.Points = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == otherPlayer1.Id).Sum(a => a.Point).Value;
+                            if (!competitionStartDTO.IsQuestionsTypeIsRound)
+                                otherPlayer1.competitonQuestions = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == otherPlayer1.Id).Select(a => new CompetitonQuestions
+                                {
+                                    QuestionId = a.QuestionId,
+                                    AnswerId = a.AnswerId,
+                                    IsCorrectAnswer = a.IsCorrectAnswer,
+                                    Points = a.Point,
+                                    Time = a.Time,
+                                }).ToList();
+                        }
 
                         //if (Team2.Player1.HasProfilePicture == true)
                         //{
@@ -1102,7 +1157,18 @@ namespace CMC.Presentation.Application.Services.Competitions
                         otherPlayer2.Name = Team2.Player2.Name;
                         otherPlayer2.Points = 0;
                         if (IsCompetitionStartedBefore)
+                        {
                             otherPlayer2.Points = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == otherPlayer2.Id).Sum(a => a.Point).Value;
+                            if (!competitionStartDTO.IsQuestionsTypeIsRound)
+                                otherPlayer2.competitonQuestions = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == otherPlayer2.Id).Select(a => new CompetitonQuestions
+                                {
+                                    QuestionId = a.QuestionId,
+                                    AnswerId = a.AnswerId,
+                                    IsCorrectAnswer = a.IsCorrectAnswer,
+                                    Points = a.Point,
+                                    Time = a.Time,
+                                }).ToList();
+                        }
 
                         //if (Team2.Player2.HasProfilePicture == true)
                         //{
@@ -1125,7 +1191,18 @@ namespace CMC.Presentation.Application.Services.Competitions
                         otherPlayer3.Name = Team2.Player3.Name;
                         otherPlayer3.Points = 0;
                         if (IsCompetitionStartedBefore)
+                        {
                             otherPlayer3.Points = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == otherPlayer3.Id).Sum(a => a.Point).Value;
+                            if (!competitionStartDTO.IsQuestionsTypeIsRound)
+                                otherPlayer3.competitonQuestions = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == otherPlayer3.Id).Select(a => new CompetitonQuestions
+                                {
+                                    QuestionId = a.QuestionId,
+                                    AnswerId = a.AnswerId,
+                                    IsCorrectAnswer = a.IsCorrectAnswer,
+                                    Points = a.Point,
+                                    Time = a.Time,
+                                }).ToList();
+                        }
 
                         //if (Team2.Player3.HasProfilePicture == true)
                         //{
@@ -1147,7 +1224,18 @@ namespace CMC.Presentation.Application.Services.Competitions
                         otherPlayer4.Name = Team2.Player4.Name;
                         otherPlayer4.Points = 0;
                         if (IsCompetitionStartedBefore)
+                        {
                             otherPlayer4.Points = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == otherPlayer4.Id).Sum(a => a.Point).Value;
+                            if (!competitionStartDTO.IsQuestionsTypeIsRound)
+                                otherPlayer4.competitonQuestions = AllQuestionsWasAskedBefore.Where(a => a.PlayerId == otherPlayer4.Id).Select(a => new CompetitonQuestions
+                                {
+                                    QuestionId = a.QuestionId,
+                                    AnswerId = a.AnswerId,
+                                    IsCorrectAnswer = a.IsCorrectAnswer,
+                                    Points = a.Point,
+                                    Time = a.Time,
+                                }).ToList();
+                        }
 
                         //if (Team2.Player4.HasProfilePicture == true)
                         //{
@@ -1192,10 +1280,16 @@ namespace CMC.Presentation.Application.Services.Competitions
 
                         if (competitionStartDTO.CurrentStep == "categories" || competitionStartDTO.CurrentStep == "question")
                         {
-                            var cityMallPlayer = competitionStartDTO.TeamCityMall.Where(a => a.Id == competitionStartDTO.cityMallSelectedId).SingleOrDefault();
-                            cityMallPlayer.IsVSPlayer = true;
-                            var otherPlayer = competitionStartDTO.OtherTeam.Where(a => a.Id == competitionStartDTO.OtherTeamSelectedId).SingleOrDefault();
-                            otherPlayer.IsVSPlayer = true;
+                            if (competitionStartDTO.cityMallSelectedId != 0)
+                            {
+                                var cityMallPlayer = competitionStartDTO.TeamCityMall.Where(a => a.Id == competitionStartDTO.cityMallSelectedId).SingleOrDefault();
+                                cityMallPlayer.IsVSPlayer = true;
+                            }
+                            if (competitionStartDTO.OtherTeamSelectedId != 0)
+                            {
+                                var otherPlayer = competitionStartDTO.OtherTeam.Where(a => a.Id == competitionStartDTO.OtherTeamSelectedId).SingleOrDefault();
+                                otherPlayer.IsVSPlayer = true;
+                            }
 
                             if (competitionStartDTO.TeamCityMall.Count == 1 && !competitionStartDTO.TeamCityMall.Where(a => a.IsVSPlayer).Any())
                             {

@@ -2128,6 +2128,22 @@ var StartCompetition = {
 
             // Get other values
             var runButtleMode = competitionDataElement.dataset.currentStep == 'initial' || competitionDataElement.dataset.currentStep == 'battle-mode';
+            if (runButtleMode) {
+                //Check Who is from City mall && other team has already played.
+                $('.cityMallPlayers').each(function (index, element) {
+                    var currentPlayerId = parseInt($(this).attr('data-player-Id'));
+                    if (CityMallPlayed.includes(currentPlayerId)) {
+                        $(this).css('pointer-events', 'none');
+                    }
+                });
+
+                $('.OtherPlayers').each(function (index, element) {
+                    var currentPlayerId = parseInt($(this).attr('data-player-Id'));
+                    if (OtherTeamPlayed.includes(currentPlayerId)) {
+                        $(this).css('pointer-events', 'none');
+                    }
+                });
+            }
             if (competitionDataElement.dataset.citymallSelected != '') {
                 playersInCompetition.CityMallPlayer = competitionDataElement.dataset.citymallSelected;
                 if (runButtleMode) {
