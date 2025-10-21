@@ -99,7 +99,7 @@ namespace CMC.Presentation.Application.Services.Players
                     player.CreatedOn = DateTime.Now;
                 }
 
-                player.Name = playerDTO.Name;
+                player.Name = playerDTO.Name?.Trim();
                 player.PhoneNumber = playerDTO.PhoneNumber;
                 player.EmailAddress = playerDTO.EmailAddress;
                 player.IsEmployee = playerDTO.IsEmployee;
